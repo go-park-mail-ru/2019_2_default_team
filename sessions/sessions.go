@@ -82,6 +82,14 @@ func Get(sID string) (uint, error) {
 	return uint(res), nil
 }
 
+func AddCSRFToken(sID string, csrfToken string) {
+	// TODO: Добавить CSRF-токен в базу данных
+}
+
+func GetCSRFToken(sID string) (string, error) {
+	// TODO: Доастать CSRF-токен из базы и вернуть
+}
+
 func Delete(sID string) error {
 	_, err := redis.Int(Sm.redisConn.Do("DEL", sID))
 	if err != nil {

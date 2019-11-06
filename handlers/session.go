@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"strconv"
 	"encoding/json"
 	"fmt"
 	"github.com/asaskevich/govalidator"
@@ -99,6 +102,11 @@ func getSession(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+
+		csrfToken := generateCSRFToken()
+		sessions.AddCSRFToken(sID, csrfToken)
+		w.Header().Set("X-csrf-token", csrfToken)
+
 		fmt.Fprintln(w, string(sID))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -186,9 +194,14 @@ func deleteSession(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
-
-
+// @Summary Сгенерировать CSRF-токен
+// @Descriptiond Функция генерации CSRF-токена (возвращает строку)
+func generateCSRFToken() string {
+	timeNanoString := strconv.FormatInt(time.Now().UnixNano(), 10)
+	fmt.Println(timeNanoString)
+	hashInBytes := md5.Sum([]byte(timeNanoString))
+	return hex.EncodeToString(hashInBytes[:])
+}
 /*
 
 func loginUser(w http.ResponseWriter, userID uint) error {
@@ -415,4 +428,4 @@ func (api *MyHandler) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 
- */
+*/

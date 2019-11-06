@@ -111,6 +111,11 @@ func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		} else { // ErrNoCookie
 			ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
 		}
+		csrfToken := r.Header.Get('X-csrf-token')
+		csrfValid, err := sessions.GetCSRFToken(c)
+		if err != nil || csrfToken != csrfValid {
+			ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
+		}
 		//fmt.Println("key  ", KeyIsAuthenticated)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
