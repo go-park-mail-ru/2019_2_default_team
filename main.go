@@ -10,6 +10,10 @@ import (
 
 func main() {
 
+	l := logger.InitLogger()
+	db.Db = db.InitDB("postgres@postgres:5432", "some-postgres")
+	sessions.Sm = sessions.ConnectSessionDB("user@redis:6379", "0")
+
 	newServer, err := server.CreateServer()
 
 	if err != nil {
@@ -17,10 +21,6 @@ func main() {
 		return
 	}
 
-	l := logger.InitLogger()
-
-	db.Db = db.InitDB("postgres@postgres:5432", "some-postgres")
-	sessions.Sm = sessions.ConnectSessionDB("user@redis:6379", "0")
 	newServer.RunServer()
 
 	defer sessions.Sm.Close()

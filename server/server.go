@@ -2,22 +2,23 @@ package server
 
 import (
 	"github.com/gorilla/mux"
-	fmdelivery "kino_backend/films/delivery"
-	fpostgres "kino_backend/films/repository/Postgres"
-	fusecase "kino_backend/films/usecase"
-	tpostgres "kino_backend/tickets/repository/Postgres"
-	upostgres "kino_backend/users/repository/Postgres"
-	tdelivery "kino_backend/tickets/delivery"
-	"kino_backend/handlers"
-	"kino_backend/middleware"
-	udelivery "kino_backend/users/delivery"
+	"kino_backend/db"
+	"kino_backend/delivery/films_delivery"
+	"kino_backend/delivery/sessions_delivery"
+	"kino_backend/delivery/tickets_delivery"
+	"kino_backend/delivery/users_delivery"
+	fpostgres "kino_backend/repository/films_repository/Postgres"
+	"kino_backend/repository/session_repository/Redis"
+	tpostgres "kino_backend/repository/tickets_repository/Postgres"
+	upostgres "kino_backend/repository/users_repository/Postgres"
+	"kino_backend/useCase/films_usecase"
+	"kino_backend/useCase/sessions_usecase"
+	"kino_backend/useCase/tickets_usecase"
+	"kino_backend/useCase/users_usecase"
+	"kino_backend/utilits/middleware"
 	"log"
 	"net/http"
 	"os"
-	"kino_backend/db"
-	tusecase "kino_backend/tickets/usecase"
-	uusecase "kino_backend/users/usecase"
-
 )
 
 type Server struct{
@@ -35,20 +36,20 @@ func CreateServer() (*Server ,error){
 	Access := new(middleware.AccessLogger)
 	Access.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 
-	fuc := fusecase.NewFilmUseCase(fpostgres.NewFilmRepository(db.Db))
-	tuc := tusecase.NewTicketUseCase(tpostgres.NewTicketRepository(db.Db))
-	uuc := uusecase.NewUserUseCase(upostgres.NewUserRepository(db.Db))
-	apif := fmdelivery.NewMyHandlerFilms(fuc)
-	apiu := udelivery.NewMyHandlerUser(uuc)
-	apit := tdelivery.NewMyHandlerTicket(tuc)
+	fuc := films_usecase.NewFilmUseCase(fpostgres.NewFilmRepository(db.Db))
+	tuc := tickets_usecase.NewTicketUseCase(tpostgres.NewTicketRepository(db.Db))
+	uuc := users_usecase.NewUserUseCase(upostgres.NewUserRepository(db.Db))
+	suc := sessions_usecase.NewSessionUseCase(Redis.NewSessionsRepository(Redis.Rd))
+
+	apif := films_delivery.NewMyHandlerFilms(fuc)
+	apiu := users_delivery.NewMyHandlerUser(uuc)
+	apit := tickets_delivery.NewMyHandlerTicket(tuc)
+	apis := sessions_delivery.NewMyHandlerFilms(suc)
 
 
-	api := handlers.NewMyHandler()
 
 	r.HandleFunc("/profile", apiu.ProfileHandler)
 
-	r.HandleFunc("/logging", middleware.RecoverMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(api.SessionHandler))))
 
 	r.HandleFunc("/profile", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apiu.ProfileHandler))))
@@ -56,6 +57,8 @@ func CreateServer() (*Server ,error){
 		middleware.SessionMiddleware(apif.ProfileFilmHandler))))
 	r.HandleFunc("/ticket", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apit.ProfileTicketHandler))))
+	r.HandleFunc("/session", middleware.RecoverMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apis.ProfileSessionsHandler))))
 	//r.HandleFunc("/logging", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 	//	middleware.SessionMiddleware(api.SessionHandler))))
 	//r.HandleFunc("/profile", middleware.RecoverMiddleware(middleware.CorsMiddleware(
@@ -66,10 +69,6 @@ func CreateServer() (*Server ,error){
 	//	middleware.SessionMiddleware(api.ProfileTicketHandler))))
 
 
-
-
-	r.HandleFunc("/photodownload", api.GetPhoto)
-	r.HandleFunc("/upload", api.UploadPage)
 
 	err = nil
 	server.routing = r

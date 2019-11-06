@@ -11,6 +11,7 @@ var logger *zap.Logger
 var sugar *zap.SugaredLogger
 
 func InitLogger() *zap.SugaredLogger {
+	//поправить путь
 	rawJSON, err := ioutil.ReadFile("./logger/logger-config.json")
 	if err != nil {
 		log.Println(err)
