@@ -1,9 +1,10 @@
 package sessions
 
 import (
+	"2019_2_default_team/logger"
 	"errors"
+
 	"github.com/gomodule/redigo/redis"
-	"kino_backend/logger"
 )
 
 var Sm *sessionManager
@@ -19,7 +20,6 @@ type sessionManager struct {
 func (sm *sessionManager) Close() {
 	sm.redisConn.Close()
 }
-
 
 const (
 	host     = "localhost"

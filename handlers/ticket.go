@@ -1,17 +1,17 @@
 package handlers
 
 import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"kino_backend/db"
-	"kino_backend/models"
 	"log"
 	"net/http"
-	"kino_backend/logger"
 )
 
-func (api *MyHandler)  ProfileTicketHandler(w http.ResponseWriter, r *http.Request) {
+func (api *MyHandler) ProfileTicketHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		getProfileTicket(w, r)
@@ -23,7 +23,6 @@ func (api *MyHandler)  ProfileTicketHandler(w http.ResponseWriter, r *http.Reque
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-
 
 func readRegisterProfileTicket(r *http.Request, p *models.RegisterTicket) error {
 	body, err := ioutil.ReadAll(r.Body)
@@ -65,7 +64,7 @@ func readProfileTicket(r *http.Request, p *models.Ticket) error {
 // @Failure 500 "Ошибка в бд"
 // @Router /profileticket [GET]
 
-func getProfileTicket(w http.ResponseWriter, r *http.Request){
+func getProfileTicket(w http.ResponseWriter, r *http.Request) {
 	params := &models.RequestTicket{}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(params)
@@ -101,12 +100,11 @@ func getProfileTicket(w http.ResponseWriter, r *http.Request){
 			return
 		}
 		fmt.Fprintln(w, string(json))
-	} else{
+	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 }
-
 
 // @Title Зарегистрироваться и залогиниться по новому профилю
 // @Summary Зарегистрировать по никнейму, почте и паролю и автоматически залогинить
@@ -121,7 +119,7 @@ func getProfileTicket(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func postBuyTicket(w http.ResponseWriter, r *http.Request){
+func postBuyTicket(w http.ResponseWriter, r *http.Request) {
 	u := &models.RegisterTicket{}
 	err := readRegisterProfileTicket(r, u)
 	if err != nil {
@@ -158,5 +156,3 @@ func postBuyTicket(w http.ResponseWriter, r *http.Request){
 	logger.Infof("New ticket with id %v ", newT.TicketID)
 
 }
-
-

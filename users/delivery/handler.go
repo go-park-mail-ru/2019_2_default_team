@@ -1,25 +1,26 @@
 package delivery
 
 import (
+	"2019_2_default_team/auth"
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/middleware"
+	"2019_2_default_team/models"
+	"2019_2_default_team/users"
 	"encoding/json"
 	"fmt"
-	"github.com/asaskevich/govalidator"
 	"io/ioutil"
-	"kino_backend/auth"
-	"kino_backend/users"
 	"log"
 	"net/http"
-	"kino_backend/models"
-	"kino_backend/db"
-	"kino_backend/logger"
-	"kino_backend/middleware"
+
+	"github.com/asaskevich/govalidator"
 )
 
-type Handler struct{
+type Handler struct {
 	useCase users.UseCase
 }
 
-func NewHandler(useCase users.UseCase) *Handler{
+func NewHandler(useCase users.UseCase) *Handler {
 	return &Handler{
 		useCase: useCase,
 	}
@@ -134,9 +135,6 @@ func validateFields(u *models.RegisterProfile) ([]models.ProfileError, error) {
 	return errors, nil
 }
 
-
-
-
 // @Title Получить профиль
 // @Summary Получить профиль пользователя по ID, email или из сессии
 // @ID get-profile
@@ -150,7 +148,7 @@ func validateFields(u *models.RegisterProfile) ([]models.ProfileError, error) {
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [GET]
 
-func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request) {
 	//data parse
 	params := &models.RequestProfile{}
 	decoder := json.NewDecoder(r.Body)
@@ -166,7 +164,7 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 
 	if r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		id = r.Context().Value(middleware.KeyUserID).(uint)
-	}else {
+	} else {
 		id = 0
 	}
 
@@ -195,7 +193,6 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	fmt.Fprintln(w, string(json))
-
 
 	//if params.ID != 0 {
 	//	profile, err := db.GetUserProfileByID(params.ID)
@@ -285,7 +282,7 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 	//parsedata
 	u := &models.RegisterProfile{}
 	err := readProfile(r, u)
@@ -349,7 +346,6 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-
 // @Title Изменить профиль
 // @Summary Изменить профиль, должен быть залогинен
 // @ID put-profile
@@ -363,7 +359,7 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [PUT]
 
-func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -426,7 +422,7 @@ func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
 		err := h.useCase.PutUser(r.Context(), id, editUser)
 		//err := db.UpdateUserByID(id, editUser)
 
-		if err != nil{
+		if err != nil {
 			switch err.(type) {
 			case db.UserNotFoundError:
 				w.WriteHeader(http.StatusNotFound)

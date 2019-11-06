@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"github.com/asaskevich/govalidator"
-	"kino_backend/db"
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/middleware"
+	"2019_2_default_team/models"
 	"bufio"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"kino_backend/middleware"
-	"kino_backend/models"
 	"log"
 	"math/rand"
 	"mime/multipart"
@@ -17,11 +17,12 @@ import (
 	"os"
 	"strconv"
 	"sync"
-	"kino_backend/logger"
+
+	"github.com/asaskevich/govalidator"
 )
 
 type HandlerDB struct {
-	DB   *sql.DB
+	DB *sql.DB
 }
 
 func RandStringRunes(n int) string {
@@ -39,13 +40,13 @@ func NewMyHandler() *MyHandler {
 			"testUser": {1, "testuser", "test"},
 		},
 		users: make([]User, 0),
-		mu: &sync.Mutex{},
+		mu:    &sync.Mutex{},
 	}
 }
 
 //вспомогательные функции
 
-func (api *MyHandler)  ProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (api *MyHandler) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		getProfile(w, r)
@@ -59,7 +60,6 @@ func (api *MyHandler)  ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-
 
 func readProfile(r *http.Request, p *models.RegisterProfile) error {
 	body, err := ioutil.ReadAll(r.Body)
@@ -170,11 +170,9 @@ func validateFields(u *models.RegisterProfile) ([]models.ProfileError, error) {
 	return errors, nil
 }
 
-
-
 //основные методы к профилю юзера
 
-func (api *MyHandler) GetMyProfile(w http.ResponseWriter, r *http.Request){
+func (api *MyHandler) GetMyProfile(w http.ResponseWriter, r *http.Request) {
 
 	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -206,8 +204,8 @@ func (api *MyHandler) GetMyProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [GET]
 
-func getProfile(w http.ResponseWriter, r *http.Request){
-//data parse
+func getProfile(w http.ResponseWriter, r *http.Request) {
+	//data parse
 	params := &models.RequestProfile{}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(params)
@@ -307,8 +305,8 @@ func getProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func postSignupProfile(w http.ResponseWriter, r *http.Request){
-//parsedata
+func postSignupProfile(w http.ResponseWriter, r *http.Request) {
+	//parsedata
 	u := &models.RegisterProfile{}
 	err := readProfile(r, u)
 	if err != nil {
@@ -367,7 +365,6 @@ func postSignupProfile(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-
 // @Title Изменить профиль
 // @Summary Изменить профиль, должен быть залогинен
 // @ID put-profile
@@ -381,7 +378,7 @@ func postSignupProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [PUT]
 
-func putEditUserProfile(w http.ResponseWriter, r *http.Request){
+func putEditUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -437,25 +434,24 @@ func putEditUserProfile(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintln(w, string(jsonObject))
 	} else {
-			id := r.Context().Value(middleware.KeyUserID).(uint)
+		id := r.Context().Value(middleware.KeyUserID).(uint)
 
-			//logic
-			err := db.UpdateUserByID(id, editUser)
+		//logic
+		err := db.UpdateUserByID(id, editUser)
 
-			if err != nil{
-				switch err.(type) {
-				case db.UserNotFoundError:
-					w.WriteHeader(http.StatusNotFound)
-				default:
-					log.Println(err)
-					w.WriteHeader(http.StatusInternalServerError)
-				}
-				return
+		if err != nil {
+			switch err.(type) {
+			case db.UserNotFoundError:
+				w.WriteHeader(http.StatusNotFound)
+			default:
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
 			}
-			log.Println("User with id", id, "changed to", editUser.Nickname, editUser.Email)
+			return
+		}
+		log.Println("User with id", id, "changed to", editUser.Nickname, editUser.Email)
 	}
 }
-
 
 func getPhoto(id int) (os.File, error) {
 	fileName := strconv.Itoa(id)
@@ -466,7 +462,6 @@ func getPhoto(id int) (os.File, error) {
 	}
 	return *file, nil
 }
-
 
 func Download(file multipart.File, id string) (returnErr error) {
 	defer func() {
@@ -514,7 +509,6 @@ func Download(file multipart.File, id string) (returnErr error) {
 	return nil
 }
 
-
 func (api *MyHandler) UploadPage(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(5 * 1024 * 1025)
 	file, handler, err := r.FormFile("my_file")
@@ -538,8 +532,7 @@ func (api *MyHandler) UploadPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (api *MyHandler) GetPhoto(w http.ResponseWriter, r *http.Request){
-
+func (api *MyHandler) GetPhoto(w http.ResponseWriter, r *http.Request) {
 
 	authorized := false
 	session, err := r.Cookie("session_id")

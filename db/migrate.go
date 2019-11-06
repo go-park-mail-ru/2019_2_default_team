@@ -1,10 +1,10 @@
 package db
 
-
 import (
+	"2019_2_default_team/logger"
+
 	"github.com/jmoiron/sqlx"
 	migrate "github.com/rubenv/sql-migrate"
-	"kino_backend/logger"
 )
 
 func makeMigrations(db *sqlx.DB) {

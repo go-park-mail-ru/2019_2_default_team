@@ -1,16 +1,15 @@
 package delivery
 
-import (
-	//"github.com/golang/mock/gomock"
-	//"github.com/stretchr/testify/assert"
-	//"kino_backend/models"
-	//"net/http"
-	//"net/http/httptest"
-	//"strings"
-	//"testing"
-	//tmocks "kino_backend/tickets/mocks"
-	//"kino_backend/logger"
-)
+//"github.com/golang/mock/gomock"
+//"github.com/stretchr/testify/assert"
+//"2019_2_default_team/models"
+//"net/http"
+//"net/http/httptest"
+//"strings"
+//"testing"
+//tmocks "2019_2_default_team/tickets/mocks"
+//"2019_2_default_team/logger"
+
 //
 //func TestPostBuyTicket (t *testing.T) {
 //	ctrl := gomock.NewController(t)

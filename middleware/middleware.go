@@ -1,17 +1,17 @@
 package middleware
 
-import(
+import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/sessions"
 	"context"
 	"fmt"
-	"kino_backend/logger"
 	"log"
 	"net/http"
 	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
-	"kino_backend/db"
-	"kino_backend/sessions"
 )
 
 type key int
@@ -115,9 +115,3 @@ func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-
-
-
-
-
-

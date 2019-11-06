@@ -1,10 +1,10 @@
 package models
 
 import (
+	"2019_2_default_team/logger"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"kino_backend/logger"
 )
 
 type Error struct {

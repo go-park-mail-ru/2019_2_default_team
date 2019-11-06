@@ -1,19 +1,20 @@
 package Postgres
 
-import(
+import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/models"
 	"context"
+
 	"github.com/jmoiron/sqlx"
-	"kino_backend/models"
-	"kino_backend/db"
 )
 
-type TicketRepository struct{
+type TicketRepository struct {
 	database *sqlx.DB
 }
 
-func NewTicketRepository(db *sqlx.DB) *TicketRepository{
+func NewTicketRepository(db *sqlx.DB) *TicketRepository {
 	return &TicketRepository{
-		database:db,
+		database: db,
 	}
 }
 
@@ -26,8 +27,7 @@ func (t TicketRepository) GetTicket(ctx context.Context, params *models.RequestT
 	return profile, nil
 }
 
-
-func (t TicketRepository) PostTicket(ctx context.Context, u *models.RegisterTicket) (models.Ticket, error){
+func (t TicketRepository) PostTicket(ctx context.Context, u *models.RegisterTicket) (models.Ticket, error) {
 	newT, err := db.CreateNewTicket(u)
 	if err != nil {
 		return models.Ticket{}, err

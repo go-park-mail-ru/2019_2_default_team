@@ -1,11 +1,11 @@
 package db
 
 import (
+	"2019_2_default_team/logger"
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // postgres driver
-	"kino_backend/logger"
-
 )
 
 var Db *sqlx.DB
@@ -17,7 +17,6 @@ const (
 	password = "docker"
 	dbname   = "postgres"
 )
-
 
 func InitDB(address, database string) *sqlx.DB {
 	var err error

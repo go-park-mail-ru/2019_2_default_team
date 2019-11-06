@@ -1,13 +1,13 @@
 package db
 
 import (
+	"2019_2_default_team/models"
 	"database/sql"
 	"fmt"
-	"github.com/lib/pq"
-	"kino_backend/models"
 	"strings"
-)
 
+	"github.com/lib/pq"
+)
 
 func GetUserPassword(e string) (models.User, error) {
 	res := models.User{}

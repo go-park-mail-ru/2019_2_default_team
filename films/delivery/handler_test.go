@@ -1,40 +1,40 @@
 package delivery
 
-import(
-	"github.com/golang/mock/gomock"
+import (
+	fmocks "2019_2_default_team/films/mocks"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/models"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	fmocks "kino_backend/films/mocks"
-	"kino_backend/models"
+
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"kino_backend/logger"
 )
 
-
-func TestPostSignupProfileFilm (t *testing.T) {
+func TestPostSignupProfileFilm(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	userCRUD := fmocks.NewMockUseCase(ctrl)
 	var userJSON = `{"title" : "ToStars", "description":"space", "director" : "someone", "mainactor" : "Pitt", "admin_id" : 1}`
 	u := &models.RegisterProfileFilm{
-		Title:"ToStars",
-		Description:"space",
-		Director:"someone",
-		MainActor:"Pitt",
-		AdminID: 1,
+		Title:       "ToStars",
+		Description: "space",
+		Director:    "someone",
+		MainActor:   "Pitt",
+		AdminID:     1,
 	}
 	//var ctx context.Context
-	film := models.Film{FilmID:1}
+	film := models.Film{FilmID: 1}
 	pfout := models.ProfileFilm{
-		Film: film,
-		Title:"ToStars",
-		Description:"space",
-		Director:"someone",
-		MainActor:"Pitt",
-		AdminID: 1,
+		Film:        film,
+		Title:       "ToStars",
+		Description: "space",
+		Director:    "someone",
+		MainActor:   "Pitt",
+		AdminID:     1,
 	}
 
 	l := logger.InitLogger()
@@ -48,31 +48,31 @@ func TestPostSignupProfileFilm (t *testing.T) {
 
 	userCRUD.EXPECT().PostFilmUse(c, u).Return(pfout, nil).Times(1)
 
-	handler := &Handler{useCase:userCRUD}
+	handler := &Handler{useCase: userCRUD}
 
 	handler.postSignupProfileFilm(rec, req)
 	assert.Equal(t, http.StatusOK, rec.Code)
 
 }
 
-func TestGetProfileFilm (t *testing.T) {
+func TestGetProfileFilm(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	userCRUD := fmocks.NewMockUseCase(ctrl)
 	var userJSON = `{"reqtitle" : "Joker"}`
 	u := &models.RequestProfileFilm{
-		Title:"Joker",
+		Title: "Joker",
 	}
 	//var ctx context.Context
-	film := models.Film{FilmID:1}
+	film := models.Film{FilmID: 1}
 	pfout := models.ProfileFilm{
-		Film: film,
-		Title:"Joker",
-		Description:"Absolutely madness",
-		Director:"Todd",
-		MainActor:"Phoenix",
-		AdminID: 1,
+		Film:        film,
+		Title:       "Joker",
+		Description: "Absolutely madness",
+		Director:    "Todd",
+		MainActor:   "Phoenix",
+		AdminID:     1,
 	}
 
 	l := logger.InitLogger()
@@ -85,7 +85,7 @@ func TestGetProfileFilm (t *testing.T) {
 
 	userCRUD.EXPECT().GetFilm(c, u).Return(pfout, nil).Times(1)
 
-	handler := &Handler{useCase:userCRUD}
+	handler := &Handler{useCase: userCRUD}
 
 	handler.getProfileFilm(rec, req)
 	assert.Equal(t, http.StatusOK, rec.Code)

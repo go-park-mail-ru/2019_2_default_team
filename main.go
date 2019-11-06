@@ -1,11 +1,11 @@
 package main
 
 import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/server"
+	"2019_2_default_team/sessions"
 	"log"
-	"kino_backend/server"
-	"kino_backend/db"
-	"kino_backend/sessions"
-	"kino_backend/logger"
 )
 
 func main() {

@@ -1,24 +1,24 @@
 package handlers
 
 import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/middleware"
+	"2019_2_default_team/models"
+	"2019_2_default_team/sessions"
 	"encoding/json"
 	"fmt"
-	"github.com/asaskevich/govalidator"
-	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 	"time"
-	"kino_backend/models"
-	"kino_backend/logger"
-	"kino_backend/sessions"
-	"kino_backend/middleware"
-	"kino_backend/db"
-)
 
+	"github.com/asaskevich/govalidator"
+	uuid "github.com/satori/go.uuid"
+)
 
 //вспомогательные методы
 
-func (api *MyHandler)  SessionHandler(w http.ResponseWriter, r *http.Request) {
+func (api *MyHandler) SessionHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		getSession(w, r)
@@ -32,7 +32,6 @@ func (api *MyHandler)  SessionHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-
 
 func readLoginInfo(r *http.Request, u *models.UserPassword) error {
 	body, err := ioutil.ReadAll(r.Body)
@@ -54,7 +53,7 @@ func loginUser(w http.ResponseWriter, userID uint) error {
 	for {
 		// create session, if collision ocquires, generate new sessionID
 		var err error
-		u, _ := uuid.NewV4()
+		u := uuid.NewV4()
 		sessionID = u.String()
 
 		//sessionID = uuid.NewV4().String()
@@ -79,7 +78,6 @@ func loginUser(w http.ResponseWriter, userID uint) error {
 
 	return nil
 }
-
 
 // @Summary Получить сессию
 // @Description Получить сессию пользователя, если есть сессия, то она в куке session_id
@@ -185,9 +183,6 @@ func deleteSession(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 }
-
-
-
 
 /*
 
@@ -415,4 +410,4 @@ func (api *MyHandler) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 
- */
+*/

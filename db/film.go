@@ -1,14 +1,13 @@
 package db
 
 import (
+	"2019_2_default_team/models"
 	"database/sql"
 	"fmt"
-	"github.com/lib/pq"
 	"strings"
-	"kino_backend/models"
+
+	"github.com/lib/pq"
 )
-
-
 
 func CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
@@ -74,10 +73,10 @@ func UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 		Film: models.Film{
 			FilmID: id,
 		},
-		Title: u.Title,
+		Title:       u.Title,
 		Description: u.Description,
-		Director: u.Director,
-		MainActor: u.MainActor,
+		Director:    u.Director,
+		MainActor:   u.MainActor,
 	})
 	if err != nil {
 		return err
@@ -125,7 +124,6 @@ func GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
 
 	return res, nil
 }
-
 
 func CheckExistenceOfTitle(n string) (bool, error) {
 	res := models.ProfileFilm{}

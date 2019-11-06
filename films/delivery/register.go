@@ -1,19 +1,19 @@
 package delivery
 
 import (
-	"kino_backend/films"
+	"2019_2_default_team/films"
 	"net/http"
 	"sync"
 )
 
-type MyHandlerFilms struct{
+type MyHandlerFilms struct {
 	mu      *sync.Mutex
 	useCase films.UseCase
 }
 
 func NewMyHandlerFilms(uc films.UseCase) *MyHandlerFilms {
 	return &MyHandlerFilms{
-		mu: &sync.Mutex{},
+		mu:      &sync.Mutex{},
 		useCase: uc,
 	}
 }
@@ -34,4 +34,3 @@ func (apif *MyHandlerFilms) ProfileFilmHandler(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-

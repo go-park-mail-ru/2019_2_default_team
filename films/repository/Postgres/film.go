@@ -1,17 +1,18 @@
 package Postgres
 
 import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/models"
 	"context"
+
 	"github.com/jmoiron/sqlx"
-	"kino_backend/models"
-	"kino_backend/db"
 )
 
-type FilmRepository struct{
+type FilmRepository struct {
 	database *sqlx.DB
 }
 
-func NewFilmRepository(db *sqlx.DB) *FilmRepository{
+func NewFilmRepository(db *sqlx.DB) *FilmRepository {
 	return &FilmRepository{
 		database: db,
 	}
@@ -40,7 +41,7 @@ func (fm FilmRepository) GetFilm(ctx context.Context, params *models.RequestProf
 	return profile, nil
 }
 
-func (fm FilmRepository) PostFilm(ctx context.Context, u *models.RegisterProfileFilm) (models.ProfileFilm, error){
+func (fm FilmRepository) PostFilm(ctx context.Context, u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	newF, err := db.CreateNewFilm(u)
 
 	if err != nil {
@@ -50,7 +51,7 @@ func (fm FilmRepository) PostFilm(ctx context.Context, u *models.RegisterProfile
 	return newF, err
 }
 
-func (fm FilmRepository) UpdateFilm(ctx context.Context, filmInfo *models.ProfileFilm) (error){
+func (fm FilmRepository) UpdateFilm(ctx context.Context, filmInfo *models.ProfileFilm) error {
 	err := db.UpdateFilmByID(filmInfo.FilmID, filmInfo)
 	return err
 }

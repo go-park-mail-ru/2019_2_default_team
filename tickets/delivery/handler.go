@@ -1,23 +1,22 @@
 package delivery
 
 import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/models"
+	"2019_2_default_team/tickets"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"kino_backend/tickets"
 	"log"
 	"net/http"
-	"kino_backend/models"
-	"kino_backend/db"
-	"kino_backend/logger"
 )
 
-
-type Handler struct{
+type Handler struct {
 	useCase tickets.UseCase
 }
 
-func NewHandler(useCase tickets.UseCase) *Handler{
+func NewHandler(useCase tickets.UseCase) *Handler {
 	return &Handler{
 		useCase: useCase,
 	}
@@ -53,7 +52,6 @@ func readProfileTicket(r *http.Request, p *models.Ticket) error {
 	return nil
 }
 
-
 // @Title Получить профиль
 // @Summary Получить профиль билета по ID
 // @Produce json
@@ -64,7 +62,7 @@ func readProfileTicket(r *http.Request, p *models.Ticket) error {
 // @Failure 500 "Ошибка в бд"
 // @Router /profileticket [GET]
 
-func (h *Handler) getProfileTicket(w http.ResponseWriter, r *http.Request){
+func (h *Handler) getProfileTicket(w http.ResponseWriter, r *http.Request) {
 	params := &models.RequestTicket{}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(params)
@@ -101,12 +99,11 @@ func (h *Handler) getProfileTicket(w http.ResponseWriter, r *http.Request){
 			return
 		}
 		fmt.Fprintln(w, string(json))
-	} else{
+	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 }
-
 
 // @Title Зарегистрироваться и залогиниться по новому профилю
 // @Summary Зарегистрировать по никнейму, почте и паролю и автоматически залогинить
@@ -121,7 +118,7 @@ func (h *Handler) getProfileTicket(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func (h *Handler) postBuyTicket(w http.ResponseWriter, r *http.Request){
+func (h *Handler) postBuyTicket(w http.ResponseWriter, r *http.Request) {
 	u := &models.RegisterTicket{}
 	err := readRegisterProfileTicket(r, u)
 	if err != nil {
@@ -161,6 +158,3 @@ func (h *Handler) postBuyTicket(w http.ResponseWriter, r *http.Request){
 	//logger.Infof("New ticket with id %v ", newT.TicketID)
 
 }
-
-
-

@@ -1,23 +1,23 @@
 package delivery
 
 import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/films"
+	"2019_2_default_team/logger"
+	"2019_2_default_team/middleware"
+	"2019_2_default_team/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"kino_backend/films"
 	"log"
 	"net/http"
-	"kino_backend/models"
-	"kino_backend/db"
-	"kino_backend/logger"
-	"kino_backend/middleware"
 )
 
-type Handler struct{
+type Handler struct {
 	useCase films.UseCase
 }
 
-func NewHandler(useCase films.UseCase) *Handler{
+func NewHandler(useCase films.UseCase) *Handler {
 	return &Handler{
 		useCase: useCase,
 	}
@@ -53,7 +53,6 @@ func readRegisterProfileFilm(r *http.Request, p *models.RegisterProfileFilm) err
 	return nil
 }
 
-
 // @Title Получить профиль
 // @Summary Получить профиль фильма по ID или названию Title
 // @ID get-profilefilm
@@ -67,7 +66,7 @@ func readRegisterProfileFilm(r *http.Request, p *models.RegisterProfileFilm) err
 
 //http methods handler.go
 
-func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
+func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request) {
 	//этап парсинга данных
 	params := &models.RequestProfileFilm{}
 	decoder := json.NewDecoder(r.Body)
@@ -104,7 +103,6 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
 
 }
 
-
 // @Title Зарегистрироваться и залогиниться по новому профилю
 // @Summary Зарегистрировать по никнейму, почте и паролю и автоматически залогинить
 // @ID post-profile
@@ -118,7 +116,7 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
+func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request) {
 
 	//начала парсинга данных
 	u := &models.RegisterProfileFilm{}
@@ -159,7 +157,6 @@ func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
 	//очень плохо в тесте реагирует мока
 }
 
-
 // @Title Изменить профиль
 // @Summary Изменить профиль, должен быть залогинен
 // @ID put-profile
@@ -173,7 +170,7 @@ func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [PUT]
 
-func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request) {
 	//начало парсинга данных
 	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -194,7 +191,7 @@ func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
 	}
 
 	uid := r.Context().Value(middleware.KeyUserID).(uint)
-	if uid != filmInfo.AdminID{
+	if uid != filmInfo.AdminID {
 		log.Println("no access")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -205,7 +202,7 @@ func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
 
 	//err = db.UpdateFilmByID(filmInfo.FilmID, filmInfo)
 	//ответ с логики
-	if err != nil{
+	if err != nil {
 		switch err.(type) {
 		case db.FilmNotFoundError:
 			w.WriteHeader(http.StatusNotFound)

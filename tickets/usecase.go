@@ -1,8 +1,8 @@
 package tickets
 
 import (
+	"2019_2_default_team/models"
 	"context"
-	"kino_backend/models"
 )
 
 type UseCase interface {

@@ -1,9 +1,10 @@
 package db
 
 import (
+	"2019_2_default_team/models"
 	"database/sql"
+
 	"github.com/lib/pq"
-	"kino_backend/models"
 )
 
 func CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
@@ -48,7 +49,6 @@ func GetTicketProfileByID(id uint) (models.Ticket, error) {
 
 	return res, nil
 }
-
 
 func CheckExistenceOfTicket(n int) (bool, error) {
 	res := models.Ticket{}

@@ -1,30 +1,30 @@
 package server
 
 import (
-	"github.com/gorilla/mux"
-	fmdelivery "kino_backend/films/delivery"
-	fpostgres "kino_backend/films/repository/Postgres"
-	fusecase "kino_backend/films/usecase"
-	tpostgres "kino_backend/tickets/repository/Postgres"
-	upostgres "kino_backend/users/repository/Postgres"
-	tdelivery "kino_backend/tickets/delivery"
-	"kino_backend/handlers"
-	"kino_backend/middleware"
-	udelivery "kino_backend/users/delivery"
+	"2019_2_default_team/db"
+	fmdelivery "2019_2_default_team/films/delivery"
+	fpostgres "2019_2_default_team/films/repository/Postgres"
+	fusecase "2019_2_default_team/films/usecase"
+	"2019_2_default_team/handlers"
+	"2019_2_default_team/middleware"
+	tdelivery "2019_2_default_team/tickets/delivery"
+	tpostgres "2019_2_default_team/tickets/repository/Postgres"
+	tusecase "2019_2_default_team/tickets/usecase"
+	udelivery "2019_2_default_team/users/delivery"
+	upostgres "2019_2_default_team/users/repository/Postgres"
+	uusecase "2019_2_default_team/users/usecase"
 	"log"
 	"net/http"
 	"os"
-	"kino_backend/db"
-	tusecase "kino_backend/tickets/usecase"
-	uusecase "kino_backend/users/usecase"
 
+	"github.com/gorilla/mux"
 )
 
-type Server struct{
+type Server struct {
 	routing *mux.Router
 }
 
-func CreateServer() (*Server ,error){
+func CreateServer() (*Server, error) {
 	server := new(Server)
 
 	//l := logger.InitLogger()
@@ -41,7 +41,6 @@ func CreateServer() (*Server ,error){
 	apif := fmdelivery.NewMyHandlerFilms(fuc)
 	apiu := udelivery.NewMyHandlerUser(uuc)
 	apit := tdelivery.NewMyHandlerTicket(tuc)
-
 
 	api := handlers.NewMyHandler()
 
@@ -65,9 +64,6 @@ func CreateServer() (*Server ,error){
 	//r.HandleFunc("/ticket", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 	//	middleware.SessionMiddleware(api.ProfileTicketHandler))))
 
-
-
-
 	r.HandleFunc("/photodownload", api.GetPhoto)
 	r.HandleFunc("/upload", api.UploadPage)
 
@@ -77,6 +73,6 @@ func CreateServer() (*Server ,error){
 	return server, err
 }
 
-func (s *Server)RunServer() {
+func (s *Server) RunServer() {
 	http.ListenAndServe(":8080", s.routing)
 }

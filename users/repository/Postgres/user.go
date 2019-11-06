@@ -1,21 +1,21 @@
 package Postgres
 
-import(
+import (
+	"2019_2_default_team/db"
+	"2019_2_default_team/models"
+	"2019_2_default_team/users"
 	"context"
+
 	"github.com/jmoiron/sqlx"
-	"kino_backend/models"
-	"kino_backend/db"
-	"kino_backend/users"
 )
 
-
-type UserRepository struct{
+type UserRepository struct {
 	database *sqlx.DB
 }
 
-func NewUserRepository(db *sqlx.DB) *UserRepository{
+func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{
-		database:db,
+		database: db,
 	}
 }
 
@@ -115,7 +115,7 @@ func (user UserRepository) GetUser(ctx context.Context, params *models.RequestPr
 //	return profile, nil
 //}
 
-func (user UserRepository) PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error){
+func (user UserRepository) PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error) {
 	newU, err := db.CreateNewUser(u)
 	if err != nil {
 		return models.Profile{}, err
@@ -134,11 +134,11 @@ func (user UserRepository) PostUser(ctx context.Context, u *models.RegisterProfi
 
 }
 
-func (user UserRepository) PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) (error){
+func (user UserRepository) PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) error {
 
 	err := db.UpdateUserByID(id, editUser)
 
-	if err != nil{
+	if err != nil {
 		return err
 		//switch err.(type) {
 		//case db.UserNotFoundError:
@@ -152,4 +152,3 @@ func (user UserRepository) PutUser(ctx context.Context, id uint, editUser *model
 
 	return nil
 }
-

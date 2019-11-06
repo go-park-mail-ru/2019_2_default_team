@@ -1,19 +1,19 @@
 package delivery
 
 import (
-	"kino_backend/tickets"
+	"2019_2_default_team/tickets"
 	"net/http"
 	"sync"
 )
 
-type MyHandlerTicket struct{
-	mu  *sync.Mutex
+type MyHandlerTicket struct {
+	mu      *sync.Mutex
 	useCase tickets.UseCase
 }
 
 func NewMyHandlerTicket(uc tickets.UseCase) *MyHandlerTicket {
 	return &MyHandlerTicket{
-		mu: &sync.Mutex{},
+		mu:      &sync.Mutex{},
 		useCase: uc,
 	}
 }

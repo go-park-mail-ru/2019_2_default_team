@@ -1,19 +1,19 @@
 package delivery
 
 import (
-	"kino_backend/users"
+	"2019_2_default_team/users"
 	"net/http"
 	"sync"
 )
 
-type MyHandlerUser struct{
-	mu  *sync.Mutex
+type MyHandlerUser struct {
+	mu      *sync.Mutex
 	useCase users.UseCase
 }
 
 func NewMyHandlerUser(uc users.UseCase) *MyHandlerUser {
 	return &MyHandlerUser{
-		mu: &sync.Mutex{},
+		mu:      &sync.Mutex{},
 		useCase: uc,
 	}
 }
@@ -34,4 +34,3 @@ func (apiu *MyHandlerUser) ProfileHandler(w http.ResponseWriter, r *http.Request
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-
