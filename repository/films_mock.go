@@ -107,6 +107,21 @@ func (mr *MockFilmsRepositoryMockRecorder) GetFilmProfileByID(arg0 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmProfileByID", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmProfileByID), arg0)
 }
 
+// GetFilmProfileByIDSQL mocks base method
+func (m *MockFilmsRepository) GetFilmProfileByIDSQL(arg0 uint) (models.ProfileFilm, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFilmProfileByIDSQL", arg0)
+	ret0, _ := ret[0].(models.ProfileFilm)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFilmProfileByIDSQL indicates an expected call of GetFilmProfileByIDSQL
+func (mr *MockFilmsRepositoryMockRecorder) GetFilmProfileByIDSQL(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmProfileByIDSQL", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmProfileByIDSQL), arg0)
+}
+
 // GetFilmProfileByTitle mocks base method
 func (m *MockFilmsRepository) GetFilmProfileByTitle(arg0 string) (models.ProfileFilm, error) {
 	m.ctrl.T.Helper()

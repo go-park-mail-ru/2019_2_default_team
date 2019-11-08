@@ -2,6 +2,8 @@ package server
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
+	"kino_backend/sessions"
 	"kino_backend/db"
 	"kino_backend/delivery/films_delivery"
 	"kino_backend/delivery/sessions_delivery"
@@ -19,7 +21,7 @@ type Server struct{
 	routing *mux.Router
 }
 
-func CreateServer() (*Server ,error){
+func CreateServer(database *sqlx.DB, sesredis *sessions.SessionManager) (*Server ,error){
 	server := new(Server)
 
 	//l := logger.InitLogger()
@@ -30,8 +32,8 @@ func CreateServer() (*Server ,error){
 	Access := new(middleware.AccessLogger)
 	Access.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 
-	fuc := useCase.NewFilmUseCase(repository.NewFilmRepository(db.Db))
-	tuc := useCase.NewTicketUseCase(repository.NewTicketRepository(db.Db))
+	fuc := useCase.NewFilmUseCase(repository.NewFilmRepository(database))
+	tuc := useCase.NewTicketUseCase(repository.NewTicketRepository(database))
 	uuc := useCase.NewUserUseCase(repository.NewUserRepository(db.Db))
 	suc := useCase.NewSessionUseCase(repository.NewSessionsRepository(repository.Rd))
 

@@ -2,46 +2,49 @@ package repository
 
 import(
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/jmoiron/sqlx"
 	"reflect"
 	"testing"
 	"kino_backend/models"
 )
 
-func TestGetUser(t *testing.T) {
+func TestGetFilm(t *testing.T) {
 	db, mock, err := sqlmock.New()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 	if err != nil {
 		t.Fatalf("cant create mock: %s", err)
 	}
 	defer db.Close()
 
 	var elemID uint = 1
-	userp := models.UserPassword{"emailtest@mail.ru", "pass"}
-	user := models.User{UserID:elemID, UserPassword: userp}
-	text := ""
-	ava := &text
-
+	film := models.Film{elemID}
+	foto := ""
+	ava := &foto
 	rows := sqlmock.
-		NewRows([]string{"user_id", "email", "password", "nickname", "avatar"})
-	expect := []models.Profile{
+		NewRows([]string{"film_id", "title", "description", "avatar", "director", "mainactor", "admin_id"})
+	expect := []models.ProfileFilm{
 		{
-			user,
-			"nicktest",
+			film,
+			"Joker",
+			"testd",
 			ava,
+			"testd",
+			"actor",
+			1,
 		},
 	}
 	for _, item := range expect {
-		rows = rows.AddRow(item.UserID, item.Email, item.Password,
-			item.Nickname, item.Avatar)
+		rows = rows.AddRow(item.FilmID, item.Title, item.Description, item.Avatar, item.Director, item.MainActor, item.AdminID)
 	}
 
-	//repo := NewFilmRepository(db)
+	filmRepo := NewFilmRepository(sqlxDB)
 
 	mock.
-		ExpectQuery("SELECT user_id email password nickname avatar FROM user_profile WHERE").
+		ExpectQuery("SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile WHERE").
 		WithArgs(elemID).
 		WillReturnRows(rows)
 
-	item, err := GetFilmProfileByID(elemID)
+	item, err := filmRepo.GetFilmProfileByIDSQL(elemID)
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)

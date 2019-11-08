@@ -22,10 +22,10 @@ func NewFilmRepository(db *sqlx.DB) FilmRepository{
 }
 
 
-func (fr FilmRepository) CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
+func CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	fmt.Println(u)
-	qres := fr.database.QueryRowx(`
+	qres := db.Db.QueryRowx(`
 		INSERT INTO film_profile (title, description, director, mainactor, admin_id)
 		VALUES ($1, $2, $3, $4, $5) RETURNING film_id, title, director`,
 		u.Title, u.Description, u.Director, u.MainActor, u.AdminID)
@@ -101,6 +101,27 @@ func UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 func GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := db.Db.QueryRowx(`
+		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
+		WHERE film_id = $1`,
+		id)
+	if err := qres.Err(); err != nil {
+		return res, err
+	}
+	err := qres.StructScan(&res)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.FilmNotFoundError{"id"}
+		}
+		return res, err
+	}
+
+	return res, nil
+}
+
+
+func (fm FilmRepository) GetFilmProfileByIDSQL(id uint) (models.ProfileFilm, error) {
+	res := models.ProfileFilm{}
+	qres := fm.database.QueryRowx(`
 		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
 		WHERE film_id = $1`,
 		id)

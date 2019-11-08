@@ -9,6 +9,7 @@ type FilmsRepository interface{
 	CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error)
 	UpdateFilmByID(id uint, u *models.ProfileFilm) error
 	GetFilmProfileByID(id uint) (models.ProfileFilm, error)
+	GetFilmProfileByIDSQL(id uint) (models.ProfileFilm, error)
 	GetFilmProfileByTitle(title string) (models.ProfileFilm, error)
 	CheckExistenceOfTitle(n string) (bool, error)
 	GetCountOfFilms() (int, error)

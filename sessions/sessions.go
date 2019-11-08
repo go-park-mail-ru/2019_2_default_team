@@ -6,17 +6,17 @@ import (
 	"kino_backend/logger"
 )
 
-var Sm *sessionManager
+var Sm *SessionManager
 
 var (
 	ErrKeyNotFound = errors.New("key not found")
 )
 
-type sessionManager struct {
+type SessionManager struct {
 	redisConn redis.Conn
 }
 
-func (sm *sessionManager) Close() {
+func (sm *SessionManager) Close() {
 	sm.redisConn.Close()
 }
 
@@ -29,9 +29,9 @@ const (
 	dbname   = "redis"
 )
 
-func ConnectSessionDB(address, database string) *sessionManager {
+func ConnectSessionDB(address, database string) *SessionManager {
 	var err error
-	Sm = &sessionManager{}
+	Sm = &SessionManager{}
 
 	//redisInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 	//	"password=%s dbname=%s",

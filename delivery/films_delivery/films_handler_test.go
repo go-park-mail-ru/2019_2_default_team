@@ -3,21 +3,20 @@ package films_delivery
 import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	fmocks "kino_backend/films/mocks"
-	"kino_backend/logger"
-	"kino_backend/models"
+	"kino_backend/repository"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"kino_backend/models"
+	"kino_backend/logger"
 )
-
 
 func TestPostSignupProfileFilm (t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userCRUD := fmocks.NewMockUseCase(ctrl)
+	userCRUD := repository.NewMockFilmsRepository(ctrl)
 	var userJSON = `{"title" : "ToStars", "description":"space", "director" : "someone", "mainactor" : "Pitt", "admin_id" : 1}`
 	u := &models.RegisterProfileFilm{
 		Title:"ToStars",
@@ -46,7 +45,7 @@ func TestPostSignupProfileFilm (t *testing.T) {
 	//c := e.NewContext(req, rec)
 	c := req.Context()
 
-	userCRUD.EXPECT().PostFilmUse(c, u).Return(pfout, nil).Times(1)
+	userCRUD.EXPECT().CreateNewFilm(c, pfout)
 
 	handler := &Handler{useCase: userCRUD}
 
@@ -91,3 +90,6 @@ func TestGetProfileFilm (t *testing.T) {
 	assert.Equal(t, http.StatusOK, rec.Code)
 
 }
+
+
+var usersApi UserHandlers
