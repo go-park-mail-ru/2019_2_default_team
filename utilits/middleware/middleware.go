@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"kino_backend/CSRF"
 	"kino_backend/db"
 	"kino_backend/logger"
 	"kino_backend/repository"
@@ -99,6 +100,9 @@ func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				ctx = context.WithValue(ctx, KeyIsAuthenticated, true)
 				ctx = context.WithValue(ctx, KeySessionID, c.Value)
 				ctx = context.WithValue(ctx, KeyUserID, uid)
+				tokenExpiration := time.Now().Add(24 * time.Hour)
+				csrfToken, _ := CSRF.Tokens.Create(string(uid), c.Value, tokenExpiration.Unix())
+				w.Header().Set("X-CSRF-Token", csrfToken)
 			case db.ErrSessionNotFound:
 				// delete unvalid cookie
 				c.Expires = time.Now().AddDate(0, 0, -1)

@@ -7,6 +7,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
+	"kino_backend/CSRF"
 	"kino_backend/db"
 	"kino_backend/logger"
 	"kino_backend/models"
@@ -61,6 +62,7 @@ func (h *Handler) loginUser(ctx context.Context, w http.ResponseWriter, userID u
 		}
 	}
 
+
 	cookie := http.Cookie{
 		Name:     "session_id",
 		Value:    sessionID,
@@ -68,6 +70,10 @@ func (h *Handler) loginUser(ctx context.Context, w http.ResponseWriter, userID u
 		Secure:   true,
 		HttpOnly: true,
 	}
+	tokenExpiration := time.Now().Add(24 * time.Hour)
+	csrfToken, _ := CSRF.Tokens.Create(string(userID), cookie.Value, tokenExpiration.Unix())
+	w.Header().Set("X-CSRF-Token", csrfToken)
+
 	http.SetCookie(w, &cookie)
 
 	return nil
