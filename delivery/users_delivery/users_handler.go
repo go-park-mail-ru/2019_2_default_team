@@ -161,14 +161,17 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 
 	//end data parse
 	var id uint
+	var auth bool
 
-	if r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
-		id = r.Context().Value(middleware.KeyUserID).(uint)
+	if middleware.KeyIsAuthenticated != 0 {
+		id = uint(middleware.KeyUserID)
+		auth = true
 	}else {
 		id = 0
+		auth = false
 	}
 
-	profile, err := h.useCase.GetUser(r.Context(), params, r.Context().Value(middleware.KeyIsAuthenticated).(bool), id)
+	profile, err := h.useCase.GetUser( params, auth, id)
 
 	if err != nil {
 		switch err.(type) {

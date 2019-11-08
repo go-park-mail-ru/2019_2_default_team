@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"kino_backend/db"
 	"kino_backend/logger"
 	"kino_backend/models"
 	"kino_backend/useCase"
+	"kino_backend/utilits/errors"
 	"kino_backend/utilits/middleware"
 	"log"
 	"net/http"
@@ -83,7 +83,7 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
 	profile, err := h.useCase.GetFilm(r.Context(), params)
 	if err != nil {
 		switch err.(type) {
-		case db.FilmNotFoundError:
+		case errors.FilmNotFoundError:
 			w.WriteHeader(http.StatusNotFound)
 			return
 		default:
@@ -142,8 +142,8 @@ func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
 	newF, err := h.useCase.PostFilmUse(r.Context(), u)
 
 	if err != nil {
-		if err == db.ErrUniqueConstraintViolation ||
-			err == db.ErrNotNullConstraintViolation {
+		if err == errors.ErrUniqueConstraintViolation ||
+			err == errors.ErrNotNullConstraintViolation {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			return
 		}
@@ -207,7 +207,7 @@ func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
 	//ответ с логики
 	if err != nil{
 		switch err.(type) {
-		case db.FilmNotFoundError:
+		case errors.FilmNotFoundError:
 			w.WriteHeader(http.StatusNotFound)
 		default:
 			log.Println(err)

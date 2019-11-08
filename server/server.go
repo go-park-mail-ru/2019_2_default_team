@@ -7,14 +7,8 @@ import (
 	"kino_backend/delivery/sessions_delivery"
 	"kino_backend/delivery/tickets_delivery"
 	"kino_backend/delivery/users_delivery"
-	fpostgres "kino_backend/repository/films_repository/Postgres"
-	"kino_backend/repository/session_repository/Redis"
-	tpostgres "kino_backend/repository/tickets_repository/Postgres"
-	upostgres "kino_backend/repository/users_repository/Postgres"
-	"kino_backend/useCase/films_usecase"
-	"kino_backend/useCase/sessions_usecase"
-	"kino_backend/useCase/tickets_usecase"
-	"kino_backend/useCase/users_usecase"
+	"kino_backend/repository"
+	"kino_backend/useCase"
 	"kino_backend/utilits/middleware"
 	"log"
 	"net/http"
@@ -36,10 +30,10 @@ func CreateServer() (*Server ,error){
 	Access := new(middleware.AccessLogger)
 	Access.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 
-	fuc := films_usecase.NewFilmUseCase(fpostgres.NewFilmRepository(db.Db))
-	tuc := tickets_usecase.NewTicketUseCase(tpostgres.NewTicketRepository(db.Db))
-	uuc := users_usecase.NewUserUseCase(upostgres.NewUserRepository(db.Db))
-	suc := sessions_usecase.NewSessionUseCase(Redis.NewSessionsRepository(Redis.Rd))
+	fuc := useCase.NewFilmUseCase(repository.NewFilmRepository(db.Db))
+	tuc := useCase.NewTicketUseCase(repository.NewTicketRepository(db.Db))
+	uuc := useCase.NewUserUseCase(repository.NewUserRepository(db.Db))
+	suc := useCase.NewSessionUseCase(repository.NewSessionsRepository(repository.Rd))
 
 	apif := films_delivery.NewMyHandlerFilms(fuc)
 	apiu := users_delivery.NewMyHandlerUser(uuc)

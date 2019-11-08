@@ -4,8 +4,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"time"
-	"kino_backend/sessions"
 	"kino_backend/logger"
+	"kino_backend/sessions"
 )
 
 func LoginUser(w http.ResponseWriter, userID uint) error {
@@ -17,6 +17,7 @@ func LoginUser(w http.ResponseWriter, userID uint) error {
 		sessionID = u.String()
 
 		//sessionID = uuid.NewV4().String()
+		//s := Redis.NewSessionsRepository(Redis.Rd)
 		success, err := sessions.Create(sessionID, userID)
 		if err != nil {
 			logger.Error(err)

@@ -1,4 +1,4 @@
-package Redis
+package repository
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"errors"
 )
 
-var Sm *SessionManager
+var Sm *sessionManager
 var Rd *redis.Conn
 
 var (
@@ -15,21 +15,21 @@ var (
 )
 
 
-type SessionManager struct {
+type sessionManager struct {
 	redisConn redis.Conn
 }
 
-type SessionsRepository struct{
+type SessionRepository struct{
 	database *redis.Conn
 }
 
-func NewSessionsRepository(db *redis.Conn) *SessionsRepository{
-	return &SessionsRepository{
+func NewSessionsRepository(db *redis.Conn) SessionRepository {
+	return SessionRepository{
 		database:db,
 	}
 }
 
-func (sm *SessionManager) Close() {
+func (sm *sessionManager) Close() {
 	sm.redisConn.Close()
 }
 
@@ -42,8 +42,8 @@ const (
 	dbname   = "redis"
 )
 
-func ConnectSessionDB(address, database string) *SessionManager {
-	//Sm = &SessionManager{}
+func ConnectSessionDB(address, database string) *sessionManager {
+	//Sm = &sessionManager{}
 	var err error
 
 	//redisInfo := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -62,7 +62,7 @@ func ConnectSessionDB(address, database string) *SessionManager {
 	return Sm
 }
 
-func (s SessionsRepository) Create(ctx context.Context, sID string, uID uint) (bool, error) {
+func (s SessionRepository) Create(sID string, uID uint) (bool, error) {
 	res, err := Sm.redisConn.Do("SET", sID, uID, "NX", "EX", 30*24*60*60)
 	if err != nil {
 		return false, err
@@ -83,7 +83,7 @@ func (s SessionsRepository) Create(ctx context.Context, sID string, uID uint) (b
 	return true, nil
 }
 
-func (s SessionsRepository) Get(ctx context.Context, sID string) (uint, error) {
+func (s SessionRepository) Get(ctx context.Context, sID string) (uint, error) {
 	res, err := redis.Uint64(Sm.redisConn.Do("GET", sID))
 	if err != nil {
 		if err == redis.ErrNil {
@@ -95,7 +95,7 @@ func (s SessionsRepository) Get(ctx context.Context, sID string) (uint, error) {
 	return uint(res), nil
 }
 
-func (s SessionsRepository) Delete(ctx context.Context, sID string) error {
+func (s SessionRepository) Delete(ctx context.Context, sID string) error {
 	_, err := redis.Int(Sm.redisConn.Do("DEL", sID))
 	if err != nil {
 		return err

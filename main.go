@@ -1,11 +1,12 @@
 package main
 
 import (
-	"log"
-	"kino_backend/server"
 	"kino_backend/db"
-	"kino_backend/sessions"
 	"kino_backend/logger"
+	"kino_backend/repository"
+	"kino_backend/server"
+	"kino_backend/sessions"
+	"log"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 
 	newServer.RunServer()
 
-	defer sessions.Sm.Close()
+	defer repository.Sm.Close()
 	defer db.Db.Close()
 	defer l.Sync()
 

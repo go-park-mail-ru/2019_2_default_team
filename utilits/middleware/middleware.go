@@ -1,17 +1,17 @@
 package middleware
 
-import(
+import (
 	"context"
 	"fmt"
+	"kino_backend/db"
 	"kino_backend/logger"
+	"kino_backend/repository"
 	"log"
 	"net/http"
 	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
-	"kino_backend/db"
-	"kino_backend/sessions"
 )
 
 type key int
@@ -92,7 +92,8 @@ func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		ctx := r.Context()
 		c, err := r.Cookie("session_id")
 		if err == nil {
-			uid, err := sessions.Get(c.Value)
+			s := repository.NewSessionsRepository(repository.Rd)
+			uid, err := s.Get(r.Context(), c.Value)
 			switch err {
 			case nil:
 				ctx = context.WithValue(ctx, KeyIsAuthenticated, true)
