@@ -3,6 +3,7 @@ package films_delivery
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/microcosm-cc/bluemonday"
 	"io/ioutil"
 	"kino_backend/logger"
 	"kino_backend/models"
@@ -53,6 +54,15 @@ func readRegisterProfileFilm(r *http.Request, p *models.RegisterProfileFilm) err
 	return nil
 }
 
+func SanitizeMe(film models.ProfileFilm) (models.ProfileFilm){
+	sanitizer := bluemonday.UGCPolicy()
+	film.Description = sanitizer.Sanitize(film.Description)
+	film.MainActor = sanitizer.Sanitize(film.Description)
+	film.Director = sanitizer.Sanitize(film.Director)
+
+	return film
+}
+
 
 // @Title Получить профиль
 // @Summary Получить профиль фильма по ID или названию Title
@@ -94,6 +104,7 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	profile = SanitizeMe(profile)
 	json, err := json.Marshal(profile)
 	if err != nil {
 		log.Println(err, "in profileMethod")
