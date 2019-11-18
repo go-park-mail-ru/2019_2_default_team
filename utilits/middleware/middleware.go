@@ -93,7 +93,7 @@ func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		ctx := r.Context()
 		c, err := r.Cookie("session_id")
 		if err == nil {
-			s := repository.NewSessionsRepository(repository.Rd)
+			s := repository.NewSessionsRepository(*repository.Rd)
 			uid, err := s.Get(r.Context(), c.Value)
 			switch err {
 			case nil:
@@ -120,9 +120,3 @@ func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-
-
-
-
-
-

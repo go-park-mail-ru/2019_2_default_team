@@ -2,30 +2,28 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
-	"strings"
-	"kino_backend/db"
 	"kino_backend/models"
-	"fmt"
 	"kino_backend/utilits/errors"
+	"strings"
 )
 
-type FilmRepository struct{
+type FilmRepository struct {
 	database *sqlx.DB
 }
 
-func NewFilmRepository(db *sqlx.DB) FilmRepository{
+func NewFilmRepository(db *sqlx.DB) FilmRepository {
 	return FilmRepository{
 		database: db,
 	}
 }
 
-
-func CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
+func (FR FilmRepository) CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	fmt.Println(u)
-	qres := db.Db.QueryRowx(`
+	qres := FR.database.QueryRowx(`
 		INSERT INTO film_profile (title, description, director, mainactor, admin_id)
 		VALUES ($1, $2, $3, $4, $5) RETURNING film_id, title, director`,
 		u.Title, u.Description, u.Director, u.MainActor, u.AdminID)
@@ -46,7 +44,7 @@ func CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	return res, nil
 }
 
-func UpdateFilmByID(id uint, u *models.ProfileFilm) error {
+func (FR FilmRepository) UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 	if u.Title == "" {
 		return nil
 	}
@@ -82,14 +80,14 @@ func UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 	q.WriteString(`
 		WHERE film_id = :film_id`)
 
-	_, err := db.Db.NamedExec(q.String(), &models.ProfileFilm{
+	_, err := FR.database.NamedExec(q.String(), &models.ProfileFilm{
 		Film: models.Film{
 			FilmID: id,
 		},
-		Title: u.Title,
+		Title:       u.Title,
 		Description: u.Description,
-		Director: u.Director,
-		MainActor: u.MainActor,
+		Director:    u.Director,
+		MainActor:   u.MainActor,
 	})
 	if err != nil {
 		return err
@@ -98,9 +96,9 @@ func UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 	return nil
 }
 
-func GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
+func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
-	qres := db.Db.QueryRowx(`
+	qres := FR.database.QueryRowx(`
 		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
 		WHERE film_id = $1`,
 		id)
@@ -118,30 +116,9 @@ func GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
 	return res, nil
 }
 
-
-func (fm FilmRepository) GetFilmProfileByIDSQL(id uint) (models.ProfileFilm, error) {
+func (FR FilmRepository) GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
-	qres := fm.database.QueryRowx(`
-		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
-		WHERE film_id = $1`,
-		id)
-	if err := qres.Err(); err != nil {
-		return res, err
-	}
-	err := qres.StructScan(&res)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return res, errors.FilmNotFoundError{"id"}
-		}
-		return res, err
-	}
-
-	return res, nil
-}
-
-func GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
-	res := models.ProfileFilm{}
-	qres := db.Db.QueryRowx(`
+	qres := FR.database.QueryRowx(`
 		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
 		WHERE title = $1`,
 		title)
@@ -159,10 +136,9 @@ func GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
 	return res, nil
 }
 
-
-func CheckExistenceOfTitle(n string) (bool, error) {
+func (FR FilmRepository) CheckExistenceOfTitle(n string) (bool, error) {
 	res := models.ProfileFilm{}
-	qres := db.Db.QueryRowx(`
+	qres := FR.database.QueryRowx(`
 		SELECT FROM film_profile
 		WHERE title = $1`,
 		n)
@@ -180,10 +156,10 @@ func CheckExistenceOfTitle(n string) (bool, error) {
 	return true, nil
 }
 
-func GetCountOfFilms() (int, error) {
+func (FR FilmRepository) GetCountOfFilms() (int, error) {
 	res := 0
 	// TODO: optimize it
-	qres := db.Db.QueryRowx(`
+	qres := FR.database.QueryRowx(`
 		SELECT COUNT(*) FROM film_profile`)
 	if err := qres.Err(); err != nil {
 		return 0, err
@@ -196,8 +172,8 @@ func GetCountOfFilms() (int, error) {
 	return res, nil
 }
 
-func UploadAvatarFilm(uID uint, path string) error {
-	qres, err := db.Db.Exec(`
+func (FR FilmRepository) UploadAvatarFilm(uID uint, path string) error {
+	qres, err := FR.database.Exec(`
 		UPDATE film_profile
 		SET avatar = $2
 		WHERE film_id = $1`,
@@ -216,8 +192,8 @@ func UploadAvatarFilm(uID uint, path string) error {
 	return nil
 }
 
-func DeleteAvatarFilm(uID uint) error {
-	qres, err := db.Db.Exec(`
+func (FR FilmRepository) DeleteAvatarFilm(uID uint) error {
+	qres, err := FR.database.Exec(`
 		UPDATE film_profile
 		SET avatar = NULL
 		WHERE film_id = $1`,

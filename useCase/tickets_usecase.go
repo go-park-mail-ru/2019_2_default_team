@@ -2,7 +2,6 @@ package useCase
 
 import (
 	"context"
-	"kino_backend/db"
 	"kino_backend/models"
 	"kino_backend/repository"
 )
@@ -12,11 +11,9 @@ type TicketsUseCase interface {
 	PostTicket(ctx context.Context, u *models.RegisterTicket) (models.Ticket, error)
 }
 
-
-type ticketUseCase struct{
+type ticketUseCase struct {
 	ticketRepo repository.TicketRepository
 }
-
 
 func NewTicketUseCase(ticketRepo repository.TicketRepository) *ticketUseCase {
 	return &ticketUseCase{
@@ -24,8 +21,8 @@ func NewTicketUseCase(ticketRepo repository.TicketRepository) *ticketUseCase {
 	}
 }
 
-func (t ticketUseCase) GetTicket(ctx context.Context, params *models.RequestTicket) (models.Ticket, error){
-	profile, err := db.GetTicketProfileByID(params.TicketID)
+func (t ticketUseCase) GetTicket(ctx context.Context, params *models.RequestTicket) (models.Ticket, error) {
+	profile, err := t.ticketRepo.GetTicketProfileByID(params.TicketID)
 	if err != nil {
 		return models.Ticket{}, err
 	}
@@ -33,13 +30,11 @@ func (t ticketUseCase) GetTicket(ctx context.Context, params *models.RequestTick
 	return profile, nil
 }
 
-func (t ticketUseCase) PostTicket(ctx context.Context, u *models.RegisterTicket) (models.Ticket, error){
-	newT, err := db.CreateNewTicket(u)
+func (t ticketUseCase) PostTicket(ctx context.Context, u *models.RegisterTicket) (models.Ticket, error) {
+	newT, err := t.ticketRepo.CreateNewTicket(u)
 	if err != nil {
 		return models.Ticket{}, err
 	}
 
 	return newT, nil
 }
-
-

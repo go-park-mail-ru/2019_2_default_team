@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"github.com/gomodule/redigo/redis"
 	"kino_backend/logger"
-	"errors"
 )
 
 var Sm *sessionManager
@@ -14,25 +14,23 @@ var (
 	ErrKeyNotFound = errors.New("key not found")
 )
 
-
 type sessionManager struct {
-	redisConn redis.Conn
+	RedisConn redis.Conn
 }
 
-type SessionRepository struct{
-	database *redis.Conn
+type SessionRepository struct {
+	database redis.Conn
 }
 
-func NewSessionsRepository(db *redis.Conn) SessionRepository {
+func NewSessionsRepository(db redis.Conn) SessionRepository {
 	return SessionRepository{
-		database:db,
+		database: db,
 	}
 }
 
 func (sm *sessionManager) Close() {
-	sm.redisConn.Close()
+	sm.RedisConn.Close()
 }
-
 
 const (
 	host     = "localhost"
@@ -50,9 +48,9 @@ func ConnectSessionDB(address, database string) *sessionManager {
 	//	"password=%s dbname=%s",
 	//	host, port, user, password, dbname)
 
-	//Sm.redisConn, err = redis.DialURL("redis://" + address + "/" + database)
+	//Sm.RedisConn, err = redis.DialURL("redis://" + address + "/" + database)
 	//fmt.Println(redisInfo)
-	Sm.redisConn, err = redis.DialURL("redis://redis:docker@localhost:6379/0?")
+	Sm.RedisConn, err = redis.DialURL("redis://redis:docker@localhost:6379/0?")
 	if err != nil {
 		logger.Panic(err)
 	}
@@ -63,7 +61,7 @@ func ConnectSessionDB(address, database string) *sessionManager {
 }
 
 func (s SessionRepository) Create(sID string, uID uint) (bool, error) {
-	res, err := Sm.redisConn.Do("SET", sID, uID, "NX", "EX", 30*24*60*60)
+	res, err := s.database.Do("SET", sID, uID, "NX", "EX", 30*24*60*60)
 	if err != nil {
 		return false, err
 	}
@@ -84,7 +82,7 @@ func (s SessionRepository) Create(sID string, uID uint) (bool, error) {
 }
 
 func (s SessionRepository) Get(ctx context.Context, sID string) (uint, error) {
-	res, err := redis.Uint64(Sm.redisConn.Do("GET", sID))
+	res, err := redis.Uint64(s.database.Do("GET", sID))
 	if err != nil {
 		if err == redis.ErrNil {
 			return 0, ErrKeyNotFound
@@ -96,7 +94,7 @@ func (s SessionRepository) Get(ctx context.Context, sID string) (uint, error) {
 }
 
 func (s SessionRepository) Delete(ctx context.Context, sID string) error {
-	_, err := redis.Int(Sm.redisConn.Do("DEL", sID))
+	_, err := redis.Int(s.database.Do("DEL", sID))
 	if err != nil {
 		return err
 	}

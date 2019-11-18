@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/asaskevich/govalidator"
 	"io/ioutil"
-	"kino_backend/auth"
 	"kino_backend/db"
+	"kino_backend/delivery/sessions_delivery"
 	"kino_backend/logger"
 	"kino_backend/models"
 	"kino_backend/useCase"
@@ -16,13 +16,15 @@ import (
 	"net/http"
 )
 
-type Handler struct{
+type Handler struct {
 	useCase useCase.UsersUseCase
+	us      useCase.SessionsUseCase
 }
 
-func NewHandler(useCase useCase.UsersUseCase) *Handler{
+func NewHandler(useCase useCase.UsersUseCase, usecase_ses useCase.SessionsUseCase) *Handler {
 	return &Handler{
 		useCase: useCase,
+		us:      usecase_ses,
 	}
 }
 
@@ -41,7 +43,7 @@ func readProfile(r *http.Request, p *models.RegisterProfile) error {
 	return nil
 }
 
-func validateNickname(s string) ([]models.ProfileError, error) {
+func (h *Handler) validateNickname(s string) ([]models.ProfileError, error) {
 	var errors []models.ProfileError
 	isValid := govalidator.StringLength(s, "4", "32")
 	if !isValid {
@@ -53,7 +55,7 @@ func validateNickname(s string) ([]models.ProfileError, error) {
 	}
 
 	fmt.Println("outside", "isvalid", isValid)
-	exists, err := db.CheckExistenceOfNickname(s)
+	exists, err := h.useCase.CheckExistenceOfNickname(s)
 	if err != nil {
 		fmt.Println("exists", exists)
 		logger.Error(err)
@@ -70,7 +72,7 @@ func validateNickname(s string) ([]models.ProfileError, error) {
 	return errors, nil
 }
 
-func validateEmail(s string) ([]models.ProfileError, error) {
+func (h *Handler) validateEmail(s string) ([]models.ProfileError, error) {
 	var errors []models.ProfileError
 
 	isValid := govalidator.IsEmail(s)
@@ -82,7 +84,7 @@ func validateEmail(s string) ([]models.ProfileError, error) {
 		return errors, nil
 	}
 
-	exists, err := db.CheckExistenceOfEmail(s)
+	exists, err := h.useCase.CheckExistenceOfEmail(s)
 	if err != nil {
 		logger.Error(err)
 		return errors, err
@@ -97,7 +99,7 @@ func validateEmail(s string) ([]models.ProfileError, error) {
 	return errors, nil
 }
 
-func validatePassword(s string) []models.ProfileError {
+func (h *Handler) validatePassword(s string) []models.ProfileError {
 	var errors []models.ProfileError
 
 	isValid := govalidator.StringLength(s, "8", "32")
@@ -111,29 +113,26 @@ func validatePassword(s string) []models.ProfileError {
 	return errors
 }
 
-func validateFields(u *models.RegisterProfile) ([]models.ProfileError, error) {
+func (h *Handler) validateFields(u *models.RegisterProfile) ([]models.ProfileError, error) {
 	var errors []models.ProfileError
 
-	valErrors, dbErr := validateNickname(u.Nickname)
+	valErrors, dbErr := h.validateNickname(u.Nickname)
 	if dbErr != nil {
 		fmt.Println("errnick")
 		return []models.ProfileError{}, dbErr
 	}
 	errors = append(errors, valErrors...)
 
-	valErrors, dbErr = validateEmail(u.Email)
+	valErrors, dbErr = h.validateEmail(u.Email)
 	if dbErr != nil {
 		fmt.Println("erremail")
 		return []models.ProfileError{}, dbErr
 	}
 	errors = append(errors, valErrors...)
-	errors = append(errors, validatePassword(u.Password)...)
+	errors = append(errors, h.validatePassword(u.Password)...)
 
 	return errors, nil
 }
-
-
-
 
 // @Title Получить профиль
 // @Summary Получить профиль пользователя по ID, email или из сессии
@@ -148,7 +147,7 @@ func validateFields(u *models.RegisterProfile) ([]models.ProfileError, error) {
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [GET]
 
-func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request) {
 	//data parse
 	params := &models.RequestProfile{}
 	decoder := json.NewDecoder(r.Body)
@@ -166,12 +165,12 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 	if middleware.KeyIsAuthenticated != 0 {
 		id = uint(middleware.KeyUserID)
 		auth = true
-	}else {
+	} else {
 		id = 0
 		auth = false
 	}
 
-	profile, err := h.useCase.GetUser( params, auth, id)
+	profile, err := h.useCase.GetUser(params, auth, id)
 
 	if err != nil {
 		switch err.(type) {
@@ -196,81 +195,6 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	fmt.Fprintln(w, string(json))
-
-
-	//if params.ID != 0 {
-	//	profile, err := db.GetUserProfileByID(params.ID)
-	//	if err != nil {
-	//		switch err.(type) {
-	//		case db.UserNotFoundError:
-	//			w.WriteHeader(http.StatusNotFound)
-	//			return
-	//		default:
-	//			log.Println(err)
-	//			w.WriteHeader(http.StatusInternalServerError)
-	//			return
-	//		}
-	//	}
-	//
-	//	w.Header().Set("Content-Type", "application/json")
-	//	json, err := json.Marshal(profile)
-	//	if err != nil {
-	//		log.Println(err, "in profileMethod")
-	//		w.WriteHeader(http.StatusInternalServerError)
-	//		return
-	//	}
-	//	fmt.Fprintln(w, string(json))
-	//} else if params.Nickname != "" {
-	//	profile, err := db.GetUserProfileByNickname(params.Nickname)
-	//	if err != nil {
-	//		switch err.(type) {
-	//		case db.UserNotFoundError:
-	//			w.WriteHeader(http.StatusNotFound)
-	//			return
-	//		default:
-	//			log.Println(err)
-	//			w.WriteHeader(http.StatusInternalServerError)
-	//			return
-	//		}
-	//	}
-	//
-	//	w.Header().Set("Content-Type", "application/json")
-	//	json, err := json.Marshal(profile)
-	//	if err != nil {
-	//		log.Println(err, "in profileMethod")
-	//		w.WriteHeader(http.StatusInternalServerError)
-	//		return
-	//	}
-	//	fmt.Fprintln(w, string(json))
-	//} else {
-	//
-	//	//get auth
-	//	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
-	//		w.WriteHeader(http.StatusUnauthorized)
-	//		return
-	//	}
-	//	profile, err := db.GetUserProfileByID(r.Context().Value(middleware.KeyUserID).(uint))
-	//	if err != nil {
-	//		switch err.(type) {
-	//		case db.UserNotFoundError:
-	//			w.WriteHeader(http.StatusNotFound)
-	//			return
-	//		default:
-	//			log.Println(err)
-	//			w.WriteHeader(http.StatusInternalServerError)
-	//			return
-	//		}
-	//	}
-	//
-	//	w.Header().Set("Content-Type", "application/json")
-	//	json, err := json.Marshal(profile)
-	//	if err != nil {
-	//		log.Println(err, "in profileMethod")
-	//		w.WriteHeader(http.StatusInternalServerError)
-	//		return
-	//	}
-	//	fmt.Fprintln(w, string(json))
-	//}
 }
 
 // @Title Зарегистрироваться и залогиниться по новому профилю
@@ -286,7 +210,7 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 	//parsedata
 	u := &models.RegisterProfile{}
 	err := readProfile(r, u)
@@ -304,7 +228,7 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fieldErrors, err := validateFields(u)
+	fieldErrors, err := h.validateFields(u)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -337,8 +261,8 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
-		err = auth.LoginUser(w, newU.UserID)
+		hs := sessions_delivery.NewHandler(h.us, h.useCase)
+		err = hs.LoginUser(r.Context(), w, newU.UserID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -348,7 +272,6 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
 		logger.Infof("New user with id %v, email %v and nickname %v logged in", newU.UserID, newU.Email, newU.Nickname)
 	}
 }
-
 
 // @Title Изменить профиль
 // @Summary Изменить профиль, должен быть залогинен
@@ -363,7 +286,7 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [PUT]
 
-func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -386,7 +309,7 @@ func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
 	var fieldErrors []models.ProfileError
 
 	if editUser.Nickname != "" {
-		valErrors, dbErr := validateNickname(editUser.Nickname)
+		valErrors, dbErr := h.validateNickname(editUser.Nickname)
 		if dbErr != nil {
 			log.Println(dbErr)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -395,7 +318,7 @@ func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
 		fieldErrors = append(fieldErrors, valErrors...)
 	}
 	if editUser.Email != "" {
-		valErrors, dbErr := validateEmail(editUser.Email)
+		valErrors, dbErr := h.validateEmail(editUser.Email)
 		if dbErr != nil {
 			log.Println(dbErr)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -404,7 +327,7 @@ func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
 		fieldErrors = append(fieldErrors, valErrors...)
 	}
 	if editUser.Password != "" {
-		fieldErrors = append(fieldErrors, validatePassword(editUser.Password)...)
+		fieldErrors = append(fieldErrors, h.validatePassword(editUser.Password)...)
 	}
 
 	if len(fieldErrors) != 0 {
@@ -426,7 +349,7 @@ func (h *Handler) putEditUserProfile(w http.ResponseWriter, r *http.Request){
 		err := h.useCase.PutUser(r.Context(), id, editUser)
 		//err := db.UpdateUserByID(id, editUser)
 
-		if err != nil{
+		if err != nil {
 			switch err.(type) {
 			case db.UserNotFoundError:
 				w.WriteHeader(http.StatusNotFound)

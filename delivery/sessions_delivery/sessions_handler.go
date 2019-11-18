@@ -17,16 +17,17 @@ import (
 	"time"
 )
 
-type Handler struct{
-	useCase useCase.SessionsUseCase
+type Handler struct {
+	useCase     useCase.SessionsUseCase
+	useCaseUser useCase.UsersUseCase
 }
 
-func NewHandler(useCase useCase.SessionsUseCase) *Handler{
+func NewHandler(useCase useCase.SessionsUseCase, useCaseUser useCase.UsersUseCase) *Handler {
 	return &Handler{
-		useCase: useCase,
+		useCase:     useCase,
+		useCaseUser: useCaseUser,
 	}
 }
-
 
 func readLoginInfo(r *http.Request, u *models.UserPassword) error {
 	body, err := ioutil.ReadAll(r.Body)
@@ -43,12 +44,12 @@ func readLoginInfo(r *http.Request, u *models.UserPassword) error {
 	return nil
 }
 
-func (h *Handler) loginUser(ctx context.Context, w http.ResponseWriter, userID uint) error {
+func (h *Handler) LoginUser(ctx context.Context, w http.ResponseWriter, userID uint) error {
 	sessionID := ""
 	for {
 		// create session, if collision ocquires, generate new sessionID
 		var err error
-		u, _ := uuid.NewV4()
+		u := uuid.Must(uuid.NewV4(), err)
 		sessionID = u.String()
 
 		//sessionID = uuid.NewV4().String()
@@ -61,7 +62,6 @@ func (h *Handler) loginUser(ctx context.Context, w http.ResponseWriter, userID u
 			break
 		}
 	}
-
 
 	cookie := http.Cookie{
 		Name:     "session_id",
@@ -78,7 +78,6 @@ func (h *Handler) loginUser(ctx context.Context, w http.ResponseWriter, userID u
 
 	return nil
 }
-
 
 // @Summary Получить сессию
 // @Description Получить сессию пользователя, если есть сессия, то она в куке session_id
@@ -138,8 +137,8 @@ func (h *Handler) postLoginHandler(w http.ResponseWriter, r *http.Request) {
 		models.SendError(w, r, fmt.Errorf("Невалидная почта"), http.StatusBadRequest)
 		return
 	}
-
-	dbResponse, err := db.GetUserPassword(u.Email)
+	//исправить !!!
+	dbResponse, err := h.useCaseUser.GetUserPassword(u.Email)
 
 	if err != nil {
 		switch err.(type) {
@@ -151,7 +150,7 @@ func (h *Handler) postLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if u.Email == dbResponse.Email && u.Password == dbResponse.Password {
-		err := h.loginUser(r.Context(), w, dbResponse.UserID)
+		err := h.LoginUser(r.Context(), w, dbResponse.UserID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -184,4 +183,3 @@ func (h *Handler) deleteSession(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 }
-

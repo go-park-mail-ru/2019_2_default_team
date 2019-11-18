@@ -1,25 +1,27 @@
 package users_delivery
 
 import (
+	"kino_backend/useCase"
 	"net/http"
 	"sync"
-	"kino_backend/useCase"
 )
 
-type MyHandlerUser struct{
-	mu  *sync.Mutex
+type MyHandlerUser struct {
+	mu      *sync.Mutex
 	useCase useCase.UsersUseCase
+	uS      useCase.SessionsUseCase
 }
 
-func NewMyHandlerUser(uc useCase.UsersUseCase) *MyHandlerUser {
+func NewMyHandlerUser(uc useCase.UsersUseCase, hS useCase.SessionsUseCase) *MyHandlerUser {
 	return &MyHandlerUser{
-		mu: &sync.Mutex{},
+		mu:      &sync.Mutex{},
 		useCase: uc,
+		uS:      hS,
 	}
 }
 
 func (apiu *MyHandlerUser) ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	h := NewHandler(apiu.useCase)
+	h := NewHandler(apiu.useCase, apiu.uS)
 
 	switch r.Method {
 	case http.MethodGet:
@@ -34,4 +36,3 @@ func (apiu *MyHandlerUser) ProfileHandler(w http.ResponseWriter, r *http.Request
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-

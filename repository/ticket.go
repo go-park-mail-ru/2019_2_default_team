@@ -1,28 +1,26 @@
 package repository
 
-import(
+import (
 	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"kino_backend/models"
-	"kino_backend/db"
 	"kino_backend/utilits/errors"
 )
 
-type TicketRepository struct{
+type TicketRepository struct {
 	database *sqlx.DB
 }
 
-func NewTicketRepository(db *sqlx.DB) TicketRepository{
+func NewTicketRepository(db *sqlx.DB) TicketRepository {
 	return TicketRepository{
-		database:db,
+		database: db,
 	}
 }
 
-
-func CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
+func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
 	res := models.Ticket{}
-	qres := db.Db.QueryRowx(`
+	qres := TR.database.QueryRowx(`
 		INSERT INTO ticket_profile (user_id, film_id)
 		VALUES ($1, $2) RETURNING ticket_id, film_id`,
 		u.UserID, u.FilmID)
@@ -43,9 +41,9 @@ func CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
 	return res, nil
 }
 
-func GetTicketProfileByID(id uint) (models.Ticket, error) {
+func (TR TicketRepository) GetTicketProfileByID(id uint) (models.Ticket, error) {
 	res := models.Ticket{}
-	qres := db.Db.QueryRowx(`
+	qres := TR.database.QueryRowx(`
 		SELECT ticket_id, user_id, film_id FROM ticket_profile
 		WHERE ticket_id = $1`,
 		id)
@@ -63,10 +61,9 @@ func GetTicketProfileByID(id uint) (models.Ticket, error) {
 	return res, nil
 }
 
-
-func CheckExistenceOfTicket(n int) (bool, error) {
+func (TR TicketRepository) CheckExistenceOfTicket(n int) (bool, error) {
 	res := models.Ticket{}
-	qres := db.Db.QueryRowx(`
+	qres := TR.database.QueryRowx(`
 		SELECT FROM ticket_profile
 		WHERE ticket_id = $1`,
 		n)

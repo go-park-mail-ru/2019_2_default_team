@@ -2,30 +2,27 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
-	"kino_backend/db"
 	"kino_backend/models"
-	"strings"
 	"kino_backend/utilits/errors"
-	"fmt"
+	"strings"
 )
 
-
-type UserRepository struct{
+type UserRepository struct {
 	database *sqlx.DB
 }
 
-func NewUserRepository(db *sqlx.DB) UserRepository{
+func NewUserRepository(db *sqlx.DB) UserRepository {
 	return UserRepository{
-		database:db,
+		database: db,
 	}
 }
 
-
-func GetUserPassword(e string) (models.User, error) {
+func (UR UserRepository) GetUserPassword(e string) (models.User, error) {
 	res := models.User{}
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		SELECT user_id, email, password FROM user_profile
 		WHERE email = $1`,
 		e)
@@ -43,9 +40,9 @@ func GetUserPassword(e string) (models.User, error) {
 	return res, nil
 }
 
-func CreateNewUser(u *models.RegisterProfile) (models.Profile, error) {
+func (UR UserRepository) CreateNewUser(u *models.RegisterProfile) (models.Profile, error) {
 	res := models.Profile{}
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		INSERT INTO user_profile (email, password, nickname)
 		VALUES ($1, $2, $3) RETURNING user_id, email, nickname`,
 		u.Email, u.Password, u.Nickname)
@@ -66,7 +63,7 @@ func CreateNewUser(u *models.RegisterProfile) (models.Profile, error) {
 	return res, nil
 }
 
-func UpdateUserByID(id uint, u *models.RegisterProfile) error {
+func (UR UserRepository) UpdateUserByID(id uint, u *models.RegisterProfile) error {
 	if u.Email == "" && u.Password == "" && u.Nickname == "" {
 		return nil
 	}
@@ -96,7 +93,7 @@ func UpdateUserByID(id uint, u *models.RegisterProfile) error {
 	q.WriteString(`
 		WHERE user_id = :user_id`)
 
-	_, err := db.Db.NamedExec(q.String(), &models.Profile{
+	_, err := UR.database.NamedExec(q.String(), &models.Profile{
 		User: models.User{
 			UserID: id,
 			UserPassword: models.UserPassword{
@@ -113,9 +110,9 @@ func UpdateUserByID(id uint, u *models.RegisterProfile) error {
 	return nil
 }
 
-func GetUserProfileByID(id uint) (models.Profile, error) {
+func (UR UserRepository) GetUserProfileByID(id uint) (models.Profile, error) {
 	res := models.Profile{}
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		SELECT user_id, email, nickname, avatar FROM user_profile
 		WHERE user_id = $1`,
 		id)
@@ -133,9 +130,9 @@ func GetUserProfileByID(id uint) (models.Profile, error) {
 	return res, nil
 }
 
-func GetUserProfileByNickname(nickname string) (models.Profile, error) {
+func (UR UserRepository) GetUserProfileByNickname(nickname string) (models.Profile, error) {
 	res := models.Profile{}
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		SELECT user_id, email, nickname, avatar FROM user_profile
 		WHERE nickname = $1`,
 		nickname)
@@ -153,9 +150,9 @@ func GetUserProfileByNickname(nickname string) (models.Profile, error) {
 	return res, nil
 }
 
-func CheckExistenceOfEmail(e string) (bool, error) {
+func (UR UserRepository) CheckExistenceOfEmail(e string) (bool, error) {
 	res := models.Profile{}
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		SELECT FROM user_profile
 		WHERE email = $1`,
 		e)
@@ -173,9 +170,9 @@ func CheckExistenceOfEmail(e string) (bool, error) {
 	return true, nil
 }
 
-func CheckExistenceOfNickname(n string) (bool, error) {
+func (UR UserRepository) CheckExistenceOfNickname(n string) (bool, error) {
 	res := models.Profile{}
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		SELECT FROM user_profile
 		WHERE nickname = $1`,
 		n)
@@ -196,10 +193,10 @@ func CheckExistenceOfNickname(n string) (bool, error) {
 	return true, nil
 }
 
-func GetCountOfUsers() (int, error) {
+func (UR UserRepository) GetCountOfUsers() (int, error) {
 	res := 0
 	// TODO: optimize it
-	qres := db.Db.QueryRowx(`
+	qres := UR.database.QueryRowx(`
 		SELECT COUNT(*) FROM user_profile`)
 	if err := qres.Err(); err != nil {
 		return 0, err
@@ -212,8 +209,8 @@ func GetCountOfUsers() (int, error) {
 	return res, nil
 }
 
-func UploadAvatar(uID uint, path string) error {
-	qres, err := db.Db.Exec(`
+func (UR UserRepository) UploadAvatar(uID uint, path string) error {
+	qres, err := UR.database.Exec(`
 		UPDATE user_profile
 		SET avatar = $2
 		WHERE user_id = $1`,
@@ -232,8 +229,8 @@ func UploadAvatar(uID uint, path string) error {
 	return nil
 }
 
-func DeleteAvatar(uID uint) error {
-	qres, err := db.Db.Exec(`
+func (UR UserRepository) DeleteAvatar(uID uint) error {
+	qres, err := UR.database.Exec(`
 		UPDATE user_profile
 		SET avatar = NULL
 		WHERE user_id = $1`,

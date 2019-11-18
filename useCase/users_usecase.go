@@ -2,7 +2,6 @@ package useCase
 
 import (
 	"context"
-	"kino_backend/db"
 	"kino_backend/models"
 	"kino_backend/repository"
 	"kino_backend/utilits/errors"
@@ -11,11 +10,13 @@ import (
 type UsersUseCase interface {
 	GetUser(params *models.RequestProfile, auth bool, id uint) (models.Profile, error)
 	PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error)
-	PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) (error)
+	PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) error
+	CheckExistenceOfEmail(e string) (bool, error)
+	CheckExistenceOfNickname(n string) (bool, error)
+	GetUserPassword(e string) (models.User, error)
 }
 
-
-type usersUseCase struct{
+type usersUseCase struct {
 	userRepo repository.UserRepository
 }
 
@@ -25,10 +26,10 @@ func NewUserUseCase(userRepo repository.UserRepository) *usersUseCase {
 	}
 }
 
-func (user usersUseCase) GetUser( params *models.RequestProfile, auth bool, id uint) (models.Profile, error){
+func (user usersUseCase) GetUser(params *models.RequestProfile, auth bool, id uint) (models.Profile, error) {
 
 	if params.ID != 0 {
-		profile, err := db.GetUserProfileByID(params.ID)
+		profile, err := user.userRepo.GetUserProfileByID(params.ID)
 		if err != nil {
 
 			return models.Profile{}, err
@@ -36,7 +37,7 @@ func (user usersUseCase) GetUser( params *models.RequestProfile, auth bool, id u
 		return profile, nil
 
 	} else if params.Nickname != "" {
-		profile, err := db.GetUserProfileByNickname(params.Nickname)
+		profile, err := user.userRepo.GetUserProfileByNickname(params.Nickname)
 		if err != nil {
 			return models.Profile{}, err
 		}
@@ -47,7 +48,7 @@ func (user usersUseCase) GetUser( params *models.RequestProfile, auth bool, id u
 			return models.Profile{}, errors.UserNotAuthError{}
 		}
 
-		profile, err := db.GetUserProfileByID(id)
+		profile, err := user.userRepo.GetUserProfileByID(id)
 		if err != nil {
 			return models.Profile{}, err
 		}
@@ -55,8 +56,8 @@ func (user usersUseCase) GetUser( params *models.RequestProfile, auth bool, id u
 	}
 }
 
-func (user usersUseCase) PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error){
-	newU, err := db.CreateNewUser(u)
+func (user usersUseCase) PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error) {
+	newU, err := user.userRepo.CreateNewUser(u)
 
 	if err != nil {
 		return models.Profile{}, err
@@ -65,13 +66,24 @@ func (user usersUseCase) PostUser(ctx context.Context, u *models.RegisterProfile
 	return newU, nil
 }
 
-func (user usersUseCase) PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) error{
-	err := db.UpdateUserByID(id, editUser)
+func (user usersUseCase) PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) error {
+	err := user.userRepo.UpdateUserByID(id, editUser)
 
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
+func (user usersUseCase) CheckExistenceOfNickname(n string) (bool, error) {
+	return user.userRepo.CheckExistenceOfNickname(n)
+}
+
+func (user usersUseCase) CheckExistenceOfEmail(e string) (bool, error) {
+	return user.userRepo.CheckExistenceOfEmail(e)
+}
+
+func (user usersUseCase) GetUserPassword(e string) (models.User, error) {
+	return user.userRepo.GetUserPassword(e)
+}

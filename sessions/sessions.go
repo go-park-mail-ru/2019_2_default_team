@@ -13,13 +13,12 @@ var (
 )
 
 type SessionManager struct {
-	redisConn redis.Conn
+	RedisConn redis.Conn
 }
 
 func (sm *SessionManager) Close() {
-	sm.redisConn.Close()
+	sm.RedisConn.Close()
 }
-
 
 const (
 	host     = "localhost"
@@ -37,9 +36,9 @@ func ConnectSessionDB(address, database string) *SessionManager {
 	//	"password=%s dbname=%s",
 	//	host, port, user, password, dbname)
 
-	//Sm.redisConn, err = redis.DialURL("redis://" + address + "/" + database)
+	//Sm.RedisConn, err = redis.DialURL("redis://" + address + "/" + database)
 	//fmt.Println(redisInfo)
-	Sm.redisConn, err = redis.DialURL("redis://redis:docker@localhost:6379/0?")
+	Sm.RedisConn, err = redis.DialURL("redis://redis:docker@localhost:6379/0?")
 	if err != nil {
 		logger.Panic(err)
 	}
@@ -50,7 +49,7 @@ func ConnectSessionDB(address, database string) *SessionManager {
 }
 
 func Create(sID string, uID uint) (bool, error) {
-	res, err := Sm.redisConn.Do("SET", sID, uID, "NX", "EX", 30*24*60*60)
+	res, err := Sm.RedisConn.Do("SET", sID, uID, "NX", "EX", 30*24*60*60)
 	if err != nil {
 		return false, err
 	}
@@ -71,7 +70,7 @@ func Create(sID string, uID uint) (bool, error) {
 }
 
 func Get(sID string) (uint, error) {
-	res, err := redis.Uint64(Sm.redisConn.Do("GET", sID))
+	res, err := redis.Uint64(Sm.RedisConn.Do("GET", sID))
 	if err != nil {
 		if err == redis.ErrNil {
 			return 0, ErrKeyNotFound
@@ -83,7 +82,7 @@ func Get(sID string) (uint, error) {
 }
 
 func Delete(sID string) error {
-	_, err := redis.Int(Sm.redisConn.Do("DEL", sID))
+	_, err := redis.Int(Sm.RedisConn.Do("DEL", sID))
 	if err != nil {
 		return err
 	}
