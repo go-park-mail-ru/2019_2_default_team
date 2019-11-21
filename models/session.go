@@ -12,3 +12,7 @@ type Sessions struct {
 	sync.Mutex
 	Sessions map[string]uint
 }
+
+type Authorization struct {
+	authorized bool
+}

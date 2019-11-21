@@ -54,6 +54,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apit.ProfileTicketHandler))))
 	r.HandleFunc("/session", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apis.ProfileSessionsHandler))))
+	r.HandleFunc("/authorized", middleware.RecoverMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apis.ProfileAuth))))
 
 	err = nil
 	server.routing = r

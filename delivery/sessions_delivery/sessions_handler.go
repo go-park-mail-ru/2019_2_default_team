@@ -183,3 +183,27 @@ func (h *Handler) deleteSession(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 }
+
+// @Summary Проверка авторизации
+// @Description получить булевое значение статуса авторизации
+// @ID authorized
+// @Produce json
+// @Success 200 true/false "Пользователь залогинен, успешно"
+// @Failure 500 "Ошибка в бд"
+// @Router /session [GET]
+func (h *Handler) getOfAuthorized(w http.ResponseWriter, r *http.Request) {
+	if r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
+		params := r.Context().Value(middleware.KeyIsAuthenticated).(bool)
+		paramsJSON, err := json.Marshal(models.Authorization{params})
+		if err != nil {
+			logger.Error(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintln(w, string(paramsJSON))
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}

@@ -36,3 +36,14 @@ func (apis *MyHandlerSessions) ProfileSessionsHandler(w http.ResponseWriter, r *
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
+
+func (apis *MyHandlerSessions) ProfileAuth(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apis.useCase, apis.useCaseUser)
+
+	switch r.Method {
+	case http.MethodGet:
+		h.getOfAuthorized(w, r)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
