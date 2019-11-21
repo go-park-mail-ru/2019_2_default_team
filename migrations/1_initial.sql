@@ -3,6 +3,8 @@
 -- DROP TABLE user_profile;
 CREATE EXTENSION IF NOT EXISTS citext;
 
+
+
 CREATE TABLE user_profile (
     user_id serial PRIMARY KEY,
     email varchar(400) UNIQUE NOT NULL,

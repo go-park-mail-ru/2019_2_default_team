@@ -43,9 +43,9 @@ func (UR UserRepository) GetUserPassword(e string) (models.User, error) {
 func (UR UserRepository) CreateNewUser(u *models.RegisterProfile) (models.Profile, error) {
 	res := models.Profile{}
 	qres := UR.database.QueryRowx(`
-		INSERT INTO user_profile (email, password, nickname)
-		VALUES ($1, $2, $3) RETURNING user_id, email, nickname`,
-		u.Email, u.Password, u.Nickname)
+		INSERT INTO user_profile (email, password, nickname, first_name, last_name)
+		VALUES ($1, $2, $3, $4, $5) RETURNING user_id, email, nickname`,
+		u.Email, u.Password, u.Nickname, u.FirstName, u.LastName)
 	if err := qres.Err(); err != nil {
 		pqErr := err.(*pq.Error)
 		switch pqErr.Code {
@@ -113,7 +113,7 @@ func (UR UserRepository) UpdateUserByID(id uint, u *models.RegisterProfile) erro
 func (UR UserRepository) GetUserProfileByID(id uint) (models.Profile, error) {
 	res := models.Profile{}
 	qres := UR.database.QueryRowx(`
-		SELECT user_id, email, nickname, avatar FROM user_profile
+		SELECT user_id, email, nickname, avatar, first_name, last_name FROM user_profile
 		WHERE user_id = $1`,
 		id)
 	if err := qres.Err(); err != nil {
@@ -133,7 +133,7 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.Profile, error) {
 func (UR UserRepository) GetUserProfileByNickname(nickname string) (models.Profile, error) {
 	res := models.Profile{}
 	qres := UR.database.QueryRowx(`
-		SELECT user_id, email, nickname, avatar FROM user_profile
+		SELECT user_id, email, nickname, avatar, first_name, last_name FROM user_profile
 		WHERE nickname = $1`,
 		nickname)
 	if err := qres.Err(); err != nil {

@@ -21,9 +21,9 @@ func NewTicketRepository(db *sqlx.DB) TicketRepository {
 func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
 	res := models.Ticket{}
 	qres := TR.database.QueryRowx(`
-		INSERT INTO ticket_profile (user_id, film_id)
-		VALUES ($1, $2) RETURNING ticket_id, film_id`,
-		u.UserID, u.FilmID)
+		INSERT INTO ticket_profile (profile_id, movie_session_id, seat_id, price)
+		VALUES ($1, $2, $3, $4) RETURNING ticket_id, movie_session_id`,
+		u.UserID, u.FilmID, u.SeatID, u.Price)
 	if err := qres.Err(); err != nil {
 		pqErr := err.(*pq.Error)
 		switch pqErr.Code {
@@ -44,7 +44,7 @@ func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Tic
 func (TR TicketRepository) GetTicketProfileByID(id uint) (models.Ticket, error) {
 	res := models.Ticket{}
 	qres := TR.database.QueryRowx(`
-		SELECT ticket_id, user_id, film_id FROM ticket_profile
+		SELECT ticket_id, profile_id, movie_session_id, seat_id, price FROM ticket_profile
 		WHERE ticket_id = $1`,
 		id)
 	if err := qres.Err(); err != nil {

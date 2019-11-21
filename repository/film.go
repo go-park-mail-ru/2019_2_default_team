@@ -24,9 +24,9 @@ func (FR FilmRepository) CreateNewFilm(u *models.RegisterProfileFilm) (models.Pr
 	res := models.ProfileFilm{}
 	fmt.Println(u)
 	qres := FR.database.QueryRowx(`
-		INSERT INTO film_profile (title, description, director, mainactor, admin_id)
-		VALUES ($1, $2, $3, $4, $5) RETURNING film_id, title, director`,
-		u.Title, u.Description, u.Director, u.MainActor, u.AdminID)
+		INSERT INTO film_profile (title, description, director, actors, admin_id, genre, length, production, year)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING film_id, title, director`,
+		u.Title, u.Description, u.Director, u.MainActor, u.AdminID, u.Genre, u.Length, u.Production, u.Year)
 	if err := qres.Err(); err != nil {
 		pqErr := err.(*pq.Error)
 		switch pqErr.Code {
@@ -99,7 +99,7 @@ func (FR FilmRepository) UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
-		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year FROM film_profile
 		WHERE film_id = $1`,
 		id)
 	if err := qres.Err(); err != nil {
@@ -119,7 +119,7 @@ func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error)
 func (FR FilmRepository) GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
-		SELECT film_id, title, description, avatar, director, mainactor, admin_id FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year FROM film_profile
 		WHERE title = $1`,
 		title)
 	if err := qres.Err(); err != nil {

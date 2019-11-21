@@ -1,22 +1,32 @@
 package models
 
+import "time"
+
 type ProfileFilm struct {
 	Film
-	Title string  `json:"title" example:"Joker"`
+	Title       string  `json:"title" example:"Joker"`
 	Description string  `json:"description" example:"Absolutely madness"`
-	Avatar   *string `json:"avatar,omitempty"`
-	Director string   `json:"director" example:"Todd Philips"`
-	MainActor string   `json:"mainactor" example:"Phoenix"`
-	AdminID uint `json:"admin_id" db:"admin_id"`
+	Avatar      *string `json:"avatar,omitempty"`
+	Director    string  `json:"director"  db:"director" example:"Todd Philips"`
+	MainActor   string  `json:"mainactor"  db:"actors" example:"Phoenix"`
+	AdminID     uint    `json:"admin_id" db:"admin_id"`
+	Genre       string  `json:"genre" db:"genre"`
+	Length      int     `json:"length" db:"length"`
+	Production  string  `json:"production" db:"production"`
+	Year        int     `json:"year" db:"year"`
 }
 
 type RegisterProfileFilm struct {
-	Title string `json:"title" example:"Joker"`
+	Title       string  `json:"title" example:"Joker"`
 	Description string  `json:"description" example:"Absolutely madness"`
-	Avatar   *string `json:"avatar,omitempty"`
-	Director string   `json:"director" example:"Todd Philips"`
-	MainActor string   `json:"mainactor" example:"Phoenix"`
-	AdminID uint `json:"admin_id" db:"admin_id"`
+	Avatar      *string `json:"avatar,omitempty"`
+	Director    string  `json:"director" example:"Todd Philips"`
+	MainActor   string  `json:"mainactor" example:"Phoenix"`
+	AdminID     uint    `json:"admin_id" db:"admin_id"`
+	Genre       string  `json:"genre" db:"genre"`
+	Length      int     `json:"length" db:"length"`
+	Production  string  `json:"production" db:"production"`
+	Year        int     `json:"year" db:"year"`
 	//UserPassword
 }
 
@@ -30,7 +40,6 @@ type Film struct {
 //	Password string `json:"password,omitempty" example:"password" valid:"stringlength(8|32)~Пароль должен быть не менее 8 символов и не более 32 символов"`
 //}
 
-
 type ProfileFilmError struct {
 	Field string `json:"field" example:"title"`
 	Text  string `json:"text" example:"Этот фильм уже занят"`
@@ -41,6 +50,14 @@ type ProfileFilmErrorList struct {
 }
 
 type RequestProfileFilm struct {
-	ID       uint    `json:"reqidfilm"`
-	Title string   `json:"reqtitle"`
+	ID    uint   `json:"reqidfilm"`
+	Title string `json:"reqtitle"`
+}
+
+type MovieSession struct {
+	MsID     uint      `json:"ms_id" db:"ms_id"`
+	HallName string    `json:"hall_name" db:"hall_name"`
+	MovieID  uint      `json:"movie_id" db:"movie_id"`
+	Date     time.Time `json:"start_datetime" db:"start_datetime"`
+	Type     string    `json:"type" db:"type"`
 }

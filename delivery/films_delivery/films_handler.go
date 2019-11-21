@@ -3,6 +3,7 @@ package films_delivery
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"io/ioutil"
 	"kino_backend/logger"
@@ -12,13 +13,14 @@ import (
 	"kino_backend/utilits/middleware"
 	"log"
 	"net/http"
+	"strconv"
 )
 
-type Handler struct{
+type Handler struct {
 	useCase useCase.FilmsUseCase
 }
 
-func NewHandler(useCase useCase.FilmsUseCase) *Handler{
+func NewHandler(useCase useCase.FilmsUseCase) *Handler {
 	return &Handler{
 		useCase: useCase,
 	}
@@ -54,7 +56,7 @@ func readRegisterProfileFilm(r *http.Request, p *models.RegisterProfileFilm) err
 	return nil
 }
 
-func SanitizeMe(film models.ProfileFilm) (models.ProfileFilm){
+func SanitizeMe(film models.ProfileFilm) models.ProfileFilm {
 	sanitizer := bluemonday.UGCPolicy()
 	film.Description = sanitizer.Sanitize(film.Description)
 	film.MainActor = sanitizer.Sanitize(film.Description)
@@ -62,7 +64,6 @@ func SanitizeMe(film models.ProfileFilm) (models.ProfileFilm){
 
 	return film
 }
-
 
 // @Title Получить профиль
 // @Summary Получить профиль фильма по ID или названию Title
@@ -77,7 +78,7 @@ func SanitizeMe(film models.ProfileFilm) (models.ProfileFilm){
 
 //http methods tickets_handler.go
 
-func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
+func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request) {
 	//этап парсинга данных
 	params := &models.RequestProfileFilm{}
 	decoder := json.NewDecoder(r.Body)
@@ -115,7 +116,6 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
 
 }
 
-
 // @Title Зарегистрироваться и залогиниться по новому профилю
 // @Summary Зарегистрировать по никнейму, почте и паролю и автоматически залогинить
 // @ID post-profile
@@ -129,7 +129,7 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [POST]
 
-func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
+func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request) {
 
 	//начала парсинга данных
 	u := &models.RegisterProfileFilm{}
@@ -170,7 +170,6 @@ func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
 	//очень плохо в тесте реагирует мока
 }
 
-
 // @Title Изменить профиль
 // @Summary Изменить профиль, должен быть залогинен
 // @ID put-profile
@@ -184,7 +183,7 @@ func (h *Handler) postSignupProfileFilm(w http.ResponseWriter, r *http.Request){
 // @Failure 500 "Ошибка в бд"
 // @Router /profile [PUT]
 
-func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
+func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request) {
 	//начало парсинга данных
 	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -205,7 +204,7 @@ func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
 	}
 
 	uid := r.Context().Value(middleware.KeyUserID).(uint)
-	if uid != filmInfo.AdminID{
+	if uid != filmInfo.AdminID {
 		log.Println("no access")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -216,7 +215,7 @@ func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
 
 	//err = db.UpdateFilmByID(filmInfo.FilmID, filmInfo)
 	//ответ с логики
-	if err != nil{
+	if err != nil {
 		switch err.(type) {
 		case errors.FilmNotFoundError:
 			w.WriteHeader(http.StatusNotFound)
@@ -228,4 +227,58 @@ func (h *Handler) putEditFilmProfile(w http.ResponseWriter, r *http.Request){
 	}
 
 	log.Println("Film with id", filmInfo.FilmID, "changed to", filmInfo.Title, filmInfo.Description)
+}
+
+// @Title Зарегистрироваться и залогиниться по новому профилю
+// @Summary Зарегистрировать по никнейму, почте и паролю и автоматически залогинить
+// @ID post-profile
+// @Accept json
+// @Produce json
+// @Param Profile body models.RegisterProfile true "Никнейм, почта и пароль"
+// @Success 200 "Пользователь зарегистрирован и залогинен успешно"
+// @Failure 400 "Неверный формат JSON"
+// @Failure 403 {object} models.ProfileErrorList "Занята почта или ник, пароль не удовлетворяет правилам безопасности, другие ошибки"
+// @Failure 422 "При регистрации не все параметры"
+// @Failure 500 "Ошибка в бд"
+// @Router /profile [POST]
+
+func (h *Handler) getOneFilm(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+	ID, err := strconv.Atoi(id)
+	if err != nil {
+		log.Println(err, "error")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	params := &models.RequestProfileFilm{}
+	params.ID = uint(ID)
+
+	//конец парсинга данных можно передавать ctx,
+
+	profile, err := h.useCase.GetFilm(r.Context(), params)
+	if err != nil {
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	profile = SanitizeMe(profile)
+	json, err := json.Marshal(profile)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
+
 }

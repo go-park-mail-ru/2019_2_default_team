@@ -1,15 +1,18 @@
 package models
 
-
 type Profile struct {
 	User
-	Nickname string  `json:"nickname" example:"Nick"`
-	Avatar   *string `json:"avatar,omitempty"`
+	Nickname  string  `json:"nickname" example:"Nick"`
+	Avatar    *string `json:"avatar,omitempty"`
+	FirstName string  `json:"first_name" example:"Nick" db:"first_name"`
+	LastName  string  `json:"last_name" example:"Nicker" db:"last_name"`
 }
 
 type RegisterProfile struct {
 	Nickname string `json:"nickname" example:"Nick"`
 	UserPassword
+	FirstName string `json:"first_name" example:"Nick"`
+	LastName  string `json:"last_name" example:"Nicker"`
 }
 
 type User struct {
@@ -22,7 +25,6 @@ type UserPassword struct {
 	Password string `json:"password,omitempty" example:"password" valid:"stringlength(8|32)~Пароль должен быть не менее 8 символов и не более 32 символов"`
 }
 
-
 type ProfileError struct {
 	Field string `json:"field" example:"nickname"`
 	Text  string `json:"text" example:"Этот никнейм уже занят"`
@@ -33,6 +35,6 @@ type ProfileErrorList struct {
 }
 
 type RequestProfile struct {
-	ID       uint    `json:"reqid"`
-	Nickname string `json: "reqnick"`
+	ID       uint   `json:"reqid"`
+	Nickname string `json:"reqnick"`
 }
