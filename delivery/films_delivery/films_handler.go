@@ -282,3 +282,30 @@ func (h *Handler) getOneFilm(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(json))
 
 }
+
+func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
+
+	//конец парсинга данных можно передавать ctx,
+
+	profile, err := h.useCase.GetAllFilms(r.Context())
+	if err != nil {
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json, err := json.Marshal(profile)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
+
+}

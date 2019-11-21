@@ -211,3 +211,30 @@ func (FR FilmRepository) DeleteAvatarFilm(uID uint) error {
 
 	return nil
 }
+
+func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
+	res := []models.ProfileFilm{}
+	resOne := models.ProfileFilm{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year FROM film_profile
+		WHERE is_deleted = $1`,
+		false)
+	if err != nil {
+		return res, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.FilmNotFoundError{"title"}
+		}
+		return []models.ProfileFilm{}, err
+	}
+
+	return res, nil
+}

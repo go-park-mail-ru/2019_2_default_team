@@ -48,6 +48,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apif.ProfileFilmHandler))))
 	r.HandleFunc("/film/{id}", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.ProfileOneFilm))))
+	r.HandleFunc("/allfilms", middleware.RecoverMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.ProfileAllFilms))))
 	r.HandleFunc("/ticket", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apit.ProfileTicketHandler))))
 	r.HandleFunc("/session", middleware.RecoverMiddleware(middleware.CorsMiddleware(

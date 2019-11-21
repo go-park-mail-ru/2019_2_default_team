@@ -40,3 +40,9 @@ func (apif *MyHandlerFilms) ProfileOneFilm(w http.ResponseWriter, r *http.Reques
 
 	h.getOneFilm(w, r)
 }
+
+func (apif *MyHandlerFilms) ProfileAllFilms(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getAllFilms(w, r)
+}

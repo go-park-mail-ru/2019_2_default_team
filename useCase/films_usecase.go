@@ -10,6 +10,7 @@ type FilmsUseCase interface {
 	GetFilm(ctx context.Context, params *models.RequestProfileFilm) (models.ProfileFilm, error)
 	PostFilmUse(ctx context.Context, u *models.RegisterProfileFilm) (models.ProfileFilm, error)
 	PutFilm(ctx context.Context, filmInfo *models.ProfileFilm) error
+	GetAllFilms(ctx context.Context) ([]models.ProfileFilm, error)
 }
 
 type filmUseCase struct {
@@ -57,4 +58,17 @@ func (f filmUseCase) PostFilmUse(ctx context.Context, u *models.RegisterProfileF
 func (f filmUseCase) PutFilm(ctx context.Context, filmInfo *models.ProfileFilm) error {
 	err := f.filmRepo.UpdateFilmByID(filmInfo.FilmID, filmInfo)
 	return err
+}
+
+func (f filmUseCase) GetAllFilms(ctx context.Context) ([]models.ProfileFilm, error) {
+	var err error
+	var profile []models.ProfileFilm
+
+	profile, err = f.filmRepo.GetAllFilms()
+
+	if err != nil {
+		return []models.ProfileFilm{}, err
+	}
+
+	return profile, nil
 }
