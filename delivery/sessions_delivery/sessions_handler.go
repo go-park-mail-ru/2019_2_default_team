@@ -194,7 +194,7 @@ func (h *Handler) deleteSession(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getOfAuthorized(w http.ResponseWriter, r *http.Request) {
 	if r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
 		params := r.Context().Value(middleware.KeyIsAuthenticated).(bool)
-		paramsJSON, err := json.Marshal(models.Authorization{params})
+		paramsJSON, err := json.Marshal(models.Authorization{Authorized: params})
 		if err != nil {
 			logger.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)

@@ -14,5 +14,5 @@ type Sessions struct {
 }
 
 type Authorization struct {
-	authorized bool
+	Authorized bool
 }
