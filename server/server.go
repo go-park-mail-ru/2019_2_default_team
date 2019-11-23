@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	"kino_backend/delivery/chat_support_delivery"
 	"kino_backend/delivery/films_delivery"
 	"kino_backend/delivery/sessions_delivery"
 	"kino_backend/delivery/tickets_delivery"
@@ -30,15 +31,19 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	r := mux.NewRouter()
 	Access := new(middleware.AccessLogger)
 	Access.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
+	chat := useCase.InitChat()
 	fuc := useCase.NewFilmUseCase(repository.NewFilmRepository(database))
 	tuc := useCase.NewTicketUseCase(repository.NewTicketRepository(database))
 	uuc := useCase.NewUserUseCase(repository.NewUserRepository(database))
 	suc := useCase.NewSessionUseCase(repository.NewSessionsRepository(Sesredis.RedisConn))
+	scuc := useCase.NewSupportChatsUseCase(repository.NewSupportChatRepository(database), chat)
+	scuc.Run()
 
 	apif := films_delivery.NewMyHandlerFilms(fuc)
 	apit := tickets_delivery.NewMyHandlerTicket(tuc)
 	apis := sessions_delivery.NewMyHandlerFilms(suc, uuc)
 	apiu := users_delivery.NewMyHandlerUser(uuc, suc)
+	apisc := chat_support_delivery.NewMyHandlerCS(scuc)
 
 	r.HandleFunc("/profile", apiu.ProfileHandler)
 
@@ -56,6 +61,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apis.ProfileSessionsHandler))))
 	r.HandleFunc("/authorized", middleware.RecoverMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apis.ProfileAuth))))
+	r.HandleFunc("/support", middleware.RecoverMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apisc.SupportChat))))
 
 	err = nil
 	server.routing = r

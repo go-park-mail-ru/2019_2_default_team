@@ -68,3 +68,24 @@ INSERT INTO ticket_profile(movie_session_id, seat_id, profile_id, price, is_dele
 VALUES(1, 1, 1, 100, false);
 
 
+CREATE TABLE message (
+    message_id serial PRIMARY KEY,
+    author_id integer references user_profile,
+    to_user integer references user_profile,
+    time timestamp with time zone DEFAULT now() NOT NULL,
+    is_edited boolean DEFAULT FALSE NOT NULL,
+    message text NOT NULL
+);
+
+CREATE table user_to_sup(
+    uts_id serial PRIMARY key,
+    user_id integer references user_profile,
+    sup_id integer references user_profile
+);
+
+create table support(
+    id serial primary key ,
+    user_id integer references user_profile,
+    status integer NOT NULL default 0
+);
+
