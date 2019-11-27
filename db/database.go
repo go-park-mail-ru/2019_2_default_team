@@ -6,7 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // postgres driver
 	"kino_backend/logger"
-
 )
 
 var Db *sqlx.DB
@@ -18,7 +17,6 @@ const (
 	password = "docker"
 	dbname   = "postgres"
 )
-
 
 func InitDB(address, database string) *sqlx.DB {
 	var err error
@@ -47,11 +45,10 @@ func InitDB(address, database string) *sqlx.DB {
 
 	logger.Infof("Successfully connected to %v, database %v", address, database)
 
-	makeMigrations(Db)
+	MakeMigrations(Db)
 
 	return Db
 }
-
 
 func InitDBSQL(address, database string) *sql.DB {
 	var err error
@@ -80,7 +77,7 @@ func InitDBSQL(address, database string) *sql.DB {
 
 	logger.Infof("Successfully connected to %v, database %v", address, database)
 
-	makeMigrations(Db)
+	MakeMigrations(Db)
 
 	return Database
 }

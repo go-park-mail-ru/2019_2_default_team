@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+// protoc --go_out=plugins=grpc:. *.proto
+
+package comments_microservice_client;
+
+message Comment {
+    string Username = 1;
+    string FilmTitle = 2;
+    string Text = 3;
+    uint64 ID = 4;
+
+}
+
+message CommentsResponse {
+    repeated Comment comments= 1;
+}
+
+message CommentID {
+    string Film = 1;
+    string User = 2;
+    uint64 CID = 3;
+}
+
+message Nothing {
+}
+
+// grpc-сервис проверки авторизации
+service CommentsManager {
+    rpc CreateComment (Comment) returns (Nothing) {}
+    rpc GetComment (CommentID) returns (Comment) {}
+    rpc GetCommentsByFilmID (CommentID) returns (CommentsResponse) {}
+    rpc GetCommentsByUserID (CommentID) returns (CommentsResponse) {}
+    rpc DeleteComment (CommentID) returns (Nothing) {}
+}

@@ -89,3 +89,11 @@ create table support(
     status integer NOT NULL default 0
 );
 
+create table comments(
+    id serial primary key ,
+    film_title text,
+    username text,
+    comment text
+);
+
+

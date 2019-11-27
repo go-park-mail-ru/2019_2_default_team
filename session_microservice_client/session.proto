@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+// protoc --go_out=plugins=grpc:. *.proto
+
+package session_microservice_client;
+
+message Success {
+    bool Success = 1;
+}
+
+message Session {
+    uint64 UID = 1;
+    string SID = 2;
+}
+
+message SessionID {
+    string SID = 1;
+}
+
+message Nothing {
+}
+
+// grpc-сервис проверки авторизации
+service SessionManager {
+    rpc Create (Session) returns (Success) {}
+    rpc Get (SessionID) returns (Session) {}
+    rpc Delete (SessionID) returns (Nothing) {}
+}

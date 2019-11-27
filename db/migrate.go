@@ -1,13 +1,12 @@
 package db
 
-
 import (
 	"github.com/jmoiron/sqlx"
 	migrate "github.com/rubenv/sql-migrate"
 	"kino_backend/logger"
 )
 
-func makeMigrations(db *sqlx.DB) {
+func MakeMigrations(db *sqlx.DB) {
 	migrations := &migrate.FileMigrationSource{
 		Dir: "migrations",
 	}

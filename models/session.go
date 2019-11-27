@@ -16,3 +16,7 @@ type Sessions struct {
 type Authorization struct {
 	Authorized bool
 }
+
+type Success struct {
+	Success bool `json:"Success"`
+}

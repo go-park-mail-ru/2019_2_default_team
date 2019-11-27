@@ -188,7 +188,7 @@ func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json, err := json.Marshal(profile)
+	json, err := profile.MarshalJSON()
 	if err != nil {
 		log.Println(err, "in profileMethod")
 		w.WriteHeader(http.StatusInternalServerError)

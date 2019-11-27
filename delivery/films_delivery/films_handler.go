@@ -106,13 +106,14 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	profile = SanitizeMe(profile)
-	json, err := json.Marshal(profile)
-	if err != nil {
-		log.Println(err, "in profileMethod")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprintln(w, string(json))
+	profileJSON, err := profile.MarshalJSON()
+	//json, err := json.Marshal(profile)
+	//if err != nil {
+	//	log.Println(err, "in profileMethod")
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	return
+	//}
+	fmt.Fprintln(w, string(profileJSON))
 
 }
 
@@ -273,7 +274,8 @@ func (h *Handler) getOneFilm(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	profile = SanitizeMe(profile)
-	json, err := json.Marshal(profile)
+
+	json, err := profile.MarshalJSON()
 	if err != nil {
 		log.Println(err, "in profileMethod")
 		w.WriteHeader(http.StatusInternalServerError)

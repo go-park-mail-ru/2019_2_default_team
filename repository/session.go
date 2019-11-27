@@ -48,7 +48,7 @@ func ConnectSessionDB(address, database string) *sessionManager {
 	//	"password=%s dbname=%s",
 	//	host, port, user, password, dbname)
 
-	//Sm.RedisConn, err = redis.DialURL("redis://" + address + "/" + database)
+	//Sm.PostgresConn, err = redis.DialURL("redis://" + address + "/" + database)
 	//fmt.Println(redisInfo)
 	Sm.RedisConn, err = redis.DialURL("redis://redis:docker@localhost:6379/0?")
 	if err != nil {

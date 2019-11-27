@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"kino_backend/models"
@@ -22,7 +21,6 @@ func NewFilmRepository(db *sqlx.DB) FilmRepository {
 
 func (FR FilmRepository) CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
-	fmt.Println(u)
 	qres := FR.database.QueryRowx(`
 		INSERT INTO film_profile (title, description, director, actors, admin_id, genre, length, production, year)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING film_id, title, director`,
