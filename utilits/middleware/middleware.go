@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"kino_backend/CSRF"
 	"kino_backend/db"
@@ -89,16 +88,14 @@ func AccessLogMiddleware(next http.Handler) http.HandlerFunc {
 	})
 }
 
-func SessionMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func SessionMiddleware(next http.HandlerFunc, sm *session_microservice_client.SessionManager) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authConnStr := flag.String("auth_connstr", "localhost:8081", "auth-service connection string")
-		flag.Parse()
+
 		ctx := r.Context()
 		c, err := r.Cookie("session_id")
-		if err == nil {
-			s := session_microservice_client.ConnectSessionManager(*authConnStr)
-			//s := repository.NewSessionsRepository(*repository.Rd)
-			uid, err := s.Get(c.Value)
+
+		if err == nil && c != nil {
+			uid, err := sm.Get(c.Value)
 			switch err {
 			case nil:
 				ctx = context.WithValue(ctx, KeyIsAuthenticated, true)

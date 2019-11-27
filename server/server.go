@@ -2,6 +2,7 @@ package server
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/prometheus/client_golang/prometheus"
@@ -46,6 +47,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	chat := useCase.InitChat()
 	sesmic := session_microservice_client.ConnectSessionManager(*authConnStr)
 	commic := comments_microservice_client.ConnectCommentsManager(*commentConnStr)
+	uid, err := sesmic.Get("wede")
+	fmt.Println("here   ", uid)
 
 	fuc := useCase.NewFilmUseCase(repository.NewFilmRepository(database))
 	tuc := useCase.NewTicketUseCase(repository.NewTicketRepository(database))
@@ -68,31 +71,31 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	r.HandleFunc("/profile", apiu.ProfileHandler)
 
 	r.HandleFunc("/profile", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apiu.ProfileHandler)))))
+		middleware.SessionMiddleware(apiu.ProfileHandler, sesmic)))))
 	r.HandleFunc("/films", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apif.ProfileFilmHandler)))))
+		middleware.SessionMiddleware(apif.ProfileFilmHandler, sesmic)))))
 	r.HandleFunc("/film/{id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apif.ProfileOneFilm)))))
+		middleware.SessionMiddleware(apif.ProfileOneFilm, sesmic)))))
 	r.HandleFunc("/allfilms", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apif.ProfileAllFilms)))))
+		middleware.SessionMiddleware(apif.ProfileAllFilms, sesmic)))))
 	r.HandleFunc("/ticket", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apit.ProfileTicketHandler)))))
+		middleware.SessionMiddleware(apit.ProfileTicketHandler, sesmic)))))
 	r.HandleFunc("/session", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apis.ProfileSessionsHandler)))))
+		middleware.SessionMiddleware(apis.ProfileSessionsHandler, sesmic)))))
 	r.HandleFunc("/authorized", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apis.ProfileAuth)))))
+		middleware.SessionMiddleware(apis.ProfileAuth, sesmic)))))
 	r.HandleFunc("/support", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apisc.SupportChat)))))
+		middleware.SessionMiddleware(apisc.SupportChat, sesmic)))))
 	r.HandleFunc("/sessionservice", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apism.ProfileSessionsMicroserviceHandler)))))
+		middleware.SessionMiddleware(apism.ProfileSessionsMicroserviceHandler, sesmic)))))
 	r.HandleFunc("/commentservice", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apicm.CommentsHandler)))))
+		middleware.SessionMiddleware(apicm.CommentsHandler, sesmic)))))
 	r.HandleFunc("/commentByID/{id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apicm.CommentsByIDHandler)))))
+		middleware.SessionMiddleware(apicm.CommentsByIDHandler, sesmic)))))
 	r.HandleFunc("/commentByFilm/{film}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apicm.CommentsByFilmHandler)))))
+		middleware.SessionMiddleware(apicm.CommentsByFilmHandler, sesmic)))))
 	r.HandleFunc("/commentByUsername/{username}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
-		middleware.SessionMiddleware(apicm.CommentsByUsernameHandler)))))
+		middleware.SessionMiddleware(apicm.CommentsByUsernameHandler, sesmic)))))
 
 	err = nil
 	server.routing = r

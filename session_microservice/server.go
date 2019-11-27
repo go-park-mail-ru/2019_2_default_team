@@ -23,6 +23,12 @@ type SessionRepository struct {
 	database redis.Conn
 }
 
+func NewSessionManager(db redis.Conn) SessionManager {
+	return SessionManager{
+		RedisConn: db,
+	}
+}
+
 func NewSessionsRepository(db redis.Conn) SessionRepository {
 	return SessionRepository{
 		database: db,
