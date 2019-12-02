@@ -69,10 +69,10 @@ func (h *Handler) LoginUser(ctx context.Context, w http.ResponseWriter, userID u
 	}
 
 	cookie := http.Cookie{
-		Name:     "session_id",
-		Value:    sessionID,
-		Expires:  time.Now().Add(30 * 24 * time.Hour),
-		Secure:   true,
+		Name:    "session_id",
+		Value:   sessionID,
+		Expires: time.Now().Add(10 * time.Hour),
+		//Secure:   true,
 		HttpOnly: true,
 	}
 	tokenExpiration := time.Now().Add(24 * time.Hour)

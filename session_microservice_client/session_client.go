@@ -52,7 +52,6 @@ func (sm *SessionManager) Get(sID string) (uint, error) {
 	if sm.grpcConn == nil {
 		return 0, ErrConnRefused
 	}
-
 	s, err := sm.smc.Get(
 		context.Background(),
 		&SessionID{SID: sID},
