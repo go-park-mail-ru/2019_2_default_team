@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"kino_backend/CSRF"
+
+	//"kino_backend/CSRF"
 	"kino_backend/db"
 	"kino_backend/logger"
 	"kino_backend/session_microservice_client"
 	"log"
 	"net/http"
 	"runtime/debug"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -44,15 +44,27 @@ type CorsData struct {
 func CorsMiddleware(h http.Handler) http.Handler {
 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Request was accepted")
-		val, ok := req.Header["Origin"]
-		if ok {
-			res.Header().Set("Access-Control-Allow-Origin", val[0])
-			res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
-		}
+		//val, ok := req.Header["Origin"]
+		//if ok {
+		//	res.Header().Set("Access-Control-Allow-Origin", val[0])
+		//	res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
+		//}
+		//
+		//if req.Method == "OPTIONS" {
+		//	res.Header().Set("Access-Control-Allow-Methods", strings.Join(corsData.AllowMethods, ", "))
+		//	res.Header().Set("Access-Control-Allow-Headers", strings.Join(corsData.AllowHeaders, ", "))
+		//	res.Header().Set("Access-Control-Allow-Origin", "")
+		//	return
+		//}
 
-		if req.Method == "OPTIONS" {
-			res.Header().Set("Access-Control-Allow-Methods", strings.Join(corsData.AllowMethods, ", "))
-			res.Header().Set("Access-Control-Allow-Headers", strings.Join(corsData.AllowHeaders, ", "))
+		res.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		//res.Header().Set("Access-Control-Allow-Origin", "https://20192defaultteam-3oo39phli.now.sh")
+		res.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		res.Header().Set("Access-Control-Allow-Credentials", "true")
+		res.Header().Set("Access-Control-Allow-Headers",
+			"Content-Type, User-Agent, Cache-Control, Accept, X-Requested-With, If-Modified-Since, Origin")
+
+		if req.Method == http.MethodOptions {
 			return
 		}
 

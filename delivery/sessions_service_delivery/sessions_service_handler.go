@@ -69,10 +69,10 @@ func (h *Handler) LoginUser(ctx context.Context, w http.ResponseWriter, userID u
 	}
 
 	cookie := http.Cookie{
-		Name:    "session_id",
-		Value:   sessionID,
-		Expires: time.Now().Add(10 * time.Hour),
-		//Secure:   true,
+		Name:     "session_id",
+		Value:    sessionID,
+		Expires:  time.Now().Add(10 * time.Hour),
+		Secure:   false,
 		HttpOnly: true,
 	}
 	tokenExpiration := time.Now().Add(24 * time.Hour)
@@ -185,15 +185,18 @@ func (h *Handler) deleteSession(w http.ResponseWriter, r *http.Request) {
 		// user has already logged out
 		return
 	}
+	fmt.Println("1")
 	err := h.manager.Delete(r.Context().Value(middleware.KeySessionID).(string))
 	if err != nil { // but we continue
 		logger.Error(err)
 	}
+	fmt.Println("2")
+	fmt.Println("cookie is:")
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Expires:  time.Now().AddDate(0, 0, -1),
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: true,
 	})
 }

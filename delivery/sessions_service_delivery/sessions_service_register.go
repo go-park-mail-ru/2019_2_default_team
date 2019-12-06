@@ -1,6 +1,7 @@
 package sessions_service_delivery
 
 import (
+	"fmt"
 	"kino_backend/session_microservice_client"
 	"kino_backend/useCase"
 	"net/http"
@@ -30,6 +31,7 @@ func (apis *MyHandlerSessionsMicroservice) ProfileSessionsMicroserviceHandler(w 
 	case http.MethodPost:
 		h.postLoginHandler(w, r)
 	case http.MethodDelete:
+		fmt.Println("DELETE")
 		h.deleteSession(w, r)
 	case http.MethodOptions:
 		return

@@ -2,7 +2,6 @@ package server
 
 import (
 	"flag"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/prometheus/client_golang/prometheus"
@@ -47,8 +46,6 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	chat := useCase.InitChat()
 	sesmic := session_microservice_client.ConnectSessionManager(*authConnStr)
 	commic := comments_microservice_client.ConnectCommentsManager(*commentConnStr)
-	uid, err := sesmic.Get("wede")
-	fmt.Println("here   ", uid)
 
 	fuc := useCase.NewFilmUseCase(repository.NewFilmRepository(database))
 	tuc := useCase.NewTicketUseCase(repository.NewTicketRepository(database))
