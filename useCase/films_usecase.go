@@ -11,6 +11,9 @@ type FilmsUseCase interface {
 	PostFilmUse(ctx context.Context, u *models.RegisterProfileFilm) (models.ProfileFilm, error)
 	PutFilm(ctx context.Context, filmInfo *models.ProfileFilm) error
 	GetAllFilms(ctx context.Context) ([]models.ProfileFilm, error)
+	CreateNewMovieSession(ctx context.Context, u *models.RegisterMovieSession, seatsNumber int) (models.MovieSession, error)
+	GetMovieSessionsForToday(ctx context.Context, movie_id uint) ([]models.RequestFilmTimes, error)
+	GetSeatsByMSID(ctx context.Context, movie_session_id uint) ([]models.Seat, error)
 }
 
 type filmUseCase struct {
@@ -21,6 +24,36 @@ func NewFilmUseCase(filmRepo repository.FilmRepository) *filmUseCase {
 	return &filmUseCase{
 		filmRepo: filmRepo,
 	}
+}
+
+func (f filmUseCase) GetMovieSessionsForToday(ctx context.Context, movie_id uint) ([]models.RequestFilmTimes, error) {
+	newTimes, err := f.filmRepo.GetMovieSessionsForToday(movie_id)
+
+	if err != nil {
+		return []models.RequestFilmTimes{}, err
+	}
+
+	return newTimes, err
+}
+
+func (f filmUseCase) GetSeatsByMSID(ctx context.Context, movie_session_id uint) ([]models.Seat, error) {
+	newSeats, err := f.filmRepo.GetSeatsByMSID(movie_session_id)
+
+	if err != nil {
+		return []models.Seat{}, err
+	}
+
+	return newSeats, err
+}
+
+func (f filmUseCase) CreateNewMovieSession(ctx context.Context, u *models.RegisterMovieSession, seatsNumber int) (models.MovieSession, error) {
+	newMS, err := f.filmRepo.CreateNewMovieSession(u, seatsNumber)
+
+	if err != nil {
+		return models.MovieSession{}, err
+	}
+
+	return newMS, err
 }
 
 func (f filmUseCase) GetFilm(ctx context.Context, params *models.RequestProfileFilm) (models.ProfileFilm, error) {

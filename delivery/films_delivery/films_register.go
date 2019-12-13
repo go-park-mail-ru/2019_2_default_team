@@ -46,3 +46,21 @@ func (apif *MyHandlerFilms) ProfileAllFilms(w http.ResponseWriter, r *http.Reque
 
 	h.getAllFilms(w, r)
 }
+
+func (apif *MyHandlerFilms) MovieSession(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.postCreateMovieSession(w, r)
+}
+
+func (apif *MyHandlerFilms) GetTimesMovieSessionsForToday(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getTimesForToday(w, r)
+}
+
+func (apif *MyHandlerFilms) GetSeatsByMSID(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getSeatsByMSID(w, r)
+}

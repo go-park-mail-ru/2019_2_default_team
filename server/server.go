@@ -93,6 +93,12 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apicm.CommentsByFilmHandler, sesmic)))))
 	r.HandleFunc("/commentByUsername/{username}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apicm.CommentsByUsernameHandler, sesmic)))))
+	r.HandleFunc("/createmoviesession", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.MovieSession, sesmic)))))
+	r.HandleFunc("/get_movie_sessions_times_for_today", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.GetTimesMovieSessionsForToday, sesmic)))))
+	r.HandleFunc("/get_seats", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.GetSeatsByMSID, sesmic)))))
 
 	err = nil
 	server.routing = r

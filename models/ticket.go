@@ -17,8 +17,10 @@ type RequestTicket struct {
 }
 
 type Seat struct {
-	SeatID     uint   `json:"seat_id" db:"seat_id"`
-	HallName   string `json:"hall_name" db:"hall_name"`
-	Row        int    `json:"row" db:"row"`
-	SeatNumber int    `json:"seat_number" db:"seat_number"`
+	SeatID         uint   `json:"seat_id" db:"seat_id"`
+	HallName       string `json:"hall_name, omitempty" db:"hall_name"`
+	MovieSessionID int    `json:"movie_session_id" db:"movie_session_id"`
+	IsTaken        bool   `json:"is_taken" db:"is_taken"`
+	Row            int    `json:"row" db:"row"`
+	SeatNumber     int    `json:"seat_number" db:"seat_number"`
 }

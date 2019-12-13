@@ -134,6 +134,10 @@ func easyjsonB39c1f48DecodeKinoBackendModels1(in *jlexer.Lexer, out *Seat) {
 			out.SeatID = uint(in.Uint())
 		case "hall_name":
 			out.HallName = string(in.String())
+		case "movie_session_id":
+			out.MovieSessionID = int(in.Int())
+		case "is_taken":
+			out.IsTaken = bool(in.Bool())
 		case "row":
 			out.Row = int(in.Int())
 		case "seat_number":
@@ -161,6 +165,16 @@ func easyjsonB39c1f48EncodeKinoBackendModels1(out *jwriter.Writer, in Seat) {
 		const prefix string = ",\"hall_name\":"
 		out.RawString(prefix)
 		out.String(string(in.HallName))
+	}
+	{
+		const prefix string = ",\"movie_session_id\":"
+		out.RawString(prefix)
+		out.Int(int(in.MovieSessionID))
+	}
+	{
+		const prefix string = ",\"is_taken\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsTaken))
 	}
 	{
 		const prefix string = ",\"row\":"

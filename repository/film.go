@@ -19,6 +19,46 @@ func NewFilmRepository(db *sqlx.DB) FilmRepository {
 	}
 }
 
+func (FR FilmRepository) CreateNewMovieSession(u *models.RegisterMovieSession, seatsNumber int) (models.MovieSession, error) {
+	res := models.MovieSession{}
+	qres := FR.database.QueryRowx(`
+		INSERT INTO movie_session (hall_name, movie_id, start_datetime, type)
+		VALUES ($1, $2, $3, $4) RETURNING ms_id, hall_name, movie_id, start_datetime, type`,
+		u.HallName, u.MovieID, u.Date, u.Type)
+	if err := qres.Err(); err != nil {
+		pqErr := err.(*pq.Error)
+		switch pqErr.Code {
+		case "23502":
+			return res, errors.ErrNotNullConstraintViolation
+		case "23505":
+			return res, errors.ErrUniqueConstraintViolation
+		}
+	}
+
+	err := qres.StructScan(&res)
+	if err != nil {
+		return res, err
+	}
+
+	for i := 0; i < seatsNumber; i++ {
+		qres := FR.database.QueryRowx(`
+		INSERT INTO seat (movie_session_id, row, seat_number)
+		VALUES ($1, $2, $3)`,
+			res.MsID, (i+1)/4+1, i+1)
+		if err := qres.Err(); err != nil {
+			pqErr := err.(*pq.Error)
+			switch pqErr.Code {
+			case "23502":
+				return res, errors.ErrNotNullConstraintViolation
+			case "23505":
+				return res, errors.ErrUniqueConstraintViolation
+			}
+		}
+	}
+
+	return res, nil
+}
+
 func (FR FilmRepository) CreateNewFilm(u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
@@ -92,6 +132,60 @@ func (FR FilmRepository) UpdateFilmByID(id uint, u *models.ProfileFilm) error {
 	}
 
 	return nil
+}
+
+func (FR FilmRepository) GetMovieSessionsForToday(movie_id uint) ([]models.RequestFilmTimes, error) {
+	res := []models.RequestFilmTimes{}
+	resOne := models.RequestFilmTimes{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT start_datetime, ms_id, hall_name FROM movie_session
+		WHERE movie_id = $1 AND start_datetime > now() AND start_datetime < now()::date + interval '24h'`,
+		movie_id)
+	if err != nil {
+		return res, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.FilmNotFoundError{"title"}
+		}
+		return []models.RequestFilmTimes{}, err
+	}
+
+	return res, nil
+}
+
+func (FR FilmRepository) GetSeatsByMSID(movie_session_id uint) ([]models.Seat, error) {
+	res := []models.Seat{}
+	resOne := models.Seat{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT seat_id, movie_session_id, is_taken, row, seat_number FROM seat
+		WHERE movie_session_id = $1`,
+		movie_session_id)
+	if err != nil {
+		return res, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.MSNotFoundError{"movie_session_id"}
+		}
+		return []models.Seat{}, err
+	}
+
+	return res, nil
 }
 
 func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error) {

@@ -28,14 +28,16 @@ create table film_profile (
 --  Место
 create table seat (
     seat_id                  bigserial   primary key,
-    hall_name           text        not null,
+    movie_session_id    int         not null,
+--     hall_name           text        not null,
+    is_taken            boolean     not null default(false),
     row                 int         not null,
     seat_number         int         not null,
     is_deleted          boolean     not null default(false)
 );
 
 create table movie_session (
-    ms_id                  bigserial   primary key,
+    ms_id               bigserial   primary key,
     hall_name           text        not null,
     movie_id            bigint      not null references film_profile (film_id),
     start_datetime      timestamp   not null,

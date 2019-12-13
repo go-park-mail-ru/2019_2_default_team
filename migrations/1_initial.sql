@@ -1,5 +1,7 @@
 -- +migrate Up
 
+
+
 -- DROP TABLE user_profile;
 CREATE EXTENSION IF NOT EXISTS citext;
 

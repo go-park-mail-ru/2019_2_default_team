@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"kino_backend/models"
@@ -24,6 +25,9 @@ func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Tic
 		INSERT INTO ticket_profile (profile_id, movie_session_id, seat_id, price)
 		VALUES ($1, $2, $3, $4) RETURNING ticket_id, movie_session_id`,
 		u.UserID, u.FilmID, u.SeatID, u.Price)
+
+	fmt.Println(u.SeatID)
+
 	if err := qres.Err(); err != nil {
 		pqErr := err.(*pq.Error)
 		switch pqErr.Code {
@@ -36,6 +40,20 @@ func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Tic
 	err := qres.StructScan(&res)
 	if err != nil {
 		return res, err
+	}
+
+	qt := TR.database.QueryRowx(`
+		UPDATE seat SET is_taken = true WHERE seat_id = $1`,
+		u.SeatID)
+
+	if err := qt.Err(); err != nil {
+		pqErr := err.(*pq.Error)
+		switch pqErr.Code {
+		case "23502":
+			return res, errors.ErrNotNullConstraintViolation
+		case "23505":
+			return res, errors.ErrUniqueConstraintViolation
+		}
 	}
 
 	return res, nil

@@ -15,4 +15,7 @@ type FilmsRepository interface {
 	UploadAvatarFilm(uID uint, path string) error
 	DeleteAvatarFilm(uID uint) error
 	GetAllFilms() ([]models.ProfileFilm, error)
+	CreateNewMovieSession(u *models.RegisterMovieSession, seatsNumber int) (models.MovieSession, error)
+	GetMovieSessionsForToday(movie_id int) ([]models.RequestFilmTimes, error)
+	GetSeatsByMSID(movie_session_id uint) ([]models.Seat, error)
 }
