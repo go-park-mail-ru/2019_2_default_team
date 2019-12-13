@@ -191,7 +191,7 @@ func (FR FilmRepository) GetSeatsByMSID(movie_session_id uint) ([]models.Seat, e
 func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
-		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile
 		WHERE film_id = $1`,
 		id)
 	if err := qres.Err(); err != nil {
@@ -211,7 +211,7 @@ func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error)
 func (FR FilmRepository) GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
-		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile
 		WHERE title = $1`,
 		title)
 	if err := qres.Err(); err != nil {
@@ -309,7 +309,7 @@ func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
 	resOne := models.ProfileFilm{}
 
 	qres, err := FR.database.Queryx(`
-		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile
 		WHERE is_deleted = $1`,
 		false)
 	if err != nil {
@@ -329,4 +329,67 @@ func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
 	}
 
 	return res, nil
+}
+
+func (FR FilmRepository) VoteForFilm(u *models.RegisterVote) (models.Vote, error) {
+	res := models.Vote{}
+	qres := FR.database.QueryRowx(`
+		INSERT INTO rating (user_id, film_id)
+		VALUES ($1, $2) RETURNING user_id, film_id, vote_id`,
+		u.UserID, u.MovieID)
+	if err := qres.Err(); err != nil {
+		pqErr := err.(*pq.Error)
+		switch pqErr.Code {
+		case "23502":
+			return res, errors.ErrNotNullConstraintViolation
+		case "23505":
+			return res, errors.ErrUniqueConstraintViolation
+		}
+	}
+	err := qres.StructScan(&res)
+	if err != nil {
+		return res, err
+	}
+
+	_, err = FR.database.Queryx(`
+		UPDATE film_profile SET rating = rating + 1 WHERE film_id = $1 AND
+		is_deleted = $2`,
+		u.MovieID, false)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
+func (FR FilmRepository) IsVoted(u *models.RegisterVote) (bool, error) {
+	res := []models.Vote{}
+	resOne := models.Vote{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT vote_id, user_id, film_id FROM rating
+		WHERE film_id = $1 AND user_id = $2`,
+		u.MovieID, u.UserID)
+	if err != nil {
+		return false, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+
+	if len(res) != 0 {
+		return true, nil
+	}
+
+	return false, nil
+
 }

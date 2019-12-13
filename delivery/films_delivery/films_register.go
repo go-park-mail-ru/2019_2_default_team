@@ -64,3 +64,9 @@ func (apif *MyHandlerFilms) GetSeatsByMSID(w http.ResponseWriter, r *http.Reques
 
 	h.getSeatsByMSID(w, r)
 }
+
+func (apif *MyHandlerFilms) PostVote(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.postVote(w, r)
+}

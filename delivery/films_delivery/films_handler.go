@@ -86,6 +86,21 @@ func readMovieSession(r *http.Request, p *models.MovieSession) error {
 	return nil
 }
 
+func readVote(r *http.Request, p *models.RegisterVote) error {
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, p)
+	if err != nil {
+		return models.ParseJSONError{err}
+	}
+
+	return nil
+}
+
 func SanitizeMe(film models.ProfileFilm) models.ProfileFilm {
 	sanitizer := bluemonday.UGCPolicy()
 	film.Description = sanitizer.Sanitize(film.Description)
@@ -465,4 +480,91 @@ func (h *Handler) getSeatsByMSID(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintln(w, string(json))
 
+}
+
+func (h *Handler) getIsVoted(w http.ResponseWriter, r *http.Request) {
+
+	u := &models.RegisterVote{}
+	err := readVote(r, u)
+	if err != nil {
+		switch err.(type) {
+		case models.ParseJSONError:
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		return
+	}
+
+	result, err := h.useCase.CheckIsVoted(r.Context(), u)
+	if err != nil {
+		fmt.Println("error")
+		switch err.(type) {
+		case errors.MSNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json, err := json.Marshal(result)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
+
+}
+
+func (h *Handler) postVote(w http.ResponseWriter, r *http.Request) {
+
+	u := &models.RegisterVote{}
+	err := readVote(r, u)
+	if err != nil {
+		switch err.(type) {
+		case models.ParseJSONError:
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		return
+	}
+
+	result, err := h.useCase.CheckIsVoted(r.Context(), u)
+	if err != nil {
+		switch err.(type) {
+		case errors.MSNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if !result {
+		newVote, err := h.useCase.Vote(r.Context(), u)
+
+		if err != nil {
+			if err == errors.ErrUniqueConstraintViolation ||
+				err == errors.ErrNotNullConstraintViolation {
+				w.WriteHeader(http.StatusUnprocessableEntity)
+				return
+			}
+			logger.Error(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Print("User id , was registered for film ", newVote.UserID, newVote.MovieID)
+
+		w.WriteHeader(http.StatusOK)
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

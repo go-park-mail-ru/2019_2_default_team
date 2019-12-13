@@ -22,7 +22,14 @@ create table film_profile (
     year                int         not null,
     actors              text        not null,
     description         text        not null,
+    rating              int         not null default(0),
     is_deleted          boolean     not null default(false)
+);
+
+create table rating (
+    vote_id             bigserial  primary key,
+    user_id             int        not null,
+    film_id             int        not null
 );
 
 --  Место

@@ -12,6 +12,7 @@ type ProfileFilm struct {
 	AdminID     uint    `json:"admin_id" db:"admin_id"`
 	Genre       string  `json:"genre" db:"genre"`
 	Length      int     `json:"length" db:"length"`
+	Rating      int     `json:"rating" db:"rating"`
 	Production  string  `json:"production" db:"production"`
 	Year        int     `json:"year" db:"year"`
 }
@@ -73,4 +74,15 @@ type RequestFilmTimes struct {
 	MovieSessionID uint      `json:"ms_id" db:"ms_id"`
 	Date           time.Time `json:"start_datetime" db:"start_datetime"`
 	Hall           string    `json:"hall_name" db:"hall_name"`
+}
+
+type Vote struct {
+	VoteID  uint `json:"vote_id" db:"vote_id"`
+	MovieID uint `json:"film_id" db:"film_id"`
+	UserID  uint `json:"user_id" db:"user_id"`
+}
+
+type RegisterVote struct {
+	MovieID uint `json:"film_id" db:"film_id"`
+	UserID  uint `json:"user_id" db:"user_id"`
 }
