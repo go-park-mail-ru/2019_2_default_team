@@ -408,8 +408,14 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) getTimesForToday(w http.ResponseWriter, r *http.Request) {
 
+	vars := mux.Vars(r)
+	movie_id := vars["movie_id"]
+
 	u := &models.MovieSession{}
-	err := readMovieSession(r, u)
+	var err error
+	var intValue int
+	intValue, err = strconv.Atoi(movie_id)
+
 	if err != nil {
 		switch err.(type) {
 		case models.ParseJSONError:
@@ -419,6 +425,20 @@ func (h *Handler) getTimesForToday(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	u.MovieID = uint(intValue)
+
+	//u := &models.MovieSession{}
+	//err = readMovieSession(r, u)
+	//if err != nil {
+	//	switch err.(type) {
+	//	case models.ParseJSONError:
+	//		w.WriteHeader(http.StatusBadRequest)
+	//	default:
+	//		w.WriteHeader(http.StatusInternalServerError)
+	//	}
+	//	return
+	//}
 
 	times, err := h.useCase.GetMovieSessionsForToday(r.Context(), u.MovieID)
 	if err != nil {
