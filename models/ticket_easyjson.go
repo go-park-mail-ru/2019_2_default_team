@@ -40,8 +40,8 @@ func easyjsonB39c1f48DecodeKinoBackendModels(in *jlexer.Lexer, out *Ticket) {
 			out.TicketID = uint(in.Uint())
 		case "user_id":
 			out.UserID = uint(in.Uint())
-		case "film_id":
-			out.FilmID = uint(in.Uint())
+		case "ms_id":
+			out.MSID = uint(in.Uint())
 		case "seat_id":
 			out.SeatID = uint(in.Uint())
 		case "price":
@@ -71,9 +71,9 @@ func easyjsonB39c1f48EncodeKinoBackendModels(out *jwriter.Writer, in Ticket) {
 		out.Uint(uint(in.UserID))
 	}
 	{
-		const prefix string = ",\"film_id\":"
+		const prefix string = ",\"ms_id\":"
 		out.RawString(prefix)
-		out.Uint(uint(in.FilmID))
+		out.Uint(uint(in.MSID))
 	}
 	{
 		const prefix string = ",\"seat_id\":"
@@ -299,8 +299,8 @@ func easyjsonB39c1f48DecodeKinoBackendModels3(in *jlexer.Lexer, out *RegisterTic
 		switch key {
 		case "user_id":
 			out.UserID = uint(in.Uint())
-		case "film_id":
-			out.FilmID = uint(in.Uint())
+		case "ms_id":
+			out.MSID = uint(in.Uint())
 		case "seat_id":
 			out.SeatID = uint(in.Uint())
 		case "price":
@@ -325,9 +325,9 @@ func easyjsonB39c1f48EncodeKinoBackendModels3(out *jwriter.Writer, in RegisterTi
 		out.Uint(uint(in.UserID))
 	}
 	{
-		const prefix string = ",\"film_id\":"
+		const prefix string = ",\"ms_id\":"
 		out.RawString(prefix)
-		out.Uint(uint(in.FilmID))
+		out.Uint(uint(in.MSID))
 	}
 	{
 		const prefix string = ",\"seat_id\":"

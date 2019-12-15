@@ -8,6 +8,7 @@ import (
 	"kino_backend/logger"
 	"kino_backend/models"
 	"kino_backend/useCase"
+	"kino_backend/utilits/middleware"
 	"log"
 	"net/http"
 )
@@ -119,6 +120,12 @@ func (h *Handler) getProfileTicket(w http.ResponseWriter, r *http.Request) {
 // @Router /profile [POST]
 
 func (h *Handler) postBuyTicket(w http.ResponseWriter, r *http.Request) {
+	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	id_user := r.Context().Value(middleware.KeyUserID).(uint)
 	u := &models.RegisterTicket{}
 	err := readRegisterProfileTicket(r, u)
 	if err != nil {
@@ -139,6 +146,26 @@ func (h *Handler) postBuyTicket(w http.ResponseWriter, r *http.Request) {
 	//}
 
 	//logic
+	u.UserID = id_user
+
+	result, err := h.useCase.CheckTicket(r.Context(), u)
+
+	if err != nil {
+		if err == db.ErrUniqueConstraintViolation ||
+			err == db.ErrNotNullConstraintViolation {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		}
+		logger.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if result {
+		w.WriteHeader(http.StatusAlreadyReported)
+		fmt.Print("Ticket was bought")
+		return
+	}
 
 	newT, err := h.useCase.PostTicket(r.Context(), u)
 	//newT, err := db.CreateNewTicket(u)

@@ -4,10 +4,9 @@ import (
 	"kino_backend/models"
 )
 
-type TicketsRepository interface{
+type TicketsRepository interface {
 	CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error)
 	GetTicketProfileByID(id uint) (models.Ticket, error)
 	CheckExistenceOfTicket(n int) (bool, error)
+	CheckTicket(u *models.RegisterTicket) (bool, error)
 }
-
-

@@ -19,12 +19,43 @@ func NewTicketRepository(db *sqlx.DB) TicketRepository {
 	}
 }
 
+func (TR TicketRepository) CheckTicket(u *models.RegisterTicket) (bool, error) {
+	res := []models.Ticket{}
+	resOne := models.Ticket{}
+
+	qres, err := TR.database.Queryx(`
+		SELECT ticket_id, movie_session_id, seat_id, profile_id FROM ticket_profile
+		WHERE movie_session_id = $1 AND seat_id = $2`,
+		u.MSID, u.SeatID)
+	if err != nil {
+		return false, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+
+	if len(res) != 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
 	res := models.Ticket{}
 	qres := TR.database.QueryRowx(`
 		INSERT INTO ticket_profile (profile_id, movie_session_id, seat_id, price)
 		VALUES ($1, $2, $3, $4) RETURNING ticket_id, movie_session_id`,
-		u.UserID, u.FilmID, u.SeatID, u.Price)
+		u.UserID, u.MSID, u.SeatID, u.Price)
 
 	fmt.Println(u.SeatID)
 

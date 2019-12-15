@@ -2,7 +2,7 @@ package models
 
 type RegisterTicket struct {
 	UserID uint `json:"user_id" db:"profile_id"`
-	FilmID uint `json:"film_id" db:"movie_session_id"`
+	MSID   uint `json:"ms_id" db:"movie_session_id"`
 	SeatID uint `json:"seat_id" db:"seat_id"`
 	Price  uint `json:"price" db:"price"`
 }
