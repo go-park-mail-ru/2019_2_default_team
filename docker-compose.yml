@@ -114,7 +114,7 @@ services:
 
   main:
     build: .
-#    restart: always
+    restart: always
     depends_on:
       - session_service
       - comments_service
@@ -128,7 +128,7 @@ services:
     build:
       context: .
       dockerfile: ./session_microservice/Dockerfile.session
-#    restart: always
+    restart: always
     depends_on:
       - redis_db
     ports:
@@ -140,7 +140,7 @@ services:
     build:
       context: .
       dockerfile: ./comments_microservice/Dockerfile.comments
-    #    restart: always
+    restart: always
     depends_on:
       - postgres
     ports:
