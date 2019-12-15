@@ -466,8 +466,14 @@ func (h *Handler) getTimesForToday(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) getSeatsByMSID(w http.ResponseWriter, r *http.Request) {
 
+	vars := mux.Vars(r)
+	ms_id := vars["ms_id"]
+
 	u := &models.MovieSession{}
-	err := readMovieSession(r, u)
+	var err error
+	var intValue int
+	intValue, err = strconv.Atoi(ms_id)
+
 	if err != nil {
 		switch err.(type) {
 		case models.ParseJSONError:
@@ -477,6 +483,20 @@ func (h *Handler) getSeatsByMSID(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	u.MsID = uint(intValue)
+
+	//u := &models.MovieSession{}
+	//err := readMovieSession(r, u)
+	//if err != nil {
+	//	switch err.(type) {
+	//	case models.ParseJSONError:
+	//		w.WriteHeader(http.StatusBadRequest)
+	//	default:
+	//		w.WriteHeader(http.StatusInternalServerError)
+	//	}
+	//	return
+	//}
 
 	seats, err := h.useCase.GetSeatsByMSID(r.Context(), u.MsID)
 	if err != nil {
@@ -587,4 +607,56 @@ func (h *Handler) postVote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) getFilmsForToday(w http.ResponseWriter, r *http.Request) {
+
+	films, err := h.useCase.GetFilmsForToday(r.Context())
+	if err != nil {
+		fmt.Println("error")
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json, err := json.Marshal(films)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
+
+}
+
+func (h *Handler) getFilmsForSoon(w http.ResponseWriter, r *http.Request) {
+
+	films, err := h.useCase.GetFilmsForSoon(r.Context())
+	if err != nil {
+		fmt.Println("error")
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json, err := json.Marshal(films)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
+
 }

@@ -161,6 +161,116 @@ func (FR FilmRepository) GetMovieSessionsForToday(movie_id uint) ([]models.Reque
 	return res, nil
 }
 
+func (FR FilmRepository) GetFilmsForToday() ([]models.ProfileFilm, error) {
+	res := []models.MovieSession{}
+	resOne := models.MovieSession{}
+	film := models.ProfileFilm{}
+	films := []models.ProfileFilm{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT movie_id FROM movie_session
+		 WHERE start_datetime > now() AND start_datetime < now()::date + interval '24h'`)
+	if err != nil {
+		return films, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return films, errors.FilmNotFoundError{"title"}
+		}
+		return films, err
+	}
+
+	var filmsIDs []uint
+
+	for _, value := range res {
+		filmsIDs = append(filmsIDs, value.MovieID)
+	}
+
+	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile WHERE film_id IN (?);", filmsIDs)
+
+	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
+	query = FR.database.Rebind(query)
+	qresfilms, err := FR.database.Queryx(query, args...)
+	if err != nil {
+		return films, err
+	}
+
+	for qresfilms.Next() {
+		err = qresfilms.StructScan(&film)
+		films = append(films, film)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return films, errors.FilmNotFoundError{"title"}
+		}
+		return films, err
+	}
+
+	return films, nil
+}
+
+func (FR FilmRepository) GetFilmsForSoon() ([]models.ProfileFilm, error) {
+	res := []models.MovieSession{}
+	resOne := models.MovieSession{}
+	film := models.ProfileFilm{}
+	films := []models.ProfileFilm{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT movie_id FROM movie_session
+		 WHERE start_datetime > now()::date + interval '24h'`)
+	if err != nil {
+		return films, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return films, errors.FilmNotFoundError{"title"}
+		}
+		return films, err
+	}
+
+	var filmsIDs []uint
+
+	for _, value := range res {
+		filmsIDs = append(filmsIDs, value.MovieID)
+	}
+
+	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile WHERE film_id IN (?);", filmsIDs)
+
+	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
+	query = FR.database.Rebind(query)
+	qresfilms, err := FR.database.Queryx(query, args...)
+	if err != nil {
+		return films, err
+	}
+
+	for qresfilms.Next() {
+		err = qresfilms.StructScan(&film)
+		films = append(films, film)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return films, errors.FilmNotFoundError{"title"}
+		}
+		return films, err
+	}
+
+	return films, nil
+}
+
 func (FR FilmRepository) GetSeatsByMSID(movie_session_id uint) ([]models.Seat, error) {
 	res := []models.Seat{}
 	resOne := models.Seat{}

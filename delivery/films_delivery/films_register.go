@@ -70,3 +70,15 @@ func (apif *MyHandlerFilms) PostVote(w http.ResponseWriter, r *http.Request) {
 
 	h.postVote(w, r)
 }
+
+func (apif *MyHandlerFilms) FilmsForToday(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getFilmsForToday(w, r)
+}
+
+func (apif *MyHandlerFilms) FilmsForSoon(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getFilmsForSoon(w, r)
+}

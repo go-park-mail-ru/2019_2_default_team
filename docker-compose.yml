@@ -1,0 +1,149 @@
+#version: "3"
+#services:
+#
+#  api-service:
+#    image: deadmolesstudio/ketnipz-api-service
+#    container_name: dmstudio-server
+#    volumes:
+#      - /opt/dmstudio/static:/app/static
+#    depends_on:
+#      - auth-service
+#    env_file:
+#      - api.env
+#
+#  auth-service:
+#    image: deadmolesstudio/ketnipz-auth-service
+#    container_name: auth-service
+#    env_file:
+#      - auth.env
+#
+#  game-service:
+#    image: deadmolesstudio/ketnipz-game-service
+#    container_name: game-service
+#    depends_on:
+#      - auth-service
+#    env_file:
+#      - game.env
+#
+#  chat-service:
+#    image: deadmolesstudio/ketnipz-chat-service
+#    container_name: chat-service
+#    depends_on:
+#      - auth-service
+#    env_file:
+#      - chat.env
+#
+#  prometheus:
+#    image: quay.io/prometheus/prometheus
+#    container_name: prometheus
+#    volumes:
+#      - "./prometheus:/etc/prometheus/"
+#      - prometheus_data:/prometheus
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#      - '--storage.tsdb.path=/prometheus'
+#
+#  node_exporter:
+#    image: quay.io/prometheus/node-exporter
+#    container_name: node_exporter
+#    user: root
+#    privileged: true
+#    volumes:
+#      - /proc:/host/proc:ro
+#      - /sys:/host/sys:ro
+#      - /:/rootfs:ro
+#    command:
+#      - '--path.procfs=/host/proc'
+#      - '--path.sysfs=/host/sys'
+#      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+#
+#  grafana:
+#    image: grafana/grafana
+#    container_name: grafana
+#    volumes:
+#      - grafana_data:/var/lib/grafana
+#      - ${PWD}/grafana/grafana.ini:/etc/grafana/grafana.ini
+#    environment:
+#      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+#      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+#      - GF_USERS_ALLOW_SIGN_UP=false
+#
+#volumes:
+#  prometheus_data:
+#  grafana_data:
+#
+## external network with nginx, databases
+#networks:
+#  default:
+#    external:
+#      name: ketnipz-net
+#
+#
+#
+#
+#
+#///////
+
+
+version: "3"
+
+services:
+
+#  dbpostgres:
+#    image: postgres
+#    environment:
+#      POSTGRES_DB: postgres
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: docker
+#    ports:
+#      - 5432:5432
+#    volumes:
+#      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres
+
+#  dbredis:
+#    image: redis
+##    command: redis-server --requirepass yourpassword
+#    environment:
+#      REDIS_DB: redis
+#      REDIS_USER: redis
+#      REDIS_PASSWORD: docker
+#    ports:
+#      - 6379:6379
+
+#  main:
+#    build: .
+#    restart: always
+#    depends_on:
+#      - session_service
+#      - comments_service
+#    environment:
+#      - MERLIN_NOSIGN=1
+#      - MERLIN_DEBUG=1
+#    ports:
+#      - 8080:8080
+
+  session_service:
+    build: ./session_microservice
+    volumes:
+      - .:/app
+      -
+#    restart: always
+    ports:
+      - 8081:8081
+
+#  comments_service:
+#    build: .
+#    restart: always
+#    depends_on:
+#      - dbpostgres
+#    environment:
+#      - MERLIN_NOSIGN=1
+#      - MERLIN_DEBUG=1
+#    ports:
+#      - 8082:8082
+
+
+# external network with nginx, databases
+networks:
+  default:
+    driver: bridge

@@ -27,8 +27,10 @@ func (apis *MyHandlerSessionsMicroservice) ProfileSessionsMicroserviceHandler(w 
 
 	switch r.Method {
 	case http.MethodGet:
+		fmt.Println("hello from GET")
 		h.getSession(w, r)
 	case http.MethodPost:
+		fmt.Println("hello from post")
 		h.postLoginHandler(w, r)
 	case http.MethodDelete:
 		fmt.Println("DELETE")

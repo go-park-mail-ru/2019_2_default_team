@@ -12,6 +12,7 @@ import (
 func main() {
 
 	l := logger.InitLogger()
+
 	//db.Db = db.InitDB("postgres@postgres:5432", "some-postgres")
 
 	//база для postgres

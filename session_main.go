@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+
 	l := logger.InitLogger()
 	dbConnStr := flag.String("db_connstr", "user@localhost:6379", "redis connection string")
 	dbName := flag.String("db_name", "0", "redis database name")

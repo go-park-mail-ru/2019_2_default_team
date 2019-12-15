@@ -19,4 +19,6 @@ type FilmsRepository interface {
 	GetMovieSessionsForToday(movie_id int) ([]models.RequestFilmTimes, error)
 	GetSeatsByMSID(movie_session_id uint) ([]models.Seat, error)
 	IsVoted(u *models.RegisterVote) (bool, error)
+	GetFilmsForToday() ([]models.ProfileFilm, error)
+	GetFilmsForSoon() ([]models.ProfileFilm, error)
 }

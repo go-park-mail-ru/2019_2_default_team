@@ -75,6 +75,10 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apif.ProfileOneFilm, sesmic)))))
 	r.HandleFunc("/allfilms", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.ProfileAllFilms, sesmic)))))
+	r.HandleFunc("/allfilms/today", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.FilmsForToday, sesmic)))))
+	r.HandleFunc("/allfilms/soon", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.FilmsForSoon, sesmic)))))
 	r.HandleFunc("/ticket", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apit.ProfileTicketHandler, sesmic)))))
 	r.HandleFunc("/session", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
@@ -97,7 +101,7 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apif.MovieSession, sesmic)))))
 	r.HandleFunc("/get_movie_sessions_times_for_today/{movie_id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.GetTimesMovieSessionsForToday, sesmic)))))
-	r.HandleFunc("/get_seats", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/get_seats/{ms_id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.GetSeatsByMSID, sesmic)))))
 	r.HandleFunc("/film_vote", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.PostVote, sesmic)))))

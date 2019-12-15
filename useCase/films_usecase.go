@@ -16,6 +16,8 @@ type FilmsUseCase interface {
 	GetSeatsByMSID(ctx context.Context, movie_session_id uint) ([]models.Seat, error)
 	CheckIsVoted(ctx context.Context, u *models.RegisterVote) (bool, error)
 	Vote(ctx context.Context, u *models.RegisterVote) (models.Vote, error)
+	GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm, error)
+	GetFilmsForSoon(ctx context.Context) ([]models.ProfileFilm, error)
 }
 
 type filmUseCase struct {
@@ -36,6 +38,26 @@ func (f filmUseCase) GetMovieSessionsForToday(ctx context.Context, movie_id uint
 	}
 
 	return newTimes, err
+}
+
+func (f filmUseCase) GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm, error) {
+	newFilms, err := f.filmRepo.GetFilmsForToday()
+
+	if err != nil {
+		return []models.ProfileFilm{}, err
+	}
+
+	return newFilms, err
+}
+
+func (f filmUseCase) GetFilmsForSoon(ctx context.Context) ([]models.ProfileFilm, error) {
+	newFilms, err := f.filmRepo.GetFilmsForSoon()
+
+	if err != nil {
+		return []models.ProfileFilm{}, err
+	}
+
+	return newFilms, err
 }
 
 func (f filmUseCase) GetSeatsByMSID(ctx context.Context, movie_session_id uint) ([]models.Seat, error) {
