@@ -35,8 +35,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	//l := logger.InitLogger()
 	//defer l.Sync()
 
-	authConnStr := flag.String("auth_connstr", "localhost:8081", "auth-service connection string")
-	commentConnStr := flag.String("comment_connstr", "localhost:8082", "comment-service connection string")
+	authConnStr := flag.String("auth_connstr", "session_service:8081", "auth-service connection string")
+	commentConnStr := flag.String("comment_connstr", "comments_service:8082", "comment-service connection string")
 	flag.Parse()
 
 	var err error
@@ -63,7 +63,7 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	apicm := comments_service_delivery.NewMyHandlerFilms(commic)
 	prometheus.MustRegister(metrics.AccessHits)
 
-	r = r.PathPrefix("/api/").Subrouter()
+	//r = r.PathPrefix("/api/").Subrouter()
 
 	r.Handle("/metrics", promhttp.Handler())
 

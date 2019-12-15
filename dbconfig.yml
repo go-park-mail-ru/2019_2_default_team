@@ -1,0 +1,14 @@
+development:
+  dialect: postgres
+  datasource: host=localhost dbname=postgres user=postgres password=docker sslmode=disable
+  dir: migrations
+  table: migrations
+  schema: public
+
+production:
+  dialect: postgres
+  datasource: postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable
+  dir: migrations
+  table: migrations
+  schema: public
+

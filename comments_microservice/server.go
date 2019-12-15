@@ -34,7 +34,7 @@ func (cm *CommentManager) Close() {
 }
 
 const (
-	host     = "localhost"
+	host     = "postgres"
 	port     = 5432
 	user     = "postgres"
 	password = "docker"
@@ -51,6 +51,7 @@ func InitDB(address, database string) *CommentManager {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
+	//fmt.Println(psqlInfo)
 	Db, err = sqlx.Open("postgres", psqlInfo)
 
 	if err != nil {

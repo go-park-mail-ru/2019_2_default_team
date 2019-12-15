@@ -46,7 +46,7 @@ func (sm *SessionManager) Open(address, database string) error {
 		IdleTimeout: 240 * time.Second,
 		MaxActive:   1000,
 		Wait:        true,
-		Dial:        func() (redis.Conn, error) { return redis.DialURL("redis://redis:docker@localhost:6379/0?") },
+		Dial:        func() (redis.Conn, error) { return redis.DialURL("redis://redis:docker@redis_db:6379/0?") },
 		//redis.DialURL("redis://redis:docker@localhost:6379/0?")
 		//Dial:        func() (redis.Conn, error) { return redis.DialURL("redis://" + address + "/" + database) },
 	}

@@ -89,58 +89,64 @@ version: "3"
 
 services:
 
-#  dbpostgres:
-#    image: postgres
-#    environment:
-#      POSTGRES_DB: postgres
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: docker
-#    ports:
-#      - 5432:5432
-#    volumes:
-#      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+    ports:
+      - 5432:5432
+    volumes:
+      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres
 
-#  dbredis:
-#    image: redis
-##    command: redis-server --requirepass yourpassword
-#    environment:
-#      REDIS_DB: redis
-#      REDIS_USER: redis
-#      REDIS_PASSWORD: docker
-#    ports:
-#      - 6379:6379
+  redis_db:
+    image: redis
+    command: redis-server --requirepass docker
+    environment:
+      REDIS_DB: redis
+      REDIS_USER: redis
+      REDIS_PASSWORD: docker
+    ports:
+      - 6379:6379
+    volumes:
+      - $HOME/docker/volumes/redis:/var/lib/redissql/data  redis
 
-#  main:
-#    build: .
+  main:
+    build: .
 #    restart: always
-#    depends_on:
-#      - session_service
-#      - comments_service
-#    environment:
-#      - MERLIN_NOSIGN=1
-#      - MERLIN_DEBUG=1
-#    ports:
-#      - 8080:8080
+    depends_on:
+      - session_service
+      - comments_service
+    ports:
+      - 8080:8080
+    links:
+      - session_service
+      - comments_service
 
   session_service:
-    build: ./session_microservice
-    volumes:
-      - .:/app
-      -
+    build:
+      context: .
+      dockerfile: ./session_microservice/Dockerfile.session
 #    restart: always
+    depends_on:
+      - redis_db
     ports:
       - 8081:8081
+    links:
+      - redis_db
 
-#  comments_service:
-#    build: .
-#    restart: always
-#    depends_on:
-#      - dbpostgres
-#    environment:
-#      - MERLIN_NOSIGN=1
-#      - MERLIN_DEBUG=1
-#    ports:
-#      - 8082:8082
+  comments_service:
+    build:
+      context: .
+      dockerfile: ./comments_microservice/Dockerfile.comments
+    #    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 8082:8082
+    links:
+      - postgres
 
 
 # external network with nginx, databases

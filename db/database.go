@@ -11,7 +11,7 @@ import (
 var Db *sqlx.DB
 
 const (
-	host     = "localhost"
+	host     = "postgres"
 	port     = 5432
 	user     = "postgres"
 	password = "docker"
