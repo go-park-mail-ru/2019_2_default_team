@@ -63,7 +63,7 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	apicm := comments_service_delivery.NewMyHandlerFilms(commic)
 	prometheus.MustRegister(metrics.AccessHits)
 
-	//r = r.PathPrefix("/api/").Subrouter()
+	r = r.PathPrefix("/api/").Subrouter()
 
 	r.Handle("/metrics", promhttp.Handler())
 
