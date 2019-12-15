@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Handler struct {
@@ -382,6 +383,14 @@ func (h *Handler) getOneFilm(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 
 	//конец парсинга данных можно передавать ctx,
+	vals := r.URL.Query() // Returns a url.Values, which is a map[string][]string
+	productTypes, ok := vals["title"]
+	var pt string
+	if ok {
+		if len(productTypes) >= 1 {
+			pt = productTypes[0]
+		}
+	}
 
 	profile, err := h.useCase.GetAllFilms(r.Context())
 	if err != nil {
@@ -396,14 +405,33 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	json, err := json.Marshal(profile)
-	if err != nil {
-		log.Println(err, "in profileMethod")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprintln(w, string(json))
+	var finalFilms []models.ProfileFilm
 
+	if pt != "" {
+		for _, value := range profile {
+			if strings.Contains(strings.ToLower(value.Title), strings.ToLower(pt)) {
+				finalFilms = append(finalFilms, value)
+			}
+		}
+	}
+
+	if len(finalFilms) != 0 {
+		json, err := json.Marshal(finalFilms)
+		if err != nil {
+			log.Println(err, "in profileMethod")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintln(w, string(json))
+	} else {
+		json, err := json.Marshal(profile)
+		if err != nil {
+			log.Println(err, "in profileMethod")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintln(w, string(json))
+	}
 }
 
 func (h *Handler) getTimesForToday(w http.ResponseWriter, r *http.Request) {
