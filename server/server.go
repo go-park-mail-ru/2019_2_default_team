@@ -63,47 +63,49 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	apicm := comments_service_delivery.NewMyHandlerFilms(commic)
 	prometheus.MustRegister(metrics.AccessHits)
 
-	r.Handle("/api/metrics", promhttp.Handler())
+	r = r.PathPrefix("/api/").Subrouter()
 
-	r.HandleFunc("/api/profile", apiu.ProfileHandler)
+	r.Handle("/metrics", promhttp.Handler())
 
-	r.HandleFunc("/api/profile", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/profile", apiu.ProfileHandler)
+
+	r.HandleFunc("/profile", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apiu.ProfileHandler, sesmic)))))
-	r.HandleFunc("/api/films", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/films", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.ProfileFilmHandler, sesmic)))))
-	r.HandleFunc("/api/film/{id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/film/{id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.ProfileOneFilm, sesmic)))))
-	r.HandleFunc("/api/allfilms", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/allfilms", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.ProfileAllFilms, sesmic)))))
-	r.HandleFunc("/api/allfilms/today", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/allfilms/today", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.FilmsForToday, sesmic)))))
-	r.HandleFunc("/api/allfilms/soon", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/allfilms/soon", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.FilmsForSoon, sesmic)))))
-	r.HandleFunc("/api/ticket", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/ticket", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apit.ProfileTicketHandler, sesmic)))))
-	r.HandleFunc("/api/session", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/session", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apis.ProfileSessionsHandler, sesmic)))))
-	r.HandleFunc("/api/authorized", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/authorized", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apis.ProfileAuth, sesmic)))))
-	r.HandleFunc("/api/support", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/support", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apisc.SupportChat, sesmic)))))
-	r.HandleFunc("/api/sessionservice", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/sessionservice", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apism.ProfileSessionsMicroserviceHandler, sesmic)))))
-	r.HandleFunc("/api/commentservice", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/commentservice", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apicm.CommentsHandler, sesmic)))))
-	r.HandleFunc("/api/commentByID/{id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/commentByID/{id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apicm.CommentsByIDHandler, sesmic)))))
-	r.HandleFunc("/api/commentByFilm/{film}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/commentByFilm/{film}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apicm.CommentsByFilmHandler, sesmic)))))
-	r.HandleFunc("/api/commentByUsername/{username}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/commentByUsername/{username}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apicm.CommentsByUsernameHandler, sesmic)))))
-	r.HandleFunc("/api/createmoviesession", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/createmoviesession", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.MovieSession, sesmic)))))
-	r.HandleFunc("/api/get_movie_sessions_times_for_today/{movie_id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/get_movie_sessions_times_for_today/{movie_id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.GetTimesMovieSessionsForToday, sesmic)))))
-	r.HandleFunc("/api/get_seats/{ms_id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/get_seats/{ms_id}", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.GetSeatsByMSID, sesmic)))))
-	r.HandleFunc("/api/film_vote", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+	r.HandleFunc("/film_vote", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.PostVote, sesmic)))))
 
 	err = nil
