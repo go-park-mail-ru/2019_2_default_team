@@ -1,5 +1,4 @@
 -- +migrate Up
-
 -- Профиль
 create table user_profile (
     user_id                  bigserial   primary key,
@@ -309,5 +308,14 @@ create table comments(
 );
 
 -- +migrate Down
+drop table comments cascade;
+drop table film_profile cascade;
+drop table message cascade;
+drop table movie_session cascade;
+drop table rating cascade;
+drop table seat cascade;
+drop table support cascade;
+drop table ticket_profile cascade;
+drop table user_profile cascade;
+drop table user_to_sup cascade;
 
-DROP schema public cascade;
