@@ -6,7 +6,6 @@ import (
 	"github.com/asaskevich/govalidator"
 	"io/ioutil"
 	"kino_backend/db"
-	"kino_backend/delivery/sessions_delivery"
 	"kino_backend/logger"
 	"kino_backend/models"
 	"kino_backend/useCase"
@@ -261,15 +260,15 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		hs := sessions_delivery.NewHandler(h.us, h.useCase)
-		err = hs.LoginUser(r.Context(), w, newU.UserID)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		//hs := sessions_delivery.NewHandler(h.us, h.useCase)
+		//err = hs.LoginUser(r.Context(), w, newU.UserID)
+		//if err != nil {
+		//	w.WriteHeader(http.StatusInternalServerError)
+		//	return
+		//}
 		//проблемы с тестами инициализация логгера доделать
 		//fmt.Print("New film with id , title created", newU.UserID, newU.Email)
-		logger.Infof("New user with id %v, email %v and nickname %v logged in", newU.UserID, newU.Email, newU.Nickname)
+		logger.Infof("New user with id %v, email %v and nickname %v signed up", newU.UserID, newU.Email, newU.Nickname)
 	}
 }
 
