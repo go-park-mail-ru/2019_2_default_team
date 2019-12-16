@@ -67,8 +67,6 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 
 	r.Handle("/metrics", promhttp.Handler())
 
-	r.HandleFunc("/profile", apiu.ProfileHandler)
-
 	r.HandleFunc("/profile", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apiu.ProfileHandler, sesmic)))))
 	r.HandleFunc("/films", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(

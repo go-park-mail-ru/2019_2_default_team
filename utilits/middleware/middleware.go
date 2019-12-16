@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"kino_backend/CSRF"
+	"kino_backend/session_microservice"
 
 	//"kino_backend/CSRF"
 	"kino_backend/db"
@@ -129,7 +130,14 @@ func SessionMiddleware(next http.HandlerFunc, sm *session_microservice_client.Se
 				c.Expires = time.Now().AddDate(0, 0, -1)
 				http.SetCookie(w, c)
 				ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
+			case session_microservice.ErrKeyNotFound:
+				fmt.Println("errors are here in errkeynotfound")
+				c.Expires = time.Now().AddDate(0, 0, -1)
+				http.SetCookie(w, c)
+				ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
 			default:
+				fmt.Println("errors are here in default")
+
 				log.Println(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
