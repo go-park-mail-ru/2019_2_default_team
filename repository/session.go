@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"kino_backend/logger"
 )
@@ -85,6 +86,7 @@ func (s SessionRepository) Get(ctx context.Context, sID string) (uint, error) {
 	res, err := redis.Uint64(s.database.Do("GET", sID))
 	if err != nil {
 		if err == redis.ErrNil {
+			fmt.Println("error3")
 			return 0, ErrKeyNotFound
 		}
 		return 0, err

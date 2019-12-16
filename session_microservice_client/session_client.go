@@ -2,6 +2,7 @@ package session_microservice_client
 
 import (
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"kino_backend/logger"
@@ -59,6 +60,7 @@ func (sm *SessionManager) Get(sID string) (uint, error) {
 	if err != nil {
 		s, _ := status.FromError(err)
 		if s.Message() == ErrKeyNotFound.Error() {
+			fmt.Println("error2")
 			return 0, ErrKeyNotFound
 		}
 		return 0, err

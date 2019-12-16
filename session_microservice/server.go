@@ -154,6 +154,7 @@ func (s *SessionManager) Get(ctx context.Context, in *session_microservice_clien
 	res, err := redis.Uint64(conn.Do("GET", in.SID))
 	if err != nil {
 		if err == redis.ErrNil {
+			fmt.Println("error 1")
 			return &session_microservice_client.Session{}, status.Error(codes.NotFound, ErrKeyNotFound.Error())
 		}
 		return &session_microservice_client.Session{}, status.Error(codes.Internal, err.Error())
