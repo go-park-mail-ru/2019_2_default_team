@@ -192,7 +192,7 @@ func (FR FilmRepository) GetFilmsForToday() ([]models.ProfileFilm, error) {
 		filmsIDs = append(filmsIDs, value.MovieID)
 	}
 
-	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile WHERE film_id IN (?);", filmsIDs)
+	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile WHERE film_id IN (?);", filmsIDs)
 
 	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
 	query = FR.database.Rebind(query)
@@ -247,7 +247,7 @@ func (FR FilmRepository) GetFilmsForSoon() ([]models.ProfileFilm, error) {
 		filmsIDs = append(filmsIDs, value.MovieID)
 	}
 
-	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile WHERE film_id IN (?);", filmsIDs)
+	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile WHERE film_id IN (?);", filmsIDs)
 
 	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
 	query = FR.database.Rebind(query)
@@ -301,7 +301,7 @@ func (FR FilmRepository) GetSeatsByMSID(movie_session_id uint) ([]models.Seat, e
 func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
-		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile
 		WHERE film_id = $1`,
 		id)
 	if err := qres.Err(); err != nil {
@@ -321,7 +321,7 @@ func (FR FilmRepository) GetFilmProfileByID(id uint) (models.ProfileFilm, error)
 func (FR FilmRepository) GetFilmProfileByTitle(title string) (models.ProfileFilm, error) {
 	res := models.ProfileFilm{}
 	qres := FR.database.QueryRowx(`
-		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile
 		WHERE title = $1`,
 		title)
 	if err := qres.Err(); err != nil {
@@ -419,7 +419,7 @@ func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
 	resOne := models.ProfileFilm{}
 
 	qres, err := FR.database.Queryx(`
-		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating FROM film_profile
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile
 		WHERE is_deleted = $1`,
 		false)
 	if err != nil {

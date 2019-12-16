@@ -24,6 +24,9 @@ create table film_profile (
     actors              text        not null,
     description         text        not null,
     rating              int         not null default(0),
+    poster              text        not null,
+    poster_popup        text        not null,
+    trailer              text       not null,
     is_deleted          boolean     not null default(false)
 );
 
@@ -65,9 +68,9 @@ create table ticket_profile (
 INSERT INTO user_profile(nickname, password, first_name, last_name, email, avatar, is_deleted)
 VALUES('usernick', 'password', 'user', 'surname', 'me@mail.ru', 'urlurl', false);
 
-INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, is_deleted) VALUES (2, 'ToStars', 1, 'Science, Fantastic', 169, 'Gray', 'USA', 2019, 'Pitt', 'Future, stars... ', 2, false);
-INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, is_deleted) VALUES (1, 'Joker', 1, 'Comics', 159, 'Todd', 'USA', 2019, 'Phoenix', 'Absolutely madness', 0, false);
-INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, is_deleted) VALUES (3, 'StarWars', 1, 'Fantastic', 200, 'Abrams', 'USA', 2019, 'Fisher', 'May the force be with you', 1, false);
+INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (2, 'ToStars', 1, 'Science, Fantastic', 169, 'Gray', 'USA', 2019, 'Pitt', 'Future, stars... ', 2, 'https://static.karofilm.ru/uploads/film/desktop/e3/b6/4b/5215d5811b80298172dad73fd1.jpg', 'https://static.karofilm.ru/uploads/film/desktop/06/5b/94/d93f295f6ac79d1e2060f657de.jpg', 'https://www.youtube.com/watch?v=50IJyz7ecqc', false);
+INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (1, 'Joker', 1, 'Comics', 159, 'Todd', 'USA', 2019, 'Phoenix', 'Absolutely madness', 0, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT92gzaTkJ040i9HBmLktkcNESMEYS5mm4gFLPhNOVbt0_MSk1E', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT92gzaTkJ040i9HBmLktkcNESMEYS5mm4gFLPhNOVbt0_MSk1E', 'https://www.youtube.com/embed/m6vhNci6RHc', false);
+INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (3, 'StarWars', 1, 'Fantastic', 200, 'Abrams', 'USA', 2019, 'Fisher', 'May the force be with you', 1, 'https://static.karofilm.ru/uploads/film/desktop/bc/5f/6f/475136826ebdb3cd6319074222.jpg', 'https://static.karofilm.ru/uploads/film/desktop/8a/aa/45/65154177830e35a8d767451f3f.jpg', 'https://www.youtube.com/embed/KVRBfWQgyuY', false);
 
 
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (3, 'super-hall', 3, '2019-12-16 19:28:16.968122', 'IMAX', false);

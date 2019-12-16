@@ -14,6 +14,9 @@ type ProfileFilm struct {
 	Length      int     `json:"length" db:"length"`
 	Rating      int     `json:"rating" db:"rating"`
 	Production  string  `json:"production" db:"production"`
+	Poster      string  `json:"poster" db:"poster"`
+	PosterPopup string  `json:"poster_popup" db:"poster_popup"`
+	Trailer     string  `json:"trailer" db:"trailer"`
 	Year        int     `json:"year" db:"year"`
 }
 

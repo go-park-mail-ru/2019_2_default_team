@@ -769,6 +769,12 @@ func easyjson14b8084aDecodeKinoBackendModels8(in *jlexer.Lexer, out *ProfileFilm
 			out.Rating = int(in.Int())
 		case "production":
 			out.Production = string(in.String())
+		case "poster":
+			out.Poster = string(in.String())
+		case "poster_popup":
+			out.PosterPopup = string(in.String())
+		case "trailer":
+			out.Trailer = string(in.String())
 		case "year":
 			out.Year = int(in.Int())
 		case "id":
@@ -836,6 +842,21 @@ func easyjson14b8084aEncodeKinoBackendModels8(out *jwriter.Writer, in ProfileFil
 		const prefix string = ",\"production\":"
 		out.RawString(prefix)
 		out.String(string(in.Production))
+	}
+	{
+		const prefix string = ",\"poster\":"
+		out.RawString(prefix)
+		out.String(string(in.Poster))
+	}
+	{
+		const prefix string = ",\"poster_popup\":"
+		out.RawString(prefix)
+		out.String(string(in.PosterPopup))
+	}
+	{
+		const prefix string = ",\"trailer\":"
+		out.RawString(prefix)
+		out.String(string(in.Trailer))
 	}
 	{
 		const prefix string = ",\"year\":"
