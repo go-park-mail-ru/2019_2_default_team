@@ -106,6 +106,14 @@ func SessionMiddleware(next http.HandlerFunc, sm *session_microservice_client.Se
 		ctx := r.Context()
 		c, err := r.Cookie("session_id")
 
+		if c != nil {
+			fmt.Println("cookie value is :  ", c.Value)
+			if c.Value == "" {
+				ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
+				next.ServeHTTP(w, r.WithContext(ctx))
+			}
+		}
+
 		if err == nil && c != nil {
 			uid, err := sm.Get(c.Value)
 			switch err {
