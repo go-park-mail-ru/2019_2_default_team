@@ -147,29 +147,35 @@ func (h *Handler) validateFields(u *models.RegisterProfile) ([]models.ProfileErr
 // @Router /profile [GET]
 
 func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request) {
-	//data parse
-	params := &models.RequestProfile{}
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(params)
-
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
+	id_user := r.Context().Value(middleware.KeyUserID).(uint)
+	//data parse
+	//params := &models.RequestProfile{}
+	//decoder := json.NewDecoder(r.Body)
+	//err := decoder.Decode(params)
+
+	//if err != nil {
+	//	w.WriteHeader(http.StatusBadRequest)
+	//	return
+	//}
+
 	//end data parse
-	var id uint
-	var auth bool
+	//var id uint
+	//var auth bool
+	//
+	//if middleware.KeyIsAuthenticated != 0 {
+	//	id = uint(middleware.KeyUserID)
+	//	auth = true
+	//} else {
+	//	id = 0
+	//	auth = false
+	//}
 
-	if middleware.KeyIsAuthenticated != 0 {
-		id = uint(middleware.KeyUserID)
-		auth = true
-	} else {
-		id = 0
-		auth = false
-	}
-
-	profile, err := h.useCase.GetUser(params, auth, id)
+	profile, err := h.useCase.GetUser(id_user)
 
 	if err != nil {
 		switch err.(type) {

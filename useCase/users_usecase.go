@@ -4,11 +4,10 @@ import (
 	"context"
 	"kino_backend/models"
 	"kino_backend/repository"
-	"kino_backend/utilits/errors"
 )
 
 type UsersUseCase interface {
-	GetUser(params *models.RequestProfile, auth bool, id uint) (models.Profile, error)
+	GetUser(id uint) (models.Profile, error)
 	PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error)
 	PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) error
 	CheckExistenceOfEmail(e string) (bool, error)
@@ -26,34 +25,34 @@ func NewUserUseCase(userRepo repository.UserRepository) *usersUseCase {
 	}
 }
 
-func (user usersUseCase) GetUser(params *models.RequestProfile, auth bool, id uint) (models.Profile, error) {
+func (user usersUseCase) GetUser(id uint) (models.Profile, error) {
 
-	if params.ID != 0 {
-		profile, err := user.userRepo.GetUserProfileByID(params.ID)
-		if err != nil {
+	//if params.ID != 0 {
+	//	profile, err := user.userRepo.GetUserProfileByID(params.ID)
+	//	if err != nil {
+	//
+	//		return models.Profile{}, err
+	//	}
+	//	return profile, nil
+	//
+	//} else if params.Nickname != "" {
+	//	profile, err := user.userRepo.GetUserProfileByNickname(params.Nickname)
+	//	if err != nil {
+	//		return models.Profile{}, err
+	//	}
+	//	return profile, nil
+	//
+	//} else {
+	//	if !auth {
+	//		return models.Profile{}, errors.UserNotAuthError{}
+	//	}
 
-			return models.Profile{}, err
-		}
-		return profile, nil
-
-	} else if params.Nickname != "" {
-		profile, err := user.userRepo.GetUserProfileByNickname(params.Nickname)
-		if err != nil {
-			return models.Profile{}, err
-		}
-		return profile, nil
-
-	} else {
-		if !auth {
-			return models.Profile{}, errors.UserNotAuthError{}
-		}
-
-		profile, err := user.userRepo.GetUserProfileByID(id)
-		if err != nil {
-			return models.Profile{}, err
-		}
-		return profile, nil
+	profile, err := user.userRepo.GetUserProfileByID(id)
+	if err != nil {
+		return models.Profile{}, err
 	}
+	return profile, nil
+	//}
 }
 
 func (user usersUseCase) PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error) {
