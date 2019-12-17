@@ -16,7 +16,7 @@ services:
 
 
 script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   - docker build --tag maershov/default_team .
   - docker build --tag maershov/default_team_session -f ./session_microservice/Dockerfile.session .
   - docker build --tag maershov/default_team_comment -f ./comments_microservice/Dockerfile.comments .
