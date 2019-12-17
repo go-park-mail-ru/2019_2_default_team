@@ -10,19 +10,20 @@ env:
   - GO111MODULE=on
 
 sudo: required
+services:
+  - docker
 
 before_script:
-- echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-- ssh-keyscan -H $DEPLOY_SSH_ADDRESS >> ~/.ssh/known_hosts
-- chmod 600 ~/.ssh/2019-2-default-team-IGZaL2S7.pem
+#- echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+#- ssh-keyscan -H $DEPLOY_SSH_ADDRESS >> ~/.ssh/known_hosts
+#- chmod 600 ~/.ssh/2019-2-default-team-IGZaL2S7.pem
 
 script:
-- docker pull maershov/default_team || true
-- docker build --cache-from maershov/default_team -t maershov/default_team .
-- docker push maershov/default_team
-- ssh -i ~/.ssh/2019-2-default-team-IGZaL2S7.pem root@$DEPLOY_SSH_ADDRESS '
-  docker pull maershov/default_team;
-  docker-compose up -d --no-deps --build session_service'
+  - docker build --tag myimage .
+  - docker run myimage
+
+after_script:
+  - docker images
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_47d09a04fd6a_key -iv $encrypted_47d09a04fd6a_iv
