@@ -17,6 +17,6 @@ services:
 
 script:
   - docker build --tag maershov/default_team .
-  - docker build --tag maershov/default_team_session ./session_microservice/Dockerfile.session
-  - docker build --tag maershov/default_team_comments ./comments_microservice/Dockerfile.comments
+  - docker build -f ./session_microservice/Dockerfile.session .
+  - docker build -f ./comments_microservice/Dockerfile.comments .
 
