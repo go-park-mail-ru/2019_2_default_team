@@ -21,7 +21,6 @@ before_script:
 
 script:
   - docker build --tag maershov/default_team .
-  - docker build --tag maershov/default_team_session ./session_microservice/
 
 #before_install:
 #- openssl aes-256-cbc -K $encrypted_47d09a04fd6a_key -iv $encrypted_47d09a04fd6a_iv
