@@ -1,28 +1,31 @@
 language: go
 go:
 - 1.13.4
-
 branches:
   only:
-    - dev
-
+  - dev
 env:
-  - GO111MODULE=on
-
+- GO111MODULE=on
 sudo: required
-
 services:
-  - docker
-
+- docker
 before_script:
-  - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-
-
+- echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 script:
-  - docker build --tag maershov/default_team .
-  - docker build --tag maershov/default_team_session -f ./session_microservice/Dockerfile.session .
-  - docker build --tag maershov/default_team_comment -f ./comments_microservice/Dockerfile.comments .
-  - docker push maershov/default_team
-  - docker push maershov/default_team_session
-  - docker push maershov/default_team_comment
+- eval "$(ssh-agent -s)"
+- ssh-keyscan -H 89.208.198.192 >> ~/.ssh/known_hosts
+- chmod 400 $HOME/2019-2-default-team-IGZaL2S7.pem
+- docker build --tag maershov/default_team .
+- docker build --tag maershov/default_team_session -f ./session_microservice/Dockerfile.session .
+- docker build --tag maershov/default_team_comment -f ./comments_microservice/Dockerfile.comments .
+- docker push maershov/default_team
+- docker push maershov/default_team_session
+- docker push maershov/default_team_comment
+- ssh -i $HOME/2019-2-default-team-IGZaL2S7.pem ubuntu@89.208.198.192 ' cd go/2019_2_default_team/;
+  docker-compose down;
+  docker-compose up'
 
+before_install:
+- openssl aes-256-cbc -K $encrypted_47d09a04fd6a_key -iv $encrypted_47d09a04fd6a_iv
+  -in 2019-2-default-team-IGZaL2S7.pem.enc -out ~\/2019-2-default-team-IGZaL2S7.pem
+  -d
