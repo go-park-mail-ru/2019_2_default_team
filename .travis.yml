@@ -19,4 +19,5 @@ script:
   - docker build --tag maershov/default_team .
   - docker build --tag maershov/default_team_session -f ./session_microservice/Dockerfile.session .
   - docker build --tag maershov/default_team_comment -f ./comments_microservice/Dockerfile.comments .
+  - docker push maershov/default_team
 
