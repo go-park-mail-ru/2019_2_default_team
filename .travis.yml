@@ -19,8 +19,7 @@ before_script:
 #- chmod 600 ~/.ssh/2019-2-default-team-IGZaL2S7.pem
 
 script:
-  - docker build --tag myimage .
-  - docker run myimage
+  - docker build .
 
 after_script:
   - docker images
