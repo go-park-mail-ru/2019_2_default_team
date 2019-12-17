@@ -15,9 +15,9 @@ services:
   - docker
 
 before_script:
-- echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-- ssh-keyscan -H $DEPLOY_SSH_ADDRESS >> ~/.ssh/known_hosts
-- chmod 600 ~/.ssh/2019-2-default-team-IGZaL2S7.pem
+#- echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+#- ssh-keyscan -H $DEPLOY_SSH_ADDRESS >> ~/.ssh/known_hosts
+#- chmod 600 ~/.ssh/2019-2-default-team-IGZaL2S7.pem
 
 script:
   - docker build --tag maershov/default_team .
