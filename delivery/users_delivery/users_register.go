@@ -1,6 +1,7 @@
 package users_delivery
 
 import (
+	"kino_backend/session_microservice_client"
 	"kino_backend/useCase"
 	"net/http"
 	"sync"
@@ -9,10 +10,10 @@ import (
 type MyHandlerUser struct {
 	mu      *sync.Mutex
 	useCase useCase.UsersUseCase
-	uS      useCase.SessionsUseCase
+	uS      *session_microservice_client.SessionManager
 }
 
-func NewMyHandlerUser(uc useCase.UsersUseCase, hS useCase.SessionsUseCase) *MyHandlerUser {
+func NewMyHandlerUser(uc useCase.UsersUseCase, hS *session_microservice_client.SessionManager) *MyHandlerUser {
 	return &MyHandlerUser{
 		mu:      &sync.Mutex{},
 		useCase: uc,

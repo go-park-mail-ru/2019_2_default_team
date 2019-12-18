@@ -38,3 +38,7 @@ type RequestProfile struct {
 	ID       uint   `json:"reqid"`
 	Nickname string `json:"reqnick"`
 }
+
+type SessionCheck struct {
+	Username string `json:"username"`
+}

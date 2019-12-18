@@ -6,8 +6,10 @@ import (
 	"github.com/asaskevich/govalidator"
 	"io/ioutil"
 	"kino_backend/db"
+	"kino_backend/delivery/sessions_service_delivery"
 	"kino_backend/logger"
 	"kino_backend/models"
+	"kino_backend/session_microservice_client"
 	"kino_backend/useCase"
 	"kino_backend/utilits/errors"
 	"kino_backend/utilits/middleware"
@@ -17,13 +19,13 @@ import (
 
 type Handler struct {
 	useCase useCase.UsersUseCase
-	us      useCase.SessionsUseCase
+	manager *session_microservice_client.SessionManager
 }
 
-func NewHandler(useCase useCase.UsersUseCase, usecase_ses useCase.SessionsUseCase) *Handler {
+func NewHandler(useCase useCase.UsersUseCase, managerSession *session_microservice_client.SessionManager) *Handler {
 	return &Handler{
 		useCase: useCase,
-		us:      usecase_ses,
+		manager: managerSession,
 	}
 }
 
@@ -266,15 +268,26 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		//hs := sessions_delivery.NewHandler(h.us, h.useCase)
-		//err = hs.LoginUser(r.Context(), w, newU.UserID)
-		//if err != nil {
-		//	w.WriteHeader(http.StatusInternalServerError)
-		//	return
-		//}
+
+		hs := sessions_service_delivery.NewHandler(h.manager, h.useCase)
+		res, err := hs.LoginUser(r.Context(), w, newU.UserID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		Suc := models.Success{Success: res}
+
+		json, err := json.Marshal(Suc)
+		if err != nil {
+			log.Println(err, "error msrashal")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintln(w, string(json))
 		//проблемы с тестами инициализация логгера доделать
 		//fmt.Print("New film with id , title created", newU.UserID, newU.Email)
-		logger.Infof("New user with id %v, email %v and nickname %v signed up", newU.UserID, newU.Email, newU.Nickname)
+		logger.Infof("New user with id %v, email %v and nickname %v signed up and logged in", newU.UserID, newU.Email, newU.Nickname)
 	}
 }
 

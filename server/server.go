@@ -57,7 +57,7 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 	apif := films_delivery.NewMyHandlerFilms(fuc)
 	apit := tickets_delivery.NewMyHandlerTicket(tuc)
 	apis := sessions_delivery.NewMyHandlerFilms(suc, uuc)
-	apiu := users_delivery.NewMyHandlerUser(uuc, suc)
+	apiu := users_delivery.NewMyHandlerUser(uuc, sesmic)
 	apisc := chat_support_delivery.NewMyHandlerCS(scuc)
 	apism := sessions_service_delivery.NewMyHandlerSessions(sesmic, uuc)
 	apicm := comments_service_delivery.NewMyHandlerFilms(commic)

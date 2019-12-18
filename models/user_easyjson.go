@@ -170,7 +170,73 @@ func (v *User) UnmarshalJSON(data []byte) error {
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson9e1087fdDecodeKinoBackendModels1(l, v)
 }
-func easyjson9e1087fdDecodeKinoBackendModels2(in *jlexer.Lexer, out *RequestProfile) {
+func easyjson9e1087fdDecodeKinoBackendModels2(in *jlexer.Lexer, out *SessionCheck) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "username":
+			out.Username = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9e1087fdEncodeKinoBackendModels2(out *jwriter.Writer, in SessionCheck) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"username\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Username))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v SessionCheck) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9e1087fdEncodeKinoBackendModels2(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v SessionCheck) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9e1087fdEncodeKinoBackendModels2(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *SessionCheck) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9e1087fdDecodeKinoBackendModels2(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *SessionCheck) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9e1087fdDecodeKinoBackendModels2(l, v)
+}
+func easyjson9e1087fdDecodeKinoBackendModels3(in *jlexer.Lexer, out *RequestProfile) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -203,7 +269,7 @@ func easyjson9e1087fdDecodeKinoBackendModels2(in *jlexer.Lexer, out *RequestProf
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeKinoBackendModels2(out *jwriter.Writer, in RequestProfile) {
+func easyjson9e1087fdEncodeKinoBackendModels3(out *jwriter.Writer, in RequestProfile) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -223,27 +289,27 @@ func easyjson9e1087fdEncodeKinoBackendModels2(out *jwriter.Writer, in RequestPro
 // MarshalJSON supports json.Marshaler interface
 func (v RequestProfile) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeKinoBackendModels2(&w, v)
+	easyjson9e1087fdEncodeKinoBackendModels3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v RequestProfile) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeKinoBackendModels2(w, v)
+	easyjson9e1087fdEncodeKinoBackendModels3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *RequestProfile) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeKinoBackendModels2(&r, v)
+	easyjson9e1087fdDecodeKinoBackendModels3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *RequestProfile) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeKinoBackendModels2(l, v)
+	easyjson9e1087fdDecodeKinoBackendModels3(l, v)
 }
-func easyjson9e1087fdDecodeKinoBackendModels3(in *jlexer.Lexer, out *RegisterProfile) {
+func easyjson9e1087fdDecodeKinoBackendModels4(in *jlexer.Lexer, out *RegisterProfile) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -282,7 +348,7 @@ func easyjson9e1087fdDecodeKinoBackendModels3(in *jlexer.Lexer, out *RegisterPro
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeKinoBackendModels3(out *jwriter.Writer, in RegisterProfile) {
+func easyjson9e1087fdEncodeKinoBackendModels4(out *jwriter.Writer, in RegisterProfile) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -317,27 +383,27 @@ func easyjson9e1087fdEncodeKinoBackendModels3(out *jwriter.Writer, in RegisterPr
 // MarshalJSON supports json.Marshaler interface
 func (v RegisterProfile) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeKinoBackendModels3(&w, v)
+	easyjson9e1087fdEncodeKinoBackendModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v RegisterProfile) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeKinoBackendModels3(w, v)
+	easyjson9e1087fdEncodeKinoBackendModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *RegisterProfile) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeKinoBackendModels3(&r, v)
+	easyjson9e1087fdDecodeKinoBackendModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *RegisterProfile) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeKinoBackendModels3(l, v)
+	easyjson9e1087fdDecodeKinoBackendModels4(l, v)
 }
-func easyjson9e1087fdDecodeKinoBackendModels4(in *jlexer.Lexer, out *ProfileErrorList) {
+func easyjson9e1087fdDecodeKinoBackendModels5(in *jlexer.Lexer, out *ProfileErrorList) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -389,7 +455,7 @@ func easyjson9e1087fdDecodeKinoBackendModels4(in *jlexer.Lexer, out *ProfileErro
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeKinoBackendModels4(out *jwriter.Writer, in ProfileErrorList) {
+func easyjson9e1087fdEncodeKinoBackendModels5(out *jwriter.Writer, in ProfileErrorList) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -415,27 +481,27 @@ func easyjson9e1087fdEncodeKinoBackendModels4(out *jwriter.Writer, in ProfileErr
 // MarshalJSON supports json.Marshaler interface
 func (v ProfileErrorList) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeKinoBackendModels4(&w, v)
+	easyjson9e1087fdEncodeKinoBackendModels5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ProfileErrorList) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeKinoBackendModels4(w, v)
+	easyjson9e1087fdEncodeKinoBackendModels5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ProfileErrorList) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeKinoBackendModels4(&r, v)
+	easyjson9e1087fdDecodeKinoBackendModels5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ProfileErrorList) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeKinoBackendModels4(l, v)
+	easyjson9e1087fdDecodeKinoBackendModels5(l, v)
 }
-func easyjson9e1087fdDecodeKinoBackendModels5(in *jlexer.Lexer, out *ProfileError) {
+func easyjson9e1087fdDecodeKinoBackendModels6(in *jlexer.Lexer, out *ProfileError) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -468,7 +534,7 @@ func easyjson9e1087fdDecodeKinoBackendModels5(in *jlexer.Lexer, out *ProfileErro
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeKinoBackendModels5(out *jwriter.Writer, in ProfileError) {
+func easyjson9e1087fdEncodeKinoBackendModels6(out *jwriter.Writer, in ProfileError) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -488,27 +554,27 @@ func easyjson9e1087fdEncodeKinoBackendModels5(out *jwriter.Writer, in ProfileErr
 // MarshalJSON supports json.Marshaler interface
 func (v ProfileError) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeKinoBackendModels5(&w, v)
+	easyjson9e1087fdEncodeKinoBackendModels6(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ProfileError) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeKinoBackendModels5(w, v)
+	easyjson9e1087fdEncodeKinoBackendModels6(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ProfileError) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeKinoBackendModels5(&r, v)
+	easyjson9e1087fdDecodeKinoBackendModels6(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ProfileError) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeKinoBackendModels5(l, v)
+	easyjson9e1087fdDecodeKinoBackendModels6(l, v)
 }
-func easyjson9e1087fdDecodeKinoBackendModels6(in *jlexer.Lexer, out *Profile) {
+func easyjson9e1087fdDecodeKinoBackendModels7(in *jlexer.Lexer, out *Profile) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -559,7 +625,7 @@ func easyjson9e1087fdDecodeKinoBackendModels6(in *jlexer.Lexer, out *Profile) {
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeKinoBackendModels6(out *jwriter.Writer, in Profile) {
+func easyjson9e1087fdEncodeKinoBackendModels7(out *jwriter.Writer, in Profile) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -604,23 +670,23 @@ func easyjson9e1087fdEncodeKinoBackendModels6(out *jwriter.Writer, in Profile) {
 // MarshalJSON supports json.Marshaler interface
 func (v Profile) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeKinoBackendModels6(&w, v)
+	easyjson9e1087fdEncodeKinoBackendModels7(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Profile) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeKinoBackendModels6(w, v)
+	easyjson9e1087fdEncodeKinoBackendModels7(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Profile) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeKinoBackendModels6(&r, v)
+	easyjson9e1087fdDecodeKinoBackendModels7(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Profile) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeKinoBackendModels6(l, v)
+	easyjson9e1087fdDecodeKinoBackendModels7(l, v)
 }

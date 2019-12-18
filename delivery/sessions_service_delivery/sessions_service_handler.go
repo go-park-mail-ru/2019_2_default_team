@@ -94,7 +94,25 @@ func (h *Handler) LoginUser(ctx context.Context, w http.ResponseWriter, userID u
 // @Router /session [GET]
 func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) {
 	if r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
-		sID, err := json.Marshal(models.Session{SessionID: r.Context().Value(middleware.KeySessionID).(string)})
+		_, err := json.Marshal(models.Session{SessionID: r.Context().Value(middleware.KeySessionID).(string)})
+		if err != nil {
+			logger.Error(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		user, err := h.useCaseUser.GetUser(r.Context().Value(middleware.KeyUserID).(uint))
+		if err != nil {
+			logger.Error(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		userName := models.SessionCheck{
+			Username: user.Nickname,
+		}
+
+		json, err := json.Marshal(userName)
 		if err != nil {
 			logger.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -102,10 +120,20 @@ func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintln(w, string(sID))
+		fmt.Fprintln(w, string(json))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
+
+	//w.Header().Set("Content-Type", "application/json")
+	//comment = SanitizeMe(comment)
+	//json, err := json.Marshal(comment)
+	//if err != nil {
+	//	log.Println(err, "in profileMethod")
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	return
+	//}
+	//fmt.Fprintln(w, string(json))
 }
 
 // @Summary Залогинить
