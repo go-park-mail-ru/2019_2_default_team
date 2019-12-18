@@ -24,7 +24,9 @@ script:
 - docker push maershov/default_team_comment
 - ssh -i $HOME/2019-2-default-team-IGZaL2S7.pem ubuntu@89.208.198.192 ' cd go/2019_2_default_team/;
   sudo docker-compose down;
-  sudo docker-compose up'
+  sudo docker-compose up -d'
+- ssh -i $HOME/2019-2-default-team-IGZaL2S7.pem ubuntu@89.208.198.192 ' cd go/2019_2_default_team/;
+  sql-migrate up'
 before_install:
 - openssl aes-256-cbc -K $encrypted_47d09a04fd6a_key -iv $encrypted_47d09a04fd6a_iv
   -in 2019-2-default-team-IGZaL2S7.pem.enc -out $HOME/2019-2-default-team-IGZaL2S7.pem
