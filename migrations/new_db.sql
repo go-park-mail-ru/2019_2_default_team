@@ -79,10 +79,10 @@ INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, ty
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (6, 'super-hall', 1, '2019-12-18 20:28:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (7, 'super-hall', 1, '2019-12-18 21:28:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (34, 'super-hall2', 2, '2019-12-18 14:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (35, 'super-hall2', 3, '2019-12-18 16:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (36, 'super-hall2', 3, '2019-12-18 19:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (37, 'super-hall2', 2, '2019-12-18 21:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (38, 'super-hall2', 2, '2019-12-18 23:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (35, 'super-hall2', 3, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (36, 'super-hall2', 3, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (37, 'super-hall2', 2, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (38, 'super-hall2', 2, '2019-12-18 17:30:16.968122', 'IMAX', false);
 
 
 INSERT INTO public.seat (seat_id, movie_session_id, is_taken, row, seat_number, is_deleted) VALUES (140, 36, false, 1, 1, false);
