@@ -73,16 +73,16 @@ INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, direct
 INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (3, 'StarWars', 1, 'Fantastic', 200, 'Abrams', 'USA', 2019, 'Fisher', 'May the force be with you', 1, 'https://static.karofilm.ru/uploads/film/desktop/bc/5f/6f/475136826ebdb3cd6319074222.jpg', 'https://static.karofilm.ru/uploads/film/desktop/8a/aa/45/65154177830e35a8d767451f3f.jpg', 'https://www.youtube.com/embed/KVRBfWQgyuY', false);
 
 
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (3, 'super-hall', 3, '2019-12-16 19:28:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (4, 'super-hall', 2, '2019-12-16 18:28:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (5, 'super-hall', 2, '2019-12-16 20:28:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (6, 'super-hall', 1, '2019-12-16 20:28:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (7, 'super-hall', 1, '2019-12-16 21:28:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (34, 'super-hall2', 2, '2019-12-16 14:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (35, 'super-hall2', 3, '2019-12-16 14:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (36, 'super-hall2', 3, '2019-12-17 14:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (37, 'super-hall2', 2, '2019-12-17 14:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (38, 'super-hall2', 2, '2019-12-17 17:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (3, 'super-hall', 3, '2019-12-18 19:28:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (4, 'super-hall', 2, '2019-12-18 18:28:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (5, 'super-hall', 2, '2019-12-18 20:28:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (6, 'super-hall', 1, '2019-12-18 20:28:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (7, 'super-hall', 1, '2019-12-18 21:28:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (34, 'super-hall2', 2, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (35, 'super-hall2', 3, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (36, 'super-hall2', 3, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (37, 'super-hall2', 2, '2019-12-18 14:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (38, 'super-hall2', 2, '2019-12-18 17:30:16.968122', 'IMAX', false);
 
 
 INSERT INTO public.seat (seat_id, movie_session_id, is_taken, row, seat_number, is_deleted) VALUES (140, 36, false, 1, 1, false);
