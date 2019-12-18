@@ -21,5 +21,5 @@ script:
 - docker push maershov/default_team_commentdocker
 before_install:
 - openssl aes-256-cbc -K $encrypted_47d09a04fd6a_key -iv $encrypted_47d09a04fd6a_iv
-  -in 2019-2-default-team-IGZaL2S7.pem.enc -out ~\/2019-2-default-team-IGZaL2S7.pem
+  -in 2019-2-default-team-IGZaL2S7.pem.enc -out $HOME/2019-2-default-team-IGZaL2S7.pem
   -d
