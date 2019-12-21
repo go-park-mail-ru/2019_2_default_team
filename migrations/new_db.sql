@@ -60,6 +60,7 @@ create table ticket_profile (
     ticket_id                  bigserial   primary key,
     movie_session_id    bigint      not null references movie_session (ms_id),
     seat_id             bigint      not null references seat (seat_id),
+    start_datetime      timestamp   not null,
     profile_id          bigint      null references user_profile (user_id),
     price               int         not null,
     is_deleted          boolean     not null default(false)
@@ -68,9 +69,9 @@ create table ticket_profile (
 INSERT INTO user_profile(nickname, password, first_name, last_name, email, avatar, is_deleted)
 VALUES('usernick', 'password', 'user', 'surname', 'me@mail.ru', 'urlurl', false);
 
-INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (2, 'FordVSFerrari', 1, 'Race, Drama', 169, 'Gray', 'USA', 2019, 'Bale', 'Future, cars... ', 2, 'https://static.karofilm.ru/uploads/film/desktop/03/b9/83/e827e7909888a133b74969ce6f.jpg', 'https://static.karofilm.ru/uploads/film/desktop/a0/dd/98/6ab8284a4d469111457c17e10f.jpg', 'https://www.youtube.com/embed/fAD-D3P-s0I', false);
-INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (1, 'Joker', 1, 'Comics', 159, 'Todd', 'USA', 2019, 'Phoenix', 'Absolutely madness', 0, 'https://static.karofilm.ru/uploads/film/desktop/e3/b6/4b/5215d5811b80298172dad73fd1.jpg', 'https://static.karofilm.ru/uploads/film/desktop/06/5b/94/d93f295f6ac79d1e2060f657de.jpg', 'https://www.youtube.com/embed/50IJyz7ecqc', false);
-INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (3, 'StarWars', 1, 'Fantastic', 200, 'Abrams', 'USA', 2019, 'Fisher', 'May the force be with you', 1, 'https://static.karofilm.ru/uploads/film/desktop/bc/5f/6f/475136826ebdb3cd6319074222.jpg', 'https://static.karofilm.ru/uploads/film/desktop/8a/aa/45/65154177830e35a8d767451f3f.jpg', 'https://www.youtube.com/embed/KVRBfWQgyuY', false);
+INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (2, 'FordVSFerrari', 1, 'Drama', 169, 'Gray', 'USA', 2019, 'Bale', 'Future, cars... ', 2, 'https://static.karofilm.ru/uploads/film/desktop/03/b9/83/e827e7909888a133b74969ce6f.jpg', 'https://static.karofilm.ru/uploads/film/desktop/a0/dd/98/6ab8284a4d469111457c17e10f.jpg', 'https://www.youtube.com/embed/fAD-D3P-s0I', false);
+INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (1, 'Joker', 1, 'Drama', 159, 'Todd', 'USA', 2019, 'Phoenix', 'Absolutely madness', 0, 'https://static.karofilm.ru/uploads/film/desktop/e3/b6/4b/5215d5811b80298172dad73fd1.jpg', 'https://static.karofilm.ru/uploads/film/desktop/06/5b/94/d93f295f6ac79d1e2060f657de.jpg', 'https://www.youtube.com/embed/50IJyz7ecqc', false);
+INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (3, 'StarWars', 1, 'Drama', 200, 'Abrams', 'USA', 2019, 'Fisher', 'May the force be with you', 1, 'https://static.karofilm.ru/uploads/film/desktop/bc/5f/6f/475136826ebdb3cd6319074222.jpg', 'https://static.karofilm.ru/uploads/film/desktop/8a/aa/45/65154177830e35a8d767451f3f.jpg', 'https://www.youtube.com/embed/KVRBfWQgyuY', false);
 
 
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (3, 'super-hall', 3, '2019-12-18 19:28:16.968122', 'IMAX', false);
