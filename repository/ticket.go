@@ -52,10 +52,30 @@ func (TR TicketRepository) CheckTicket(u *models.RegisterTicket) (bool, error) {
 
 func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Ticket, error) {
 	res := models.Ticket{}
+
+	resMS := models.MovieSession{}
+
+	qresms := TR.database.QueryRowx(`
+		SELECT start_datetime FROM movie_session
+		WHERE movie_id = $1`,
+		u.MSID)
+	if err := qresms.Err(); err != nil {
+		return res, err
+	}
+	err := qresms.StructScan(&resMS)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.UserNotFoundError{"id"}
+		}
+		return res, err
+	}
+
+	u.Date = resMS.Date
+
 	qres := TR.database.QueryRowx(`
-		INSERT INTO ticket_profile (profile_id, movie_session_id, seat_id, price)
-		VALUES ($1, $2, $3, $4) RETURNING ticket_id, movie_session_id`,
-		u.UserID, u.MSID, u.SeatID, u.Price)
+		INSERT INTO ticket_profile (profile_id, movie_session_id, seat_id, price, start_datetime)
+		VALUES ($1, $2, $3, $4, $5) RETURNING ticket_id, movie_session_id`,
+		u.UserID, u.MSID, u.SeatID, u.Price, u.Date)
 
 	fmt.Println(u.SeatID)
 
@@ -68,7 +88,8 @@ func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Tic
 			return res, errors.ErrUniqueConstraintViolation
 		}
 	}
-	err := qres.StructScan(&res)
+
+	err = qres.StructScan(&res)
 	if err != nil {
 		return res, err
 	}

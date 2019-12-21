@@ -3,10 +3,11 @@ package models
 import "time"
 
 type RegisterTicket struct {
-	UserID uint `json:"user_id" db:"profile_id"`
-	MSID   uint `json:"ms_id" db:"movie_session_id"`
-	SeatID uint `json:"seat_id" db:"seat_id"`
-	Price  uint `json:"price" db:"price"`
+	UserID uint      `json:"user_id" db:"profile_id"`
+	MSID   uint      `json:"ms_id" db:"movie_session_id"`
+	SeatID uint      `json:"seat_id" db:"seat_id"`
+	Price  uint      `json:"price" db:"price"`
+	Date   time.Time `json:"start_datetime" db:"start_datetime"`
 }
 
 type Ticket struct {
@@ -29,6 +30,5 @@ type Seat struct {
 
 type TicketProfile struct {
 	RegisterTicket
-	TicketID uint      `json:"ticket_id" db:"ticket_id"`
-	Date     time.Time `json:"start_datetime" db:"start_datetime"`
+	TicketID uint `json:"ticket_id" db:"ticket_id"`
 }

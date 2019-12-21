@@ -590,6 +590,11 @@ func (h *Handler) getIsVoted(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) postVote(w http.ResponseWriter, r *http.Request) {
 
+	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	u := &models.RegisterVote{}
 	err := readVote(r, u)
 	if err != nil {
@@ -601,6 +606,10 @@ func (h *Handler) postVote(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	id_user := r.Context().Value(middleware.KeyUserID).(uint)
+
+	u.UserID = id_user
 
 	result, err := h.useCase.CheckIsVoted(r.Context(), u)
 	if err != nil {
@@ -631,10 +640,10 @@ func (h *Handler) postVote(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Print("User id , was registered for film ", newVote.UserID, newVote.MovieID)
 
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusCreated)
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *Handler) getFilmsForToday(w http.ResponseWriter, r *http.Request) {

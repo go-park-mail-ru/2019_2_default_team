@@ -38,10 +38,6 @@ func easyjsonB39c1f48DecodeKinoBackendModels(in *jlexer.Lexer, out *TicketProfil
 		switch key {
 		case "ticket_id":
 			out.TicketID = uint(in.Uint())
-		case "start_datetime":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Date).UnmarshalJSON(data))
-			}
 		case "user_id":
 			out.UserID = uint(in.Uint())
 		case "ms_id":
@@ -50,6 +46,10 @@ func easyjsonB39c1f48DecodeKinoBackendModels(in *jlexer.Lexer, out *TicketProfil
 			out.SeatID = uint(in.Uint())
 		case "price":
 			out.Price = uint(in.Uint())
+		case "start_datetime":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Date).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -70,11 +70,6 @@ func easyjsonB39c1f48EncodeKinoBackendModels(out *jwriter.Writer, in TicketProfi
 		out.Uint(uint(in.TicketID))
 	}
 	{
-		const prefix string = ",\"start_datetime\":"
-		out.RawString(prefix)
-		out.Raw((in.Date).MarshalJSON())
-	}
-	{
 		const prefix string = ",\"user_id\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.UserID))
@@ -93,6 +88,11 @@ func easyjsonB39c1f48EncodeKinoBackendModels(out *jwriter.Writer, in TicketProfi
 		const prefix string = ",\"price\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.Price))
+	}
+	{
+		const prefix string = ",\"start_datetime\":"
+		out.RawString(prefix)
+		out.Raw((in.Date).MarshalJSON())
 	}
 	out.RawByte('}')
 }
@@ -149,6 +149,10 @@ func easyjsonB39c1f48DecodeKinoBackendModels1(in *jlexer.Lexer, out *Ticket) {
 			out.SeatID = uint(in.Uint())
 		case "price":
 			out.Price = uint(in.Uint())
+		case "start_datetime":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Date).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -187,6 +191,11 @@ func easyjsonB39c1f48EncodeKinoBackendModels1(out *jwriter.Writer, in Ticket) {
 		const prefix string = ",\"price\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.Price))
+	}
+	{
+		const prefix string = ",\"start_datetime\":"
+		out.RawString(prefix)
+		out.Raw((in.Date).MarshalJSON())
 	}
 	out.RawByte('}')
 }
@@ -408,6 +417,10 @@ func easyjsonB39c1f48DecodeKinoBackendModels4(in *jlexer.Lexer, out *RegisterTic
 			out.SeatID = uint(in.Uint())
 		case "price":
 			out.Price = uint(in.Uint())
+		case "start_datetime":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Date).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -441,6 +454,11 @@ func easyjsonB39c1f48EncodeKinoBackendModels4(out *jwriter.Writer, in RegisterTi
 		const prefix string = ",\"price\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.Price))
+	}
+	{
+		const prefix string = ",\"start_datetime\":"
+		out.RawString(prefix)
+		out.Raw((in.Date).MarshalJSON())
 	}
 	out.RawByte('}')
 }
