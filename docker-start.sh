@@ -1,12 +1,12 @@
-docker network create default-net
+sudo docker network create default-net
 
 cd ./database_docker_compose
-docker-compose up -d
+sudo docker-compose up -d
 
 cd ../
 
-docker pull maershov/default_team_comment
-docker pull maershov/default_team_session
-docker pull maershov/default_team
+sudo docker pull maershov/default_team_comment
+sudo docker pull maershov/default_team_session
+sudo docker pull maershov/default_team
 
-docker-compose up
+sudo docker-compose up

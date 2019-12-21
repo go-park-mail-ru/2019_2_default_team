@@ -1,8 +1,8 @@
 
 
-docker-compose down
+sudo docker-compose down
 cd ./database_docker_compose
-docker-compose down
+sudo docker-compose down
 cd ../
 
-docker network rm default-net
+sudo docker network rm default-net
