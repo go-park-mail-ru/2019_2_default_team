@@ -1,3 +1,5 @@
+docker network create default-net
+
 cd ./database_docker_compose
 docker-compose up -d
 
