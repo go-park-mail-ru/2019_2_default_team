@@ -634,7 +634,7 @@ func (h *Handler) postVote(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (h *Handler) getFilmsForToday(w http.ResponseWriter, r *http.Request) {
@@ -687,4 +687,39 @@ func (h *Handler) getFilmsForSoon(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintln(w, string(json))
 
+}
+
+func (h *Handler) getRecommendedFilms(w http.ResponseWriter, r *http.Request) {
+
+	//конец парсинга данных можно передавать ctx,
+	vals := r.URL.Query() // Returns a url.Values, which is a map[string][]string
+	productTypes, ok := vals["genre"]
+	var pt string
+	if ok {
+		if len(productTypes) >= 1 {
+			pt = productTypes[0]
+		}
+	}
+
+	films, err := h.useCase.GetRecommendedFilms(pt, r.Context())
+	if err != nil {
+		fmt.Println("error")
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json, err := json.Marshal(films)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
 }

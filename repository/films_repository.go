@@ -21,4 +21,5 @@ type FilmsRepository interface {
 	IsVoted(u *models.RegisterVote) (bool, error)
 	GetFilmsForToday() ([]models.ProfileFilm, error)
 	GetFilmsForSoon() ([]models.ProfileFilm, error)
+	GetRecommendedFilms(wantedGenre string) ([]models.ProfileFilm, error)
 }

@@ -110,8 +110,8 @@ func (UR UserRepository) UpdateUserByID(id uint, u *models.RegisterProfile) erro
 	return nil
 }
 
-func (UR UserRepository) GetUserProfileByID(id uint) (models.Profile, error) {
-	res := models.Profile{}
+func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error) {
+	res := models.FullProfile{}
 	qres := UR.database.QueryRowx(`
 		SELECT user_id, email, nickname, avatar, first_name, last_name FROM user_profile
 		WHERE user_id = $1`,
@@ -126,6 +126,31 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.Profile, error) {
 		}
 		return res, err
 	}
+
+	resT := []models.TicketProfile{}
+	resOneT := models.TicketProfile{}
+
+	qrestickets, err := UR.database.Queryx(`
+		SELECT ticket_id, movie_session_id, seat_id, profile_id, price FROM ticket_profile
+		WHERE profile_id = $1`,
+		id)
+	if err != nil {
+		return res, err
+	}
+
+	for qrestickets.Next() {
+		err = qrestickets.StructScan(&resOneT)
+		resT = append(resT, resOneT)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.TicketNotFoundError{""}
+		}
+		return models.FullProfile{}, err
+	}
+
+	res.Tickets = resT
 
 	return res, nil
 }

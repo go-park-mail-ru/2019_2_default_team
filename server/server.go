@@ -105,6 +105,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apif.GetSeatsByMSID, sesmic)))))
 	r.HandleFunc("/film_vote", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.PostVote, sesmic)))))
+	r.HandleFunc("/fils_recommended", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.FilmsRecommended, sesmic)))))
 
 	err = nil
 	server.routing = r

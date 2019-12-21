@@ -82,3 +82,9 @@ func (apif *MyHandlerFilms) FilmsForSoon(w http.ResponseWriter, r *http.Request)
 
 	h.getFilmsForSoon(w, r)
 }
+
+func (apif *MyHandlerFilms) FilmsRecommended(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getRecommendedFilms(w, r)
+}

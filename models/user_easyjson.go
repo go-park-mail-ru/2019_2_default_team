@@ -690,3 +690,158 @@ func (v *Profile) UnmarshalJSON(data []byte) error {
 func (v *Profile) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson9e1087fdDecodeKinoBackendModels7(l, v)
 }
+func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "nickname":
+			out.Nickname = string(in.String())
+		case "avatar":
+			if in.IsNull() {
+				in.Skip()
+				out.Avatar = nil
+			} else {
+				if out.Avatar == nil {
+					out.Avatar = new(string)
+				}
+				*out.Avatar = string(in.String())
+			}
+		case "first_name":
+			out.FirstName = string(in.String())
+		case "last_name":
+			out.LastName = string(in.String())
+		case "tickets":
+			if in.IsNull() {
+				in.Skip()
+				out.Tickets = nil
+			} else {
+				in.Delim('[')
+				if out.Tickets == nil {
+					if !in.IsDelim(']') {
+						out.Tickets = make([]TicketProfile, 0, 1)
+					} else {
+						out.Tickets = []TicketProfile{}
+					}
+				} else {
+					out.Tickets = (out.Tickets)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 TicketProfile
+					(v4).UnmarshalEasyJSON(in)
+					out.Tickets = append(out.Tickets, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "id":
+			out.UserID = uint(in.Uint())
+		case "email":
+			out.Email = string(in.String())
+		case "password":
+			out.Password = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in FullProfile) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"nickname\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Nickname))
+	}
+	if in.Avatar != nil {
+		const prefix string = ",\"avatar\":"
+		out.RawString(prefix)
+		out.String(string(*in.Avatar))
+	}
+	{
+		const prefix string = ",\"first_name\":"
+		out.RawString(prefix)
+		out.String(string(in.FirstName))
+	}
+	{
+		const prefix string = ",\"last_name\":"
+		out.RawString(prefix)
+		out.String(string(in.LastName))
+	}
+	{
+		const prefix string = ",\"tickets\":"
+		out.RawString(prefix)
+		if in.Tickets == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v5, v6 := range in.Tickets {
+				if v5 > 0 {
+					out.RawByte(',')
+				}
+				(v6).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix)
+		out.Uint(uint(in.UserID))
+	}
+	{
+		const prefix string = ",\"email\":"
+		out.RawString(prefix)
+		out.String(string(in.Email))
+	}
+	if in.Password != "" {
+		const prefix string = ",\"password\":"
+		out.RawString(prefix)
+		out.String(string(in.Password))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v FullProfile) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9e1087fdEncodeKinoBackendModels8(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v FullProfile) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9e1087fdEncodeKinoBackendModels8(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *FullProfile) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9e1087fdDecodeKinoBackendModels8(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *FullProfile) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9e1087fdDecodeKinoBackendModels8(l, v)
+}

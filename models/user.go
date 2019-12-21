@@ -8,6 +8,15 @@ type Profile struct {
 	LastName  string  `json:"last_name" example:"Nicker" db:"last_name"`
 }
 
+type FullProfile struct {
+	User
+	Nickname  string          `json:"nickname" example:"Nick"`
+	Avatar    *string         `json:"avatar,omitempty"`
+	FirstName string          `json:"first_name" example:"Nick" db:"first_name"`
+	LastName  string          `json:"last_name" example:"Nicker" db:"last_name"`
+	Tickets   []TicketProfile `json:"tickets"`
+}
+
 type RegisterProfile struct {
 	Nickname string `json:"nickname" example:"Nick"`
 	UserPassword

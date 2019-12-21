@@ -18,6 +18,7 @@ type FilmsUseCase interface {
 	Vote(ctx context.Context, u *models.RegisterVote) (models.Vote, error)
 	GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm, error)
 	GetFilmsForSoon(ctx context.Context) ([]models.ProfileFilm, error)
+	GetRecommendedFilms(wantedGenre string, ctx context.Context) ([]models.ProfileFilm, error)
 }
 
 type filmUseCase struct {
@@ -48,6 +49,19 @@ func (f filmUseCase) GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm
 	}
 
 	return newFilms, err
+}
+
+func (f filmUseCase) GetRecommendedFilms(wantedGenre string, ctx context.Context) ([]models.ProfileFilm, error) {
+	var err error
+	var profile []models.ProfileFilm
+
+	profile, err = f.filmRepo.GetRecommendedFilms(wantedGenre)
+
+	if err != nil {
+		return []models.ProfileFilm{}, err
+	}
+
+	return profile, nil
 }
 
 func (f filmUseCase) GetFilmsForSoon(ctx context.Context) ([]models.ProfileFilm, error) {

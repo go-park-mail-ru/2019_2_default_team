@@ -7,7 +7,7 @@ import (
 )
 
 type UsersUseCase interface {
-	GetUser(id uint) (models.Profile, error)
+	GetUser(id uint) (models.FullProfile, error)
 	PostUser(ctx context.Context, u *models.RegisterProfile) (models.Profile, error)
 	PutUser(ctx context.Context, id uint, editUser *models.RegisterProfile) error
 	CheckExistenceOfEmail(e string) (bool, error)
@@ -25,7 +25,7 @@ func NewUserUseCase(userRepo repository.UserRepository) *usersUseCase {
 	}
 }
 
-func (user usersUseCase) GetUser(id uint) (models.Profile, error) {
+func (user usersUseCase) GetUser(id uint) (models.FullProfile, error) {
 
 	//if params.ID != 0 {
 	//	profile, err := user.userRepo.GetUserProfileByID(params.ID)
@@ -49,7 +49,7 @@ func (user usersUseCase) GetUser(id uint) (models.Profile, error) {
 
 	profile, err := user.userRepo.GetUserProfileByID(id)
 	if err != nil {
-		return models.Profile{}, err
+		return models.FullProfile{}, err
 	}
 	return profile, nil
 	//}

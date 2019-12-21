@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type RegisterTicket struct {
 	UserID uint `json:"user_id" db:"profile_id"`
 	MSID   uint `json:"ms_id" db:"movie_session_id"`
@@ -23,4 +25,10 @@ type Seat struct {
 	IsTaken        bool   `json:"is_taken" db:"is_taken"`
 	Row            int    `json:"row" db:"row"`
 	SeatNumber     int    `json:"seat_number" db:"seat_number"`
+}
+
+type TicketProfile struct {
+	RegisterTicket
+	TicketID uint      `json:"ticket_id" db:"ticket_id"`
+	Date     time.Time `json:"start_datetime" db:"start_datetime"`
 }
