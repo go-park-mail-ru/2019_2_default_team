@@ -150,6 +150,44 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 		return models.FullProfile{}, err
 	}
 
+	ticketAdd := models.TicketAddInfo{}
+	//ticketAdds :=  []models.TicketAddInfo{}
+	var ticketMap map[uint]models.TicketAddInfo
+	var msIDs []uint
+
+	ticketMap = make(map[uint]models.TicketAddInfo)
+
+	for _, value := range resT {
+		msIDs = append(msIDs, value.MSID)
+	}
+
+	query, args, err := sqlx.In("SELECT a.ms_id, b.poster_popup, b.title FROM movie_session a INNER JOIN film_profile b ON a.movie_id = b.film_id WHERE a.ms_id IN (?);", msIDs)
+
+	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
+	query = UR.database.Rebind(query)
+	qresfilms, err := UR.database.Queryx(query, args...)
+	if err != nil {
+		return res, err
+	}
+
+	for qresfilms.Next() {
+		err = qresfilms.StructScan(&ticketAdd)
+		ticketMap[ticketAdd.MsID] = ticketAdd
+		//ticketAdds = append(ticketAdds, ticketAdd)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.FilmNotFoundError{"title"}
+		}
+		return res, err
+	}
+
+	for index, value := range resT {
+		resT[index].PosterPopup = ticketMap[value.MSID].PosterPopup
+		resT[index].Title = ticketMap[value.MSID].Title
+	}
+
 	res.Tickets = resT
 
 	return res, nil

@@ -30,5 +30,13 @@ type Seat struct {
 
 type TicketProfile struct {
 	RegisterTicket
-	TicketID uint `json:"ticket_id" db:"ticket_id"`
+	TicketID    uint   `json:"ticket_id" db:"ticket_id"`
+	Title       string `json:"title" example:"Joker"`
+	PosterPopup string `json:"poster_popup" db:"poster_popup"`
+}
+
+type TicketAddInfo struct {
+	MsID        uint   `json:"ms_id" db:"ms_id"`
+	Title       string `json:"title" example:"Joker"`
+	PosterPopup string `json:"poster_popup" db:"poster_popup"`
 }

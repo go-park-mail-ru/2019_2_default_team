@@ -111,6 +111,15 @@ func SanitizeMe(film models.ProfileFilm) models.ProfileFilm {
 	return film
 }
 
+func SanitizeMeVote(film models.ProfileFilmWithVote) models.ProfileFilmWithVote {
+	sanitizer := bluemonday.UGCPolicy()
+	film.Description = sanitizer.Sanitize(film.Description)
+	film.MainActor = sanitizer.Sanitize(film.Description)
+	film.Director = sanitizer.Sanitize(film.Director)
+
+	return film
+}
+
 // @Title Получить профиль
 // @Summary Получить профиль фильма по ID или названию Title
 // @ID get-profilefilm
@@ -151,7 +160,7 @@ func (h *Handler) getProfileFilm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	profile = SanitizeMe(profile)
+	profile = SanitizeMeVote(profile)
 	profileJSON, err := profile.MarshalJSON()
 	//json, err := json.Marshal(profile)
 	//if err != nil {
@@ -368,7 +377,7 @@ func (h *Handler) getOneFilm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	profile = SanitizeMe(profile)
+	profile = SanitizeMeVote(profile)
 
 	json, err := profile.MarshalJSON()
 	if err != nil {

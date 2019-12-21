@@ -20,6 +20,11 @@ type ProfileFilm struct {
 	Year        int     `json:"year" db:"year"`
 }
 
+type ProfileFilmWithVote struct {
+	ProfileFilm
+	IsVoted bool `json:"is_voted" example:"true"`
+}
+
 type RegisterProfileFilm struct {
 	Title       string  `json:"title" example:"Joker"`
 	Description string  `json:"description" example:"Absolutely madness"`

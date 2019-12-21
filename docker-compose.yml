@@ -2,28 +2,28 @@ version: "3"
 
 services:
 
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: docker
-    ports:
-      - 5432:5432
-    volumes:
-      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres
-
-  redis_db:
-    image: redis
-    command: redis-server --requirepass docker
-    environment:
-      REDIS_DB: redis
-      REDIS_USER: redis
-      REDIS_PASSWORD: docker
-    ports:
-      - 6379:6379
-    volumes:
-      - $HOME/docker/volumes/redis:/var/lib/redissql/data  redis
+#  postgres:
+#    image: postgres
+#    environment:
+#      POSTGRES_DB: postgres
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: docker
+#    ports:
+#      - 5432:5432
+#    volumes:
+#      - $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres
+#
+#  redis_db:
+#    image: redis
+#    command: redis-server --requirepass docker
+#    environment:
+#      REDIS_DB: redis
+#      REDIS_USER: redis
+#      REDIS_PASSWORD: docker
+#    ports:
+#      - 6379:6379
+#    volumes:
+#      - $HOME/docker/volumes/redis:/var/lib/redissql/data  redis
 
   main:
 #    build: .
@@ -46,12 +46,12 @@ services:
     image: maershov/default_team_session
     container_name: session
     restart: always
-    depends_on:
-      - redis_db
+#    depends_on:
+#      - redis_db
     ports:
       - 8081:8081
-    links:
-      - redis_db
+#    links:
+#      - redis_db
 
   comments_service:
 #    build:
@@ -60,15 +60,19 @@ services:
     image: maershov/default_team_comment
     container_name: comments
     restart: always
-    depends_on:
-      - postgres
+#    depends_on:
+#      - postgres
     ports:
       - 8082:8082
-    links:
-      - postgres
+#    links:
+#      - postgres
 
 
 # external network with nginx, databases
+#networks:
+#  default:
+#    driver: bridge
 networks:
   default:
-    driver: bridge
+    external:
+      name: default-net

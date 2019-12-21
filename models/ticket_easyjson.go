@@ -38,6 +38,10 @@ func easyjsonB39c1f48DecodeKinoBackendModels(in *jlexer.Lexer, out *TicketProfil
 		switch key {
 		case "ticket_id":
 			out.TicketID = uint(in.Uint())
+		case "title":
+			out.Title = string(in.String())
+		case "poster_popup":
+			out.PosterPopup = string(in.String())
 		case "user_id":
 			out.UserID = uint(in.Uint())
 		case "ms_id":
@@ -68,6 +72,16 @@ func easyjsonB39c1f48EncodeKinoBackendModels(out *jwriter.Writer, in TicketProfi
 		const prefix string = ",\"ticket_id\":"
 		out.RawString(prefix[1:])
 		out.Uint(uint(in.TicketID))
+	}
+	{
+		const prefix string = ",\"title\":"
+		out.RawString(prefix)
+		out.String(string(in.Title))
+	}
+	{
+		const prefix string = ",\"poster_popup\":"
+		out.RawString(prefix)
+		out.String(string(in.PosterPopup))
 	}
 	{
 		const prefix string = ",\"user_id\":"
@@ -120,7 +134,87 @@ func (v *TicketProfile) UnmarshalJSON(data []byte) error {
 func (v *TicketProfile) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonB39c1f48DecodeKinoBackendModels(l, v)
 }
-func easyjsonB39c1f48DecodeKinoBackendModels1(in *jlexer.Lexer, out *Ticket) {
+func easyjsonB39c1f48DecodeKinoBackendModels1(in *jlexer.Lexer, out *TicketAddInfo) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "ms_id":
+			out.MsID = uint(in.Uint())
+		case "title":
+			out.Title = string(in.String())
+		case "poster_popup":
+			out.PosterPopup = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonB39c1f48EncodeKinoBackendModels1(out *jwriter.Writer, in TicketAddInfo) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"ms_id\":"
+		out.RawString(prefix[1:])
+		out.Uint(uint(in.MsID))
+	}
+	{
+		const prefix string = ",\"title\":"
+		out.RawString(prefix)
+		out.String(string(in.Title))
+	}
+	{
+		const prefix string = ",\"poster_popup\":"
+		out.RawString(prefix)
+		out.String(string(in.PosterPopup))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v TicketAddInfo) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonB39c1f48EncodeKinoBackendModels1(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v TicketAddInfo) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonB39c1f48EncodeKinoBackendModels1(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *TicketAddInfo) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonB39c1f48DecodeKinoBackendModels1(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *TicketAddInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonB39c1f48DecodeKinoBackendModels1(l, v)
+}
+func easyjsonB39c1f48DecodeKinoBackendModels2(in *jlexer.Lexer, out *Ticket) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -163,7 +257,7 @@ func easyjsonB39c1f48DecodeKinoBackendModels1(in *jlexer.Lexer, out *Ticket) {
 		in.Consumed()
 	}
 }
-func easyjsonB39c1f48EncodeKinoBackendModels1(out *jwriter.Writer, in Ticket) {
+func easyjsonB39c1f48EncodeKinoBackendModels2(out *jwriter.Writer, in Ticket) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -203,27 +297,27 @@ func easyjsonB39c1f48EncodeKinoBackendModels1(out *jwriter.Writer, in Ticket) {
 // MarshalJSON supports json.Marshaler interface
 func (v Ticket) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB39c1f48EncodeKinoBackendModels1(&w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Ticket) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB39c1f48EncodeKinoBackendModels1(w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Ticket) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB39c1f48DecodeKinoBackendModels1(&r, v)
+	easyjsonB39c1f48DecodeKinoBackendModels2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Ticket) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB39c1f48DecodeKinoBackendModels1(l, v)
+	easyjsonB39c1f48DecodeKinoBackendModels2(l, v)
 }
-func easyjsonB39c1f48DecodeKinoBackendModels2(in *jlexer.Lexer, out *Seat) {
+func easyjsonB39c1f48DecodeKinoBackendModels3(in *jlexer.Lexer, out *Seat) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -264,7 +358,7 @@ func easyjsonB39c1f48DecodeKinoBackendModels2(in *jlexer.Lexer, out *Seat) {
 		in.Consumed()
 	}
 }
-func easyjsonB39c1f48EncodeKinoBackendModels2(out *jwriter.Writer, in Seat) {
+func easyjsonB39c1f48EncodeKinoBackendModels3(out *jwriter.Writer, in Seat) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -304,27 +398,27 @@ func easyjsonB39c1f48EncodeKinoBackendModels2(out *jwriter.Writer, in Seat) {
 // MarshalJSON supports json.Marshaler interface
 func (v Seat) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB39c1f48EncodeKinoBackendModels2(&w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Seat) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB39c1f48EncodeKinoBackendModels2(w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Seat) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB39c1f48DecodeKinoBackendModels2(&r, v)
+	easyjsonB39c1f48DecodeKinoBackendModels3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Seat) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB39c1f48DecodeKinoBackendModels2(l, v)
+	easyjsonB39c1f48DecodeKinoBackendModels3(l, v)
 }
-func easyjsonB39c1f48DecodeKinoBackendModels3(in *jlexer.Lexer, out *RequestTicket) {
+func easyjsonB39c1f48DecodeKinoBackendModels4(in *jlexer.Lexer, out *RequestTicket) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -355,7 +449,7 @@ func easyjsonB39c1f48DecodeKinoBackendModels3(in *jlexer.Lexer, out *RequestTick
 		in.Consumed()
 	}
 }
-func easyjsonB39c1f48EncodeKinoBackendModels3(out *jwriter.Writer, in RequestTicket) {
+func easyjsonB39c1f48EncodeKinoBackendModels4(out *jwriter.Writer, in RequestTicket) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -370,27 +464,27 @@ func easyjsonB39c1f48EncodeKinoBackendModels3(out *jwriter.Writer, in RequestTic
 // MarshalJSON supports json.Marshaler interface
 func (v RequestTicket) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB39c1f48EncodeKinoBackendModels3(&w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v RequestTicket) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB39c1f48EncodeKinoBackendModels3(w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *RequestTicket) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB39c1f48DecodeKinoBackendModels3(&r, v)
+	easyjsonB39c1f48DecodeKinoBackendModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *RequestTicket) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB39c1f48DecodeKinoBackendModels3(l, v)
+	easyjsonB39c1f48DecodeKinoBackendModels4(l, v)
 }
-func easyjsonB39c1f48DecodeKinoBackendModels4(in *jlexer.Lexer, out *RegisterTicket) {
+func easyjsonB39c1f48DecodeKinoBackendModels5(in *jlexer.Lexer, out *RegisterTicket) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -431,7 +525,7 @@ func easyjsonB39c1f48DecodeKinoBackendModels4(in *jlexer.Lexer, out *RegisterTic
 		in.Consumed()
 	}
 }
-func easyjsonB39c1f48EncodeKinoBackendModels4(out *jwriter.Writer, in RegisterTicket) {
+func easyjsonB39c1f48EncodeKinoBackendModels5(out *jwriter.Writer, in RegisterTicket) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -466,23 +560,23 @@ func easyjsonB39c1f48EncodeKinoBackendModels4(out *jwriter.Writer, in RegisterTi
 // MarshalJSON supports json.Marshaler interface
 func (v RegisterTicket) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB39c1f48EncodeKinoBackendModels4(&w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v RegisterTicket) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB39c1f48EncodeKinoBackendModels4(w, v)
+	easyjsonB39c1f48EncodeKinoBackendModels5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *RegisterTicket) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB39c1f48DecodeKinoBackendModels4(&r, v)
+	easyjsonB39c1f48DecodeKinoBackendModels5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *RegisterTicket) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB39c1f48DecodeKinoBackendModels4(l, v)
+	easyjsonB39c1f48DecodeKinoBackendModels5(l, v)
 }

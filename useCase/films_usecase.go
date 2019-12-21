@@ -4,10 +4,11 @@ import (
 	"context"
 	"kino_backend/models"
 	"kino_backend/repository"
+	"kino_backend/utilits/middleware"
 )
 
 type FilmsUseCase interface {
-	GetFilm(ctx context.Context, params *models.RequestProfileFilm) (models.ProfileFilm, error)
+	GetFilm(ctx context.Context, params *models.RequestProfileFilm) (models.ProfileFilmWithVote, error)
 	PostFilmUse(ctx context.Context, u *models.RegisterProfileFilm) (models.ProfileFilm, error)
 	PutFilm(ctx context.Context, filmInfo *models.ProfileFilm) error
 	GetAllFilms(ctx context.Context) ([]models.ProfileFilm, error)
@@ -114,26 +115,58 @@ func (f filmUseCase) CreateNewMovieSession(ctx context.Context, u *models.Regist
 	return newMS, err
 }
 
-func (f filmUseCase) GetFilm(ctx context.Context, params *models.RequestProfileFilm) (models.ProfileFilm, error) {
+func (f filmUseCase) GetFilm(ctx context.Context, params *models.RequestProfileFilm) (models.ProfileFilmWithVote, error) {
 	var err error
 	var profile models.ProfileFilm
+	var profileVote models.ProfileFilmWithVote
+	var u models.RegisterVote
+	var voted bool
 
 	if params.ID != 0 {
 		profile, err = f.filmRepo.GetFilmProfileByID(params.ID)
-		if err != nil {
-			return models.ProfileFilm{}, err
+		if !ctx.Value(middleware.KeyIsAuthenticated).(bool) {
+			voted = false
+		} else {
+			u.UserID = ctx.Value(middleware.KeyUserID).(uint)
+			u.MovieID = profile.FilmID
+			res, err := f.CheckIsVoted(ctx, &u)
+			if err != nil {
+				return models.ProfileFilmWithVote{}, err
+			}
+			voted = res
 		}
-		return profile, nil
+
+		profileVote.ProfileFilm = profile
+		profileVote.IsVoted = voted
+
+		if err != nil {
+			return models.ProfileFilmWithVote{}, err
+		}
+		return profileVote, nil
 	} else if params.Title != "" {
 		profile, err = f.filmRepo.GetFilmProfileByTitle(params.Title)
 
-		if err != nil {
-			return models.ProfileFilm{}, err
+		if !ctx.Value(middleware.KeyIsAuthenticated).(bool) {
+			voted = false
+		} else {
+			u.UserID = ctx.Value(middleware.KeyUserID).(uint)
+			u.MovieID = profile.FilmID
+			res, err := f.CheckIsVoted(ctx, &u)
+			if err != nil {
+				return models.ProfileFilmWithVote{}, err
+			}
+			voted = res
 		}
 
-		return profile, nil
+		profileVote.ProfileFilm = profile
+		profileVote.IsVoted = voted
+		if err != nil {
+			return models.ProfileFilmWithVote{}, err
+		}
+
+		return profileVote, nil
 	}
-	return profile, nil
+	return profileVote, nil
 }
 
 func (f filmUseCase) PostFilmUse(ctx context.Context, u *models.RegisterProfileFilm) (models.ProfileFilm, error) {
