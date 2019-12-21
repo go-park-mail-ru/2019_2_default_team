@@ -131,7 +131,7 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 	resOneT := models.TicketProfile{}
 
 	qrestickets, err := UR.database.Queryx(`
-		SELECT ticket_id, movie_session_id, seat_id, profile_id, price FROM ticket_profile
+		SELECT ticket_id, movie_session_id, seat_id, profile_id, price, start_datetime FROM ticket_profile
 		WHERE profile_id = $1`,
 		id)
 	if err != nil {
