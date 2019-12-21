@@ -16,9 +16,6 @@ script:
 - eval "$(ssh-agent -s)"
 - ssh-keyscan -H 89.208.198.192 >> ~/.ssh/known_hosts
 - chmod 400 $HOME/2019-2-default-team-IGZaL2S7.pem
-- docker pull maershov/default_team  || true
-- docker pull maershov/default_team_session  || true
-- docker pull maershov/default_team_comment  || true
 - docker build --tag maershov/default_team .
 - docker build --tag maershov/default_team_session -f ./session_microservice/Dockerfile.session .
 - docker build --tag maershov/default_team_comment -f ./comments_microservice/Dockerfile.comments .
@@ -27,6 +24,9 @@ script:
 - docker push maershov/default_team_comment
 - ssh -i $HOME/2019-2-default-team-IGZaL2S7.pem ubuntu@89.208.198.192 ' cd go/2019_2_default_team/;
   sudo docker-compose down;
+  docker pull maershov/default_team  || true;
+  docker pull maershov/default_team_session  || true;
+  docker pull maershov/default_team_comment  || true;
   sudo docker-compose up -d'
 before_install:
 - openssl aes-256-cbc -K $encrypted_47d09a04fd6a_key -iv $encrypted_47d09a04fd6a_iv
