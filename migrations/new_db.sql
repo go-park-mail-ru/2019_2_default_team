@@ -67,7 +67,7 @@ create table ticket_profile (
 );
 
 INSERT INTO user_profile(nickname, password, first_name, last_name, email, avatar, is_deleted)
-VALUES('usernick', 'password', 'user', 'surname', 'me@mail.ru', 'urlurl', false);
+VALUES('usernick', 'password', 'user', 'surname', 'me@mail.ru', 'https://yt3.ggpht.com/a/AGF-l79J268L8ezHGDGnFh57D0wyFA-ltncqGF3cVA=s900-c-k-c0xffffffff-no-rj-mo', false);
 
 INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (2, 'FordVSFerrari', 1, 'Drama', 169, 'Gray', 'USA', 2019, 'Bale', 'Future, cars... ', 2, 'https://static.karofilm.ru/uploads/film/desktop/03/b9/83/e827e7909888a133b74969ce6f.jpg', 'https://static.karofilm.ru/uploads/film/desktop/a0/dd/98/6ab8284a4d469111457c17e10f.jpg', 'https://www.youtube.com/embed/fAD-D3P-s0I', false);
 INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (1, 'Joker', 1, 'Drama', 159, 'Todd', 'USA', 2019, 'Phoenix', 'Absolutely madness', 0, 'https://static.karofilm.ru/uploads/film/desktop/e3/b6/4b/5215d5811b80298172dad73fd1.jpg', 'https://static.karofilm.ru/uploads/film/desktop/06/5b/94/d93f295f6ac79d1e2060f657de.jpg', 'https://www.youtube.com/embed/50IJyz7ecqc', false);
