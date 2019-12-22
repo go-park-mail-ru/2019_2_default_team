@@ -57,7 +57,7 @@ func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Tic
 
 	qresms := TR.database.QueryRowx(`
 		SELECT start_datetime FROM movie_session
-		WHERE movie_id = $1`,
+		WHERE ms_id = $1`,
 		u.MSID)
 	if err := qresms.Err(); err != nil {
 		return res, err
@@ -65,7 +65,7 @@ func (TR TicketRepository) CreateNewTicket(u *models.RegisterTicket) (models.Tic
 	err := qresms.StructScan(&resMS)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return res, errors.UserNotFoundError{"id"}
+			return res, errors.MSNotFoundError{"id"}
 		}
 		return res, err
 	}
