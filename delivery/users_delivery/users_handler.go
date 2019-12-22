@@ -50,7 +50,7 @@ func (h *Handler) validateNickname(s string) ([]models.ProfileError, error) {
 	if !isValid {
 		errors = append(errors, models.ProfileError{
 			Field: "nickname",
-			Text:  "Никнейм должен быть не менее 4 символов и не более 32 символов",
+			Text:  "invalid_length",
 		})
 		return errors, nil
 	}
@@ -66,7 +66,7 @@ func (h *Handler) validateNickname(s string) ([]models.ProfileError, error) {
 	if exists {
 		errors = append(errors, models.ProfileError{
 			Field: "nickname",
-			Text:  "Этот никнейм уже занят",
+			Text:  "nick_registered",
 		})
 	}
 
@@ -80,7 +80,7 @@ func (h *Handler) validateEmail(s string) ([]models.ProfileError, error) {
 	if !isValid {
 		errors = append(errors, models.ProfileError{
 			Field: "email",
-			Text:  "Невалидная почта",
+			Text:  "invalid_email",
 		})
 		return errors, nil
 	}
@@ -93,7 +93,7 @@ func (h *Handler) validateEmail(s string) ([]models.ProfileError, error) {
 	if exists {
 		errors = append(errors, models.ProfileError{
 			Field: "email",
-			Text:  "Данная почта уже занята",
+			Text:  "email_registered",
 		})
 	}
 
@@ -107,7 +107,7 @@ func (h *Handler) validatePassword(s string) []models.ProfileError {
 	if !isValid {
 		errors = append(errors, models.ProfileError{
 			Field: "password",
-			Text:  "Пароль должен быть не менее 8 символов и не более 32 символов",
+			Text:  "invalid_pass",
 		})
 	}
 
