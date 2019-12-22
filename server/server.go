@@ -31,7 +31,6 @@ type Server struct {
 
 func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server, error) {
 	server := new(Server)
-
 	//l := logger.InitLogger()
 	//defer l.Sync()
 

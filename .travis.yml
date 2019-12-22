@@ -23,7 +23,6 @@ script:
 - docker push maershov/default_team_session
 - docker push maershov/default_team_comment
 - ssh -i $HOME/2019-2-default-team-IGZaL2S7.pem ubuntu@89.208.198.192 ' cd go/2019_2_default_team/;
-  sudo docker-compose down;
   docker pull maershov/default_team  || true;
   docker pull maershov/default_team_session  || true;
   docker pull maershov/default_team_comment  || true;
