@@ -127,11 +127,11 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 		return res, err
 	}
 
-	resT := []models.TicketProfile{}
-	resOneT := models.TicketProfile{}
+	resT := []models.TicketProfilePro{}
+	resOneT := models.TicketProfilePro{}
 
 	qrestickets, err := UR.database.Queryx(`
-		SELECT ticket_id, movie_session_id, seat_id, profile_id, price, start_datetime FROM ticket_profile
+		SELECT a.ticket_id, a.movie_session_id, a.seat_id, a.profile_id, a.price, a.start_datetime, b.row, b.seat_number FROM ticket_profile a INNER JOIN seat b ON a.seat_id = b.seat_id
 		WHERE profile_id = $1`,
 		id)
 	if err != nil {
@@ -161,7 +161,7 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 		msIDs = append(msIDs, value.MSID)
 	}
 
-	query, args, err := sqlx.In("SELECT a.ms_id, b.poster_popup, b.title FROM movie_session a INNER JOIN film_profile b ON a.movie_id = b.film_id WHERE a.ms_id IN (?);", msIDs)
+	query, args, err := sqlx.In("SELECT a.ms_id, b.poster_popup, a.hall_name, b.title FROM movie_session a INNER JOIN film_profile b ON a.movie_id = b.film_id WHERE a.ms_id IN (?);", msIDs)
 
 	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
 	query = UR.database.Rebind(query)
@@ -186,6 +186,7 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 	for index, value := range resT {
 		resT[index].PosterPopup = ticketMap[value.MSID].PosterPopup
 		resT[index].Title = ticketMap[value.MSID].Title
+		resT[index].HallName = ticketMap[value.MSID].HallName
 	}
 
 	res.Tickets = resT

@@ -35,8 +35,16 @@ type TicketProfile struct {
 	PosterPopup string `json:"poster_popup" db:"poster_popup"`
 }
 
+type TicketProfilePro struct {
+	TicketProfile
+	Row        int    `json:"row" db:"row"`
+	SeatNumber int    `json:"seat_number" db:"seat_number"`
+	HallName   string `json:"hall_name, omitempty" db:"hall_name"`
+}
+
 type TicketAddInfo struct {
 	MsID        uint   `json:"ms_id" db:"ms_id"`
 	Title       string `json:"title" example:"Joker"`
 	PosterPopup string `json:"poster_popup" db:"poster_popup"`
+	HallName    string `json:"hall_name, omitempty" db:"hall_name"`
 }

@@ -733,15 +733,15 @@ func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile
 				in.Delim('[')
 				if out.Tickets == nil {
 					if !in.IsDelim(']') {
-						out.Tickets = make([]TicketProfile, 0, 1)
+						out.Tickets = make([]TicketProfilePro, 0, 1)
 					} else {
-						out.Tickets = []TicketProfile{}
+						out.Tickets = []TicketProfilePro{}
 					}
 				} else {
 					out.Tickets = (out.Tickets)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 TicketProfile
+					var v4 TicketProfilePro
 					(v4).UnmarshalEasyJSON(in)
 					out.Tickets = append(out.Tickets, v4)
 					in.WantComma()
