@@ -6,6 +6,7 @@ import (
 	"github.com/lib/pq"
 	"kino_backend/models"
 	"kino_backend/utilits/errors"
+	"math/rand"
 	"strings"
 )
 
@@ -443,11 +444,12 @@ func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
 
 func (FR FilmRepository) GetRecommendedFilms(wantedGenre string) ([]models.ProfileFilm, error) {
 	res := []models.ProfileFilm{}
+	result := []models.ProfileFilm{}
 	resOne := models.ProfileFilm{}
 
 	qres, err := FR.database.Queryx(`
 		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile
-		WHERE is_deleted = $1 AND genre = $2 LIMIT 3`,
+		WHERE is_deleted = $1 AND genre = $2`,
 		false, wantedGenre)
 	if err != nil {
 		return res, err
@@ -458,6 +460,25 @@ func (FR FilmRepository) GetRecommendedFilms(wantedGenre string) ([]models.Profi
 		res = append(res, resOne)
 	}
 
+	if len(res) <= 3 {
+		result = res
+	} else {
+		rand1 := rand.Intn(len(res))
+		rand2 := rand.Intn(len(res))
+		for rand2 == rand1 {
+			rand2 = rand.Intn(len(res))
+		}
+		rand3 := rand.Intn(len(res))
+		for rand3 == rand1 || rand3 == rand2 {
+			rand3 = rand.Intn(len(res))
+		}
+		for index, value := range res {
+			if index == rand1 || index == rand2 || index == rand3 {
+				result = append(result, value)
+			}
+		}
+	}
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return res, errors.FilmNotFoundError{"title"}
@@ -465,7 +486,7 @@ func (FR FilmRepository) GetRecommendedFilms(wantedGenre string) ([]models.Profi
 		return []models.ProfileFilm{}, err
 	}
 
-	return res, nil
+	return result, nil
 }
 
 func (FR FilmRepository) VoteForFilm(u *models.RegisterVote) (models.Vote, error) {
