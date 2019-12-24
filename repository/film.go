@@ -141,7 +141,7 @@ func (FR FilmRepository) GetMovieSessionsForToday(movie_id uint) ([]models.Reque
 
 	qres, err := FR.database.Queryx(`
 		SELECT start_datetime, ms_id, hall_name FROM movie_session
-		WHERE movie_id = $1 AND start_datetime > now() AND start_datetime < now()::date + interval '24h'`,
+		WHERE movie_id = $1 AND start_datetime > now() at time zone 'msk' AND start_datetime < (now()::date at time zone 'msk' + interval '24h')`,
 		movie_id)
 	if err != nil {
 		return res, err
@@ -170,7 +170,7 @@ func (FR FilmRepository) GetFilmsForToday() ([]models.ProfileFilm, error) {
 
 	qres, err := FR.database.Queryx(`
 		SELECT movie_id FROM movie_session
-		 WHERE start_datetime > now() AND start_datetime < now()::date + interval '24h'`)
+		 WHERE start_datetime > now() at time zone 'msk' AND start_datetime < (now()::date at time zone 'msk' + interval '24h')`)
 	if err != nil {
 		return films, err
 	}
@@ -225,7 +225,7 @@ func (FR FilmRepository) GetFilmsForSoon() ([]models.ProfileFilm, error) {
 
 	qres, err := FR.database.Queryx(`
 		SELECT movie_id FROM movie_session
-		 WHERE start_datetime > now()::date + interval '24h'`)
+		 WHERE start_datetime > (now()::date at time zone 'msk' + interval '24h')`)
 	if err != nil {
 		return films, err
 	}
