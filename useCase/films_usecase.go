@@ -5,6 +5,7 @@ import (
 	"kino_backend/models"
 	"kino_backend/repository"
 	"kino_backend/utilits/middleware"
+	"time"
 )
 
 type FilmsUseCase interface {
@@ -20,6 +21,8 @@ type FilmsUseCase interface {
 	GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm, error)
 	GetFilmsForSoon(ctx context.Context) ([]models.ProfileFilm, error)
 	GetRecommendedFilms(wantedGenre string, ctx context.Context) ([]models.ProfileFilm, error)
+	GetFilmsForDate(startTime, lastTime time.Time, filmId uint, ctx context.Context) (bool, error)
+	GetFilmsForPrice(minPrice, maxPrice int, filmId uint, ctx context.Context) (bool, error)
 }
 
 type filmUseCase struct {
@@ -50,6 +53,26 @@ func (f filmUseCase) GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm
 	}
 
 	return newFilms, err
+}
+
+func (f filmUseCase) GetFilmsForPrice(minPrice, maxPrice int, filmId uint, ctx context.Context) (bool, error) {
+	result, err := f.filmRepo.GetFilmsForPrice(minPrice, maxPrice, filmId)
+
+	if err != nil {
+		return false, err
+	}
+
+	return result, err
+}
+
+func (f filmUseCase) GetFilmsForDate(startTime, lastTime time.Time, filmId uint, ctx context.Context) (bool, error) {
+	result, err := f.filmRepo.GetFilmsForDate(startTime, lastTime, filmId)
+
+	if err != nil {
+		return false, err
+	}
+
+	return result, err
 }
 
 func (f filmUseCase) GetRecommendedFilms(wantedGenre string, ctx context.Context) ([]models.ProfileFilm, error) {

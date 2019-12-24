@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Handler struct {
@@ -400,6 +401,71 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			pt = productTypes[0]
 		}
 	}
+	urlTimeStart, ok := vals["start_time"]
+	var startTime string = ""
+	if ok {
+		if len(urlTimeStart) >= 1 {
+			startTime = urlTimeStart[0]
+		}
+	}
+	urlTimeLast, ok := vals["last_time"]
+	var lastTime string = ""
+	if ok {
+		if len(urlTimeLast) >= 1 {
+			lastTime = urlTimeLast[0]
+		}
+	}
+	urlMinPrice, ok := vals["min_price"]
+	var minPrice string
+	if ok {
+		if len(urlMinPrice) >= 1 {
+			minPrice = urlMinPrice[0]
+		}
+	}
+	urlMaxPrice, ok := vals["max_price"]
+	var maxPrice string
+	if ok {
+		if len(urlMaxPrice) >= 1 {
+			maxPrice = urlMaxPrice[0]
+		}
+	}
+	urlYearStart, ok := vals["start_year"]
+	var startYear string
+	if ok {
+		if len(urlYearStart) >= 1 {
+			startYear = urlYearStart[0]
+		}
+	}
+	urlYearLast, ok := vals["last_year"]
+	var lastYear string
+	if ok {
+		if len(urlYearLast) >= 1 {
+			lastYear = urlYearLast[0]
+		}
+	}
+	urlActor, ok := vals["actor"]
+	var actor string
+	if ok {
+		if len(urlActor) >= 1 {
+			actor = urlActor[0]
+		}
+	}
+	urlGenre, ok := vals["genre"]
+	var genre string
+	if ok {
+		if len(urlGenre) >= 1 {
+			genre = urlGenre[0]
+		}
+	}
+	urlCountry, ok := vals["country"]
+	var country string
+	if ok {
+		if len(urlCountry) >= 1 {
+			country = urlCountry[0]
+		}
+	}
+
+	fmt.Println("actor", actor, "genre", genre, "starttime", startTime, "lt", lastTime, "stYear", startYear, "ly", lastYear, "minp", minPrice, "maxpr", maxPrice)
 
 	profile, err := h.useCase.GetAllFilms(r.Context())
 	if err != nil {
@@ -415,12 +481,309 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var finalFilms []models.ProfileFilm
+	var checkFilms []models.ProfileFilm
 
 	if pt != "" {
-		for _, value := range profile {
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+		} else {
+			checkFilms = finalFilms
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
 			if strings.Contains(strings.ToLower(value.Title), strings.ToLower(pt)) {
-				finalFilms = append(finalFilms, value)
+				newCheck = append(newCheck, value)
 			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in profileMethod")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
+		}
+	}
+
+	if genre != "" {
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+		} else {
+			checkFilms = finalFilms
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
+			if strings.Contains(strings.ToLower(value.Genre), strings.ToLower(pt)) {
+				newCheck = append(newCheck, value)
+			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in profileMethod")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
+		}
+	}
+
+	if actor != "" {
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+		} else {
+			checkFilms = finalFilms
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
+			if strings.Contains(strings.ToLower(value.MainActor), strings.ToLower(pt)) {
+				newCheck = append(newCheck, value)
+			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in profileMethod")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
+		}
+	}
+
+	if country != "" {
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+		} else {
+			checkFilms = finalFilms
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
+			if strings.Contains(strings.ToLower(value.Production), strings.ToLower(pt)) {
+				newCheck = append(newCheck, value)
+			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in profileMethod")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
+		}
+	}
+
+	layout := "2006-01-02T15:04:05.000Z"
+
+	if lastTime != "" && startTime != "" {
+		fmt.Println(lastTime, startTime)
+
+		var lastTimeFormat time.Time
+		if lastTime != "" {
+			var err error
+			lastTimeFormat, err = time.Parse(layout, lastTime)
+			fmt.Println("last", lastTimeFormat)
+
+			if err != nil {
+				logger.Error("Error while parsing date last", err.Error())
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			//lastTimeFormat = time.Now() //TODO проверить значение
+		} else {
+			lastTimeFormat = time.Now() //TODO проверить значение
+		}
+		var startTimeFormat time.Time
+		if startTime != "" {
+			var err error
+			startTimeFormat, err = time.Parse(layout, startTime)
+			fmt.Println("start", startTimeFormat)
+
+			if err != nil {
+				logger.Error("Error while parsing time start", err.Error())
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			//startTimeFormat = lastTimeFormat.AddDate(0, 0, -3)
+		} else {
+			startTimeFormat = lastTimeFormat.AddDate(0, 0, -3)
+		}
+
+		if lastTimeFormat.Before(startTimeFormat) {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		fmt.Println(startTimeFormat, lastTimeFormat)
+
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+			fmt.Println("check in profile", checkFilms)
+		} else {
+			checkFilms = finalFilms
+			fmt.Println("check in final", checkFilms)
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
+			fmt.Println(startTimeFormat, lastTimeFormat, value.FilmID)
+			result, err := h.useCase.GetFilmsForDate(startTimeFormat, lastTimeFormat, value.FilmID, r.Context())
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			if result {
+				fmt.Println("result", value)
+				newCheck = append(newCheck, value)
+			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in filmMethodmarshal")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
+		}
+	}
+
+	fmt.Println("exit")
+	fmt.Println(minPrice, maxPrice)
+
+	if minPrice != "" && maxPrice != "" {
+		var maxPriceValue int
+		var minPriceValue int
+
+		if minPrice == "" {
+			minPriceValue = 0
+		} else {
+			minPriceValue, err = strconv.Atoi(minPrice)
+			if err != nil {
+				log.Println(err, "in film conv date")
+				fmt.Println("error1")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Println("in fig", minPriceValue)
+		}
+
+		if maxPrice == "" {
+			maxPriceValue = 10000
+		} else {
+			maxPriceValue, err = strconv.Atoi(maxPrice)
+			if err != nil {
+				log.Println(err, "in film conv date")
+				fmt.Println("error2")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Println("in fig", maxPriceValue)
+		}
+
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+		} else {
+			checkFilms = finalFilms
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
+			fmt.Println(value, minPriceValue, maxPriceValue)
+			result, err := h.useCase.GetFilmsForPrice(minPriceValue, maxPriceValue, value.FilmID, r.Context())
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			if result {
+				fmt.Println("result")
+				newCheck = append(newCheck, value)
+			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in filmMethodmarshal")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
+		}
+
+	}
+
+	if startYear != "" && lastYear != "" {
+		var lastYearValue int
+		var startYearValue int
+
+		if startYear == "" {
+			startYearValue = 0
+		} else {
+			startYearValue, err = strconv.Atoi(startYear)
+			if err != nil {
+				log.Println(err, "in film conv date")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+
+		if lastYear == "" {
+			lastYearValue = 10000
+		} else {
+			lastYearValue, err = strconv.Atoi(lastYear)
+			if err != nil {
+				log.Println(err, "in film conv date")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+
+		if len(finalFilms) == 0 {
+			checkFilms = profile
+		} else {
+			checkFilms = finalFilms
+		}
+		var newCheck []models.ProfileFilm
+		for _, value := range checkFilms {
+			if value.Year <= lastYearValue && value.Year >= startYearValue {
+				newCheck = append(newCheck, value)
+			}
+		}
+		if len(newCheck) == 0 {
+			json, err := json.Marshal(newCheck)
+			if err != nil {
+				log.Println(err, "in profileMethod")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			fmt.Fprintln(w, string(json))
+			return
+		} else {
+			finalFilms = newCheck
+			checkFilms = []models.ProfileFilm{}
 		}
 	}
 

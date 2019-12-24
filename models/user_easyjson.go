@@ -748,6 +748,29 @@ func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile
 				}
 				in.Delim(']')
 			}
+		case "tickets_history":
+			if in.IsNull() {
+				in.Skip()
+				out.TicketsHistory = nil
+			} else {
+				in.Delim('[')
+				if out.TicketsHistory == nil {
+					if !in.IsDelim(']') {
+						out.TicketsHistory = make([]TicketProfilePro, 0, 1)
+					} else {
+						out.TicketsHistory = []TicketProfilePro{}
+					}
+				} else {
+					out.TicketsHistory = (out.TicketsHistory)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v5 TicketProfilePro
+					(v5).UnmarshalEasyJSON(in)
+					out.TicketsHistory = append(out.TicketsHistory, v5)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "id":
 			out.UserID = uint(in.Uint())
 		case "email":
@@ -795,11 +818,27 @@ func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in FullProfil
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.Tickets {
-				if v5 > 0 {
+			for v6, v7 := range in.Tickets {
+				if v6 > 0 {
 					out.RawByte(',')
 				}
-				(v6).MarshalEasyJSON(out)
+				(v7).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"tickets_history\":"
+		out.RawString(prefix)
+		if in.TicketsHistory == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v8, v9 := range in.TicketsHistory {
+				if v8 > 0 {
+					out.RawByte(',')
+				}
+				(v9).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}

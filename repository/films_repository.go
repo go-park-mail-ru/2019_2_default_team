@@ -2,6 +2,7 @@ package repository
 
 import (
 	"kino_backend/models"
+	"time"
 )
 
 type FilmsRepository interface {
@@ -22,4 +23,6 @@ type FilmsRepository interface {
 	GetFilmsForToday() ([]models.ProfileFilm, error)
 	GetFilmsForSoon() ([]models.ProfileFilm, error)
 	GetRecommendedFilms(wantedGenre string) ([]models.ProfileFilm, error)
+	GetFilmsForDate(startTime, lastTime time.Time, filmId uint) (bool, error)
+	GetFilmsForPrice(minPrice, maxPrice int, filmId uint) (bool, error)
 }

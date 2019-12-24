@@ -78,6 +78,15 @@ type MovieSession struct {
 	Type     string    `json:"type" db:"type"`
 }
 
+type MovieSessionSeat struct {
+	MsID     uint      `json:"ms_id" db:"ms_id"`
+	HallName string    `json:"hall_name" db:"hall_name"`
+	MovieID  uint      `json:"movie_id" db:"movie_id"`
+	Date     time.Time `json:"start_datetime" db:"start_datetime"`
+	Type     string    `json:"type" db:"type"`
+	Seat
+}
+
 type RequestFilmTimes struct {
 	MovieSessionID uint      `json:"ms_id" db:"ms_id"`
 	Date           time.Time `json:"start_datetime" db:"start_datetime"`

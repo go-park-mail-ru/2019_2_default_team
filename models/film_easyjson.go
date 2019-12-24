@@ -1073,7 +1073,145 @@ func (v *ProfileFilm) UnmarshalJSON(data []byte) error {
 func (v *ProfileFilm) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson14b8084aDecodeKinoBackendModels9(l, v)
 }
-func easyjson14b8084aDecodeKinoBackendModels10(in *jlexer.Lexer, out *MovieSession) {
+func easyjson14b8084aDecodeKinoBackendModels10(in *jlexer.Lexer, out *MovieSessionSeat) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "ms_id":
+			out.MsID = uint(in.Uint())
+		case "hall_name":
+			out.HallName = string(in.String())
+		case "movie_id":
+			out.MovieID = uint(in.Uint())
+		case "start_datetime":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Date).UnmarshalJSON(data))
+			}
+		case "type":
+			out.Type = string(in.String())
+		case "seat_id":
+			out.SeatID = uint(in.Uint())
+		case "movie_session_id":
+			out.MovieSessionID = int(in.Int())
+		case "is_taken":
+			out.IsTaken = bool(in.Bool())
+		case "price":
+			out.Price = uint(in.Uint())
+		case "row":
+			out.Row = int(in.Int())
+		case "seat_number":
+			out.SeatNumber = int(in.Int())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson14b8084aEncodeKinoBackendModels10(out *jwriter.Writer, in MovieSessionSeat) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"ms_id\":"
+		out.RawString(prefix[1:])
+		out.Uint(uint(in.MsID))
+	}
+	{
+		const prefix string = ",\"hall_name\":"
+		out.RawString(prefix)
+		out.String(string(in.HallName))
+	}
+	{
+		const prefix string = ",\"movie_id\":"
+		out.RawString(prefix)
+		out.Uint(uint(in.MovieID))
+	}
+	{
+		const prefix string = ",\"start_datetime\":"
+		out.RawString(prefix)
+		out.Raw((in.Date).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix)
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"seat_id\":"
+		out.RawString(prefix)
+		out.Uint(uint(in.SeatID))
+	}
+	{
+		const prefix string = ",\"movie_session_id\":"
+		out.RawString(prefix)
+		out.Int(int(in.MovieSessionID))
+	}
+	{
+		const prefix string = ",\"is_taken\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsTaken))
+	}
+	{
+		const prefix string = ",\"price\":"
+		out.RawString(prefix)
+		out.Uint(uint(in.Price))
+	}
+	{
+		const prefix string = ",\"row\":"
+		out.RawString(prefix)
+		out.Int(int(in.Row))
+	}
+	{
+		const prefix string = ",\"seat_number\":"
+		out.RawString(prefix)
+		out.Int(int(in.SeatNumber))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v MovieSessionSeat) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson14b8084aEncodeKinoBackendModels10(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v MovieSessionSeat) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson14b8084aEncodeKinoBackendModels10(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *MovieSessionSeat) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson14b8084aDecodeKinoBackendModels10(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *MovieSessionSeat) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson14b8084aDecodeKinoBackendModels10(l, v)
+}
+func easyjson14b8084aDecodeKinoBackendModels11(in *jlexer.Lexer, out *MovieSession) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1114,7 +1252,7 @@ func easyjson14b8084aDecodeKinoBackendModels10(in *jlexer.Lexer, out *MovieSessi
 		in.Consumed()
 	}
 }
-func easyjson14b8084aEncodeKinoBackendModels10(out *jwriter.Writer, in MovieSession) {
+func easyjson14b8084aEncodeKinoBackendModels11(out *jwriter.Writer, in MovieSession) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1149,27 +1287,27 @@ func easyjson14b8084aEncodeKinoBackendModels10(out *jwriter.Writer, in MovieSess
 // MarshalJSON supports json.Marshaler interface
 func (v MovieSession) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson14b8084aEncodeKinoBackendModels10(&w, v)
+	easyjson14b8084aEncodeKinoBackendModels11(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MovieSession) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson14b8084aEncodeKinoBackendModels10(w, v)
+	easyjson14b8084aEncodeKinoBackendModels11(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MovieSession) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson14b8084aDecodeKinoBackendModels10(&r, v)
+	easyjson14b8084aDecodeKinoBackendModels11(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MovieSession) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson14b8084aDecodeKinoBackendModels10(l, v)
+	easyjson14b8084aDecodeKinoBackendModels11(l, v)
 }
-func easyjson14b8084aDecodeKinoBackendModels11(in *jlexer.Lexer, out *Film) {
+func easyjson14b8084aDecodeKinoBackendModels12(in *jlexer.Lexer, out *Film) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1200,7 +1338,7 @@ func easyjson14b8084aDecodeKinoBackendModels11(in *jlexer.Lexer, out *Film) {
 		in.Consumed()
 	}
 }
-func easyjson14b8084aEncodeKinoBackendModels11(out *jwriter.Writer, in Film) {
+func easyjson14b8084aEncodeKinoBackendModels12(out *jwriter.Writer, in Film) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1215,23 +1353,23 @@ func easyjson14b8084aEncodeKinoBackendModels11(out *jwriter.Writer, in Film) {
 // MarshalJSON supports json.Marshaler interface
 func (v Film) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson14b8084aEncodeKinoBackendModels11(&w, v)
+	easyjson14b8084aEncodeKinoBackendModels12(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Film) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson14b8084aEncodeKinoBackendModels11(w, v)
+	easyjson14b8084aEncodeKinoBackendModels12(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Film) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson14b8084aDecodeKinoBackendModels11(&r, v)
+	easyjson14b8084aDecodeKinoBackendModels12(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Film) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson14b8084aDecodeKinoBackendModels11(l, v)
+	easyjson14b8084aDecodeKinoBackendModels12(l, v)
 }

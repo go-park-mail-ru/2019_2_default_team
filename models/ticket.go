@@ -24,6 +24,7 @@ type Seat struct {
 	HallName       string `json:"hall_name, omitempty" db:"hall_name"`
 	MovieSessionID int    `json:"movie_session_id" db:"movie_session_id"`
 	IsTaken        bool   `json:"is_taken" db:"is_taken"`
+	Price          uint   `json:"price" db:"price"`
 	Row            int    `json:"row" db:"row"`
 	SeatNumber     int    `json:"seat_number" db:"seat_number"`
 }

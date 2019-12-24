@@ -2,12 +2,14 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"kino_backend/models"
 	"kino_backend/utilits/errors"
 	"math/rand"
 	"strings"
+	"time"
 )
 
 type FilmRepository struct {
@@ -413,6 +415,78 @@ func (FR FilmRepository) DeleteAvatarFilm(uID uint) error {
 	}
 
 	return nil
+}
+
+func (FR FilmRepository) GetFilmsForDate(startTime, lastTime time.Time, movie_id uint) (bool, error) {
+	res := []models.RequestFilmTimes{}
+	resOne := models.RequestFilmTimes{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT start_datetime, ms_id, hall_name FROM movie_session
+		WHERE movie_id = $1`,
+		movie_id)
+
+	if err != nil {
+		fmt.Println("erroring")
+		return false, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, errors.FilmNotFoundError{"title"}
+		}
+		return false, err
+	}
+	fmt.Println("in res", res)
+
+	for _, value := range res {
+		fmt.Println("starttime", startTime, "lasttime", lastTime, "value", value)
+		fmt.Println(value.Date.After(startTime))
+		if value.Date.After(startTime) && value.Date.Before(lastTime) {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (FR FilmRepository) GetFilmsForPrice(minPrice, maxPrice int, filmId uint) (bool, error) {
+	res := []models.MovieSessionSeat{}
+	resOne := models.MovieSessionSeat{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT a.movie_id, b.price FROM movie_session a INNER JOIN seat b ON a.ms_id = b.movie_session_id
+		 WHERE b.price > $1 AND b.price < $2 AND a.movie_id = $3`, minPrice, maxPrice, filmId)
+
+	if err != nil {
+		fmt.Println("erro1")
+		return false, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		fmt.Println("erro2")
+		if err == sql.ErrNoRows {
+			return false, errors.FilmNotFoundError{"title"}
+		}
+		return false, err
+	}
+	fmt.Println("resdate", res)
+
+	if len(res) > 0 {
+		return true, nil
+	} else {
+		return false, nil
+	}
 }
 
 func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
