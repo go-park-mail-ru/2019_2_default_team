@@ -25,4 +25,5 @@ type FilmsRepository interface {
 	GetRecommendedFilms(wantedGenre string) ([]models.ProfileFilm, error)
 	GetFilmsForDate(startTime, lastTime time.Time, filmId uint) (bool, error)
 	GetFilmsForPrice(minPrice, maxPrice int, filmId uint) (bool, error)
+	GetTopFilms() ([]models.ProfileFilm, error)
 }

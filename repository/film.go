@@ -516,6 +516,33 @@ func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
 	return res, nil
 }
 
+func (FR FilmRepository) GetTopFilms() ([]models.ProfileFilm, error) {
+	res := []models.ProfileFilm{}
+	resOne := models.ProfileFilm{}
+
+	qres, err := FR.database.Queryx(`
+		SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile
+		WHERE is_deleted = $1 ORDER BY rating DESC LIMIT 10`,
+		false)
+	if err != nil {
+		return res, err
+	}
+
+	for qres.Next() {
+		err = qres.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.FilmNotFoundError{"title"}
+		}
+		return []models.ProfileFilm{}, err
+	}
+
+	return res, nil
+}
+
 func (FR FilmRepository) GetRecommendedFilms(wantedGenre string) ([]models.ProfileFilm, error) {
 	res := []models.ProfileFilm{}
 	result := []models.ProfileFilm{}

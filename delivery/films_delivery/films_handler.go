@@ -391,7 +391,7 @@ func (h *Handler) getOneFilm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("allfilms")
 	//конец парсинга данных можно передавать ctx,
 	vals := r.URL.Query() // Returns a url.Values, which is a map[string][]string
 	productTypes, ok := vals["title"]
@@ -786,18 +786,22 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			checkFilms = []models.ProfileFilm{}
 		}
 	}
-
+	fmt.Println("end")
 	if len(finalFilms) != 0 {
+		fmt.Println("final", finalFilms)
 		json, err := json.Marshal(finalFilms)
 		if err != nil {
+			fmt.Println("err json")
 			log.Println(err, "in profileMethod")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		fmt.Fprintln(w, string(json))
 	} else {
+		fmt.Println("profile", profile)
 		json, err := json.Marshal(profile)
 		if err != nil {
+			fmt.Println("err json")
 			log.Println(err, "in profileMethod")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -1103,4 +1107,58 @@ func (h *Handler) getRecommendedFilms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprintln(w, string(json))
+}
+
+func (h *Handler) getTopFilms(w http.ResponseWriter, r *http.Request) {
+
+	//конец парсинга данных можно передавать ctx,
+	vals := r.URL.Query() // Returns a url.Values, which is a map[string][]string
+	productTypes, ok := vals["title"]
+	var pt string
+	if ok {
+		if len(productTypes) >= 1 {
+			pt = productTypes[0]
+		}
+	}
+
+	profile, err := h.useCase.GetTopFilms(r.Context())
+	if err != nil {
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	var finalFilms []models.ProfileFilm
+
+	if pt != "" {
+		for _, value := range profile {
+			if strings.Contains(strings.ToLower(value.Title), strings.ToLower(pt)) {
+				finalFilms = append(finalFilms, value)
+			}
+		}
+	}
+
+	if len(finalFilms) != 0 {
+		json, err := json.Marshal(finalFilms)
+		if err != nil {
+			log.Println(err, "in profileMethod")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintln(w, string(json))
+	} else {
+		json, err := json.Marshal(profile)
+		if err != nil {
+			log.Println(err, "in profileMethod")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintln(w, string(json))
+	}
 }

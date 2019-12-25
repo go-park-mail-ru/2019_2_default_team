@@ -88,3 +88,9 @@ func (apif *MyHandlerFilms) FilmsRecommended(w http.ResponseWriter, r *http.Requ
 
 	h.getRecommendedFilms(w, r)
 }
+
+func (apif *MyHandlerFilms) TopFilms(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getTopFilms(w, r)
+}
