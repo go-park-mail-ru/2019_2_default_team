@@ -45,9 +45,9 @@ func (FR FilmRepository) CreateNewMovieSession(u *models.RegisterMovieSession, s
 
 	for i := 0; i < seatsNumber; i++ {
 		qres := FR.database.QueryRowx(`
-		INSERT INTO seat (movie_session_id, row, seat_number)
-		VALUES ($1, $2, $3)`,
-			res.MsID, (i+1)/4+1, i+1)
+		INSERT INTO seat (movie_session_id, row, seat_number, price)
+		VALUES ($1, $2, $3, $4)`,
+			res.MsID, (i+1)/4+1, i+1, 500)
 		if err := qres.Err(); err != nil {
 			pqErr := err.(*pq.Error)
 			switch pqErr.Code {
@@ -279,7 +279,7 @@ func (FR FilmRepository) GetSeatsByMSID(movie_session_id uint) ([]models.Seat, e
 	resOne := models.Seat{}
 
 	qres, err := FR.database.Queryx(`
-		SELECT seat_id, movie_session_id, is_taken, row, seat_number FROM seat
+		SELECT seat_id, movie_session_id, is_taken, row, seat_number, price FROM seat
 		WHERE movie_session_id = $1`,
 		movie_session_id)
 	if err != nil {
