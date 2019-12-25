@@ -231,11 +231,12 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	fmt.Println(u)
 	if u.Nickname == "" || u.Email == "" || u.Password == "" {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
-
+	fmt.Println()
 	fieldErrors, err := h.validateFields(u)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

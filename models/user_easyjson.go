@@ -334,6 +334,29 @@ func easyjson9e1087fdDecodeKinoBackendModels4(in *jlexer.Lexer, out *RegisterPro
 			out.FirstName = string(in.String())
 		case "last_name":
 			out.LastName = string(in.String())
+		case "genres":
+			if in.IsNull() {
+				in.Skip()
+				out.Genres = nil
+			} else {
+				in.Delim('[')
+				if out.Genres == nil {
+					if !in.IsDelim(']') {
+						out.Genres = make([]Genre, 0, 4)
+					} else {
+						out.Genres = []Genre{}
+					}
+				} else {
+					out.Genres = (out.Genres)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 Genre
+					(v1).UnmarshalEasyJSON(in)
+					out.Genres = append(out.Genres, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "email":
 			out.Email = string(in.String())
 		case "password":
@@ -366,6 +389,22 @@ func easyjson9e1087fdEncodeKinoBackendModels4(out *jwriter.Writer, in RegisterPr
 		const prefix string = ",\"last_name\":"
 		out.RawString(prefix)
 		out.String(string(in.LastName))
+	}
+	{
+		const prefix string = ",\"genres\":"
+		out.RawString(prefix)
+		if in.Genres == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.Genres {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				(v3).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
 	}
 	{
 		const prefix string = ",\"email\":"
@@ -438,9 +477,9 @@ func easyjson9e1087fdDecodeKinoBackendModels5(in *jlexer.Lexer, out *ProfileErro
 					out.Errors = (out.Errors)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 ProfileError
-					(v1).UnmarshalEasyJSON(in)
-					out.Errors = append(out.Errors, v1)
+					var v4 ProfileError
+					(v4).UnmarshalEasyJSON(in)
+					out.Errors = append(out.Errors, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -466,11 +505,11 @@ func easyjson9e1087fdEncodeKinoBackendModels5(out *jwriter.Writer, in ProfileErr
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v2, v3 := range in.Errors {
-				if v2 > 0 {
+			for v5, v6 := range in.Errors {
+				if v5 > 0 {
 					out.RawByte(',')
 				}
-				(v3).MarshalEasyJSON(out)
+				(v6).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -690,7 +729,73 @@ func (v *Profile) UnmarshalJSON(data []byte) error {
 func (v *Profile) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson9e1087fdDecodeKinoBackendModels7(l, v)
 }
-func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile) {
+func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *Genre) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "genre":
+			out.LovelyGenre = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in Genre) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"genre\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.LovelyGenre))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Genre) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9e1087fdEncodeKinoBackendModels8(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Genre) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9e1087fdEncodeKinoBackendModels8(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Genre) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9e1087fdDecodeKinoBackendModels8(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Genre) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9e1087fdDecodeKinoBackendModels8(l, v)
+}
+func easyjson9e1087fdDecodeKinoBackendModels9(in *jlexer.Lexer, out *FullProfile) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -741,9 +846,9 @@ func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile
 					out.Tickets = (out.Tickets)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 TicketProfilePro
-					(v4).UnmarshalEasyJSON(in)
-					out.Tickets = append(out.Tickets, v4)
+					var v7 TicketProfilePro
+					(v7).UnmarshalEasyJSON(in)
+					out.Tickets = append(out.Tickets, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -764,9 +869,32 @@ func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile
 					out.TicketsHistory = (out.TicketsHistory)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v5 TicketProfilePro
-					(v5).UnmarshalEasyJSON(in)
-					out.TicketsHistory = append(out.TicketsHistory, v5)
+					var v8 TicketProfilePro
+					(v8).UnmarshalEasyJSON(in)
+					out.TicketsHistory = append(out.TicketsHistory, v8)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "genres":
+			if in.IsNull() {
+				in.Skip()
+				out.Genres = nil
+			} else {
+				in.Delim('[')
+				if out.Genres == nil {
+					if !in.IsDelim(']') {
+						out.Genres = make([]Genre, 0, 4)
+					} else {
+						out.Genres = []Genre{}
+					}
+				} else {
+					out.Genres = (out.Genres)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v9 Genre
+					(v9).UnmarshalEasyJSON(in)
+					out.Genres = append(out.Genres, v9)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -787,7 +915,7 @@ func easyjson9e1087fdDecodeKinoBackendModels8(in *jlexer.Lexer, out *FullProfile
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in FullProfile) {
+func easyjson9e1087fdEncodeKinoBackendModels9(out *jwriter.Writer, in FullProfile) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -818,11 +946,11 @@ func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in FullProfil
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v6, v7 := range in.Tickets {
-				if v6 > 0 {
+			for v10, v11 := range in.Tickets {
+				if v10 > 0 {
 					out.RawByte(',')
 				}
-				(v7).MarshalEasyJSON(out)
+				(v11).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -834,11 +962,27 @@ func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in FullProfil
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v8, v9 := range in.TicketsHistory {
-				if v8 > 0 {
+			for v12, v13 := range in.TicketsHistory {
+				if v12 > 0 {
 					out.RawByte(',')
 				}
-				(v9).MarshalEasyJSON(out)
+				(v13).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"genres\":"
+		out.RawString(prefix)
+		if in.Genres == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v14, v15 := range in.Genres {
+				if v14 > 0 {
+					out.RawByte(',')
+				}
+				(v15).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -864,23 +1008,23 @@ func easyjson9e1087fdEncodeKinoBackendModels8(out *jwriter.Writer, in FullProfil
 // MarshalJSON supports json.Marshaler interface
 func (v FullProfile) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeKinoBackendModels8(&w, v)
+	easyjson9e1087fdEncodeKinoBackendModels9(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v FullProfile) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeKinoBackendModels8(w, v)
+	easyjson9e1087fdEncodeKinoBackendModels9(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *FullProfile) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeKinoBackendModels8(&r, v)
+	easyjson9e1087fdDecodeKinoBackendModels9(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *FullProfile) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeKinoBackendModels8(l, v)
+	easyjson9e1087fdDecodeKinoBackendModels9(l, v)
 }

@@ -42,6 +42,10 @@ func easyjsonB39c1f48DecodeKinoBackendModels(in *jlexer.Lexer, out *TicketProfil
 			out.SeatNumber = int(in.Int())
 		case "hall_name":
 			out.HallName = string(in.String())
+		case "start_datetime":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Date).UnmarshalJSON(data))
+			}
 		case "ticket_id":
 			out.TicketID = uint(in.Uint())
 		case "title":
@@ -56,10 +60,6 @@ func easyjsonB39c1f48DecodeKinoBackendModels(in *jlexer.Lexer, out *TicketProfil
 			out.SeatID = uint(in.Uint())
 		case "price":
 			out.Price = uint(in.Uint())
-		case "start_datetime":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Date).UnmarshalJSON(data))
-			}
 		default:
 			in.SkipRecursive()
 		}
@@ -88,6 +88,11 @@ func easyjsonB39c1f48EncodeKinoBackendModels(out *jwriter.Writer, in TicketProfi
 		const prefix string = ",\"hall_name\":"
 		out.RawString(prefix)
 		out.String(string(in.HallName))
+	}
+	{
+		const prefix string = ",\"start_datetime\":"
+		out.RawString(prefix)
+		out.Raw((in.Date).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"ticket_id\":"
@@ -123,11 +128,6 @@ func easyjsonB39c1f48EncodeKinoBackendModels(out *jwriter.Writer, in TicketProfi
 		const prefix string = ",\"price\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.Price))
-	}
-	{
-		const prefix string = ",\"start_datetime\":"
-		out.RawString(prefix)
-		out.Raw((in.Date).MarshalJSON())
 	}
 	out.RawByte('}')
 }

@@ -594,13 +594,11 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 	layout := "2006-01-02T15:04:05.000Z"
 
 	if lastTime != "" && startTime != "" {
-		fmt.Println(lastTime, startTime)
 
 		var lastTimeFormat time.Time
 		if lastTime != "" {
 			var err error
 			lastTimeFormat, err = time.Parse(layout, lastTime)
-			fmt.Println("last", lastTimeFormat)
 
 			if err != nil {
 				logger.Error("Error while parsing date last", err.Error())
@@ -615,7 +613,6 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		if startTime != "" {
 			var err error
 			startTimeFormat, err = time.Parse(layout, startTime)
-			fmt.Println("start", startTimeFormat)
 
 			if err != nil {
 				logger.Error("Error while parsing time start", err.Error())
@@ -631,25 +628,20 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		fmt.Println(startTimeFormat, lastTimeFormat)
 
 		if len(finalFilms) == 0 {
 			checkFilms = profile
-			fmt.Println("check in profile", checkFilms)
 		} else {
 			checkFilms = finalFilms
-			fmt.Println("check in final", checkFilms)
 		}
 		var newCheck []models.ProfileFilm
 		for _, value := range checkFilms {
-			fmt.Println(startTimeFormat, lastTimeFormat, value.FilmID)
 			result, err := h.useCase.GetFilmsForDate(startTimeFormat, lastTimeFormat, value.FilmID, r.Context())
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			if result {
-				fmt.Println("result", value)
 				newCheck = append(newCheck, value)
 			}
 		}
@@ -668,9 +660,6 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println("exit")
-	fmt.Println(minPrice, maxPrice)
-
 	if minPrice != "" && maxPrice != "" {
 		var maxPriceValue int
 		var minPriceValue int
@@ -681,11 +670,9 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			minPriceValue, err = strconv.Atoi(minPrice)
 			if err != nil {
 				log.Println(err, "in film conv date")
-				fmt.Println("error1")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			fmt.Println("in fig", minPriceValue)
 		}
 
 		if maxPrice == "" {
@@ -694,11 +681,10 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			maxPriceValue, err = strconv.Atoi(maxPrice)
 			if err != nil {
 				log.Println(err, "in film conv date")
-				fmt.Println("error2")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			fmt.Println("in fig", maxPriceValue)
+
 		}
 
 		if len(finalFilms) == 0 {
@@ -708,14 +694,12 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 		var newCheck []models.ProfileFilm
 		for _, value := range checkFilms {
-			fmt.Println(value, minPriceValue, maxPriceValue)
 			result, err := h.useCase.GetFilmsForPrice(minPriceValue, maxPriceValue, value.FilmID, r.Context())
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			if result {
-				fmt.Println("result")
 				newCheck = append(newCheck, value)
 			}
 		}
@@ -1161,4 +1145,36 @@ func (h *Handler) getTopFilms(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprintln(w, string(json))
 	}
+}
+
+func (h *Handler) getLovelyFilms(w http.ResponseWriter, r *http.Request) {
+
+	if !r.Context().Value(middleware.KeyIsAuthenticated).(bool) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	id_user := r.Context().Value(middleware.KeyUserID).(uint)
+
+	films, err := h.useCase.GetLovelyFilms(id_user, r.Context())
+	if err != nil {
+		fmt.Println("error")
+		switch err.(type) {
+		case errors.FilmNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		default:
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json, err := json.Marshal(films)
+	if err != nil {
+		log.Println(err, "in profileMethod")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(w, string(json))
 }

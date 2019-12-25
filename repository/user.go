@@ -8,6 +8,7 @@ import (
 	"kino_backend/models"
 	"kino_backend/utilits/errors"
 	"strings"
+	"time"
 )
 
 type UserRepository struct {
@@ -58,6 +59,23 @@ func (UR UserRepository) CreateNewUser(u *models.RegisterProfile) (models.Profil
 	err := qres.StructScan(&res)
 	if err != nil {
 		return res, err
+	}
+
+	for _, value := range u.Genres {
+		qresg := UR.database.QueryRowx(`
+		INSERT INTO user_genres (user_id, genre)
+		VALUES ($1, $2)`,
+			res.UserID, value.LovelyGenre)
+
+		if err := qresg.Err(); err != nil {
+			pqErr := err.(*pq.Error)
+			switch pqErr.Code {
+			case "23502":
+				return res, errors.ErrNotNullConstraintViolation
+			case "23505":
+				return res, errors.ErrUniqueConstraintViolation
+			}
+		}
 	}
 
 	return res, nil
@@ -189,7 +207,31 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 		resT[index].HallName = ticketMap[value.MSID].HallName
 	}
 
-	res.Tickets = resT
+	for _, value := range resT {
+		if value.TicketProfile.Date.After(time.Now().AddDate(0, 0, 3)) {
+			res.Tickets = append(res.Tickets, value)
+		} else {
+			res.TicketsHistory = append(res.TicketsHistory, value)
+		}
+	}
+
+	resG := []models.Genre{}
+	resOneG := models.Genre{}
+
+	qresgenres, err := UR.database.Queryx(`
+		SELECT genre FROM user_genres
+		WHERE user_id = $1`,
+		id)
+	if err != nil {
+		return res, err
+	}
+
+	for qresgenres.Next() {
+		err = qresgenres.StructScan(&resOneG)
+		resG = append(resG, resOneG)
+	}
+
+	res.Genres = resG
 
 	return res, nil
 }

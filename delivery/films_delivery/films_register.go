@@ -94,3 +94,9 @@ func (apif *MyHandlerFilms) TopFilms(w http.ResponseWriter, r *http.Request) {
 
 	h.getTopFilms(w, r)
 }
+
+func (apif *MyHandlerFilms) LovelyFilms(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apif.useCase)
+
+	h.getLovelyFilms(w, r)
+}

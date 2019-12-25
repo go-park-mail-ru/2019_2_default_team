@@ -106,6 +106,8 @@ func CreateServer(database *sqlx.DB, Sesredis *sessions.SessionManager) (*Server
 		middleware.SessionMiddleware(apif.PostVote, sesmic)))))
 	r.HandleFunc("/films_recommended", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.FilmsRecommended, sesmic)))))
+	r.HandleFunc("/allfilms/lovely", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
+		middleware.SessionMiddleware(apif.LovelyFilms, sesmic)))))
 	r.HandleFunc("/allfilms/top", middleware.RecoverMiddleware(metrics.CountHitsMiddleware(middleware.CorsMiddleware(
 		middleware.SessionMiddleware(apif.TopFilms, sesmic)))))
 

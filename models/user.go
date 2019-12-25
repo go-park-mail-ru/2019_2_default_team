@@ -16,13 +16,19 @@ type FullProfile struct {
 	LastName       string             `json:"last_name" example:"Nicker" db:"last_name"`
 	Tickets        []TicketProfilePro `json:"tickets"`
 	TicketsHistory []TicketProfilePro `json:"tickets_history"`
+	Genres         []Genre            `json:"genres" example:"Nicker"`
+}
+
+type Genre struct {
+	LovelyGenre string `json:"genre" example:"Nicker" db:"genre"`
 }
 
 type RegisterProfile struct {
 	Nickname string `json:"nickname" example:"Nick"`
 	UserPassword
-	FirstName string `json:"first_name" example:"Nick"`
-	LastName  string `json:"last_name" example:"Nicker"`
+	FirstName string  `json:"first_name" example:"Nick"`
+	LastName  string  `json:"last_name" example:"Nicker"`
+	Genres    []Genre `json:"genres" example:"Nicker"`
 }
 
 type User struct {

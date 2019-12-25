@@ -516,6 +516,56 @@ func (FR FilmRepository) GetAllFilms() ([]models.ProfileFilm, error) {
 	return res, nil
 }
 
+func (FR FilmRepository) GetLovelyFilms(id uint) ([]models.ProfileFilm, error) {
+	res := []models.ProfileFilm{}
+	resOne := models.ProfileFilm{}
+
+	resG := []models.Genre{}
+	resOneG := models.Genre{}
+
+	qresgenres, err := FR.database.Queryx(`
+		SELECT genre FROM user_genres
+		WHERE user_id = $1`,
+		id)
+	if err != nil {
+		return res, err
+	}
+
+	for qresgenres.Next() {
+		err = qresgenres.StructScan(&resOneG)
+		resG = append(resG, resOneG)
+	}
+	var mas []string
+	for _, value := range resG {
+		mas = append(mas, value.LovelyGenre)
+	}
+	fmt.Println(resG)
+
+	query, args, err := sqlx.In("SELECT film_id, title, description, director, actors, admin_id, genre, length, production, year, rating, poster_popup, poster, trailer FROM film_profile WHERE genre IN (?);", mas)
+
+	// sqlx.In returns queries with the `?` bindvar, we can rebind it for our backend
+	query = FR.database.Rebind(query)
+	qresfilms, err := FR.database.Queryx(query, args...)
+	if err != nil {
+		fmt.Println("error1")
+		return res, err
+	}
+
+	for qresfilms.Next() {
+		err = qresfilms.StructScan(&resOne)
+		res = append(res, resOne)
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, errors.FilmNotFoundError{"title"}
+		}
+		return res, err
+	}
+
+	return res, nil
+}
+
 func (FR FilmRepository) GetTopFilms() ([]models.ProfileFilm, error) {
 	res := []models.ProfileFilm{}
 	resOne := models.ProfileFilm{}

@@ -26,4 +26,5 @@ type FilmsRepository interface {
 	GetFilmsForDate(startTime, lastTime time.Time, filmId uint) (bool, error)
 	GetFilmsForPrice(minPrice, maxPrice int, filmId uint) (bool, error)
 	GetTopFilms() ([]models.ProfileFilm, error)
+	GetLovelyFilms(id uint) ([]models.ProfileFilm, error)
 }

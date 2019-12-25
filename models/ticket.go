@@ -38,9 +38,10 @@ type TicketProfile struct {
 
 type TicketProfilePro struct {
 	TicketProfile
-	Row        int    `json:"row" db:"row"`
-	SeatNumber int    `json:"seat_number" db:"seat_number"`
-	HallName   string `json:"hall_name, omitempty" db:"hall_name"`
+	Row        int       `json:"row" db:"row"`
+	SeatNumber int       `json:"seat_number" db:"seat_number"`
+	HallName   string    `json:"hall_name, omitempty" db:"hall_name"`
+	Date       time.Time `json:"start_datetime" db:"start_datetime"`
 }
 
 type TicketAddInfo struct {

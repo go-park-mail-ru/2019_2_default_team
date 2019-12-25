@@ -24,6 +24,7 @@ type FilmsUseCase interface {
 	GetFilmsForDate(startTime, lastTime time.Time, filmId uint, ctx context.Context) (bool, error)
 	GetFilmsForPrice(minPrice, maxPrice int, filmId uint, ctx context.Context) (bool, error)
 	GetTopFilms(ctx context.Context) ([]models.ProfileFilm, error)
+	GetLovelyFilms(id uint, ctx context.Context) ([]models.ProfileFilm, error)
 }
 
 type filmUseCase struct {
@@ -48,6 +49,16 @@ func (f filmUseCase) GetMovieSessionsForToday(ctx context.Context, movie_id uint
 
 func (f filmUseCase) GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm, error) {
 	newFilms, err := f.filmRepo.GetFilmsForToday()
+
+	if err != nil {
+		return []models.ProfileFilm{}, err
+	}
+
+	return newFilms, err
+}
+
+func (f filmUseCase) GetLovelyFilms(id uint, ctx context.Context) ([]models.ProfileFilm, error) {
+	newFilms, err := f.filmRepo.GetLovelyFilms(id)
 
 	if err != nil {
 		return []models.ProfileFilm{}, err
