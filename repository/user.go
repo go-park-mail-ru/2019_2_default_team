@@ -233,6 +233,14 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 
 	res.Genres = resG
 
+	if res.TicketsHistory == nil {
+		res.TicketsHistory = []models.TicketProfilePro{}
+	}
+
+	if res.Tickets == nil {
+		res.Tickets = []models.TicketProfilePro{}
+	}
+
 	return res, nil
 }
 
