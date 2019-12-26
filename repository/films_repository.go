@@ -22,7 +22,7 @@ type FilmsRepository interface {
 	IsVoted(u *models.RegisterVote) (bool, error)
 	GetFilmsForToday() ([]models.ProfileFilm, error)
 	GetFilmsForSoon() ([]models.ProfileFilm, error)
-	GetRecommendedFilms(wantedGenre string) ([]models.ProfileFilm, error)
+	GetRecommendedFilms(wantedGenre string, film_id int) ([]models.ProfileFilm, error)
 	GetFilmsForDate(startTime, lastTime time.Time, filmId uint) (bool, error)
 	GetFilmsForPrice(minPrice, maxPrice int, filmId uint) (bool, error)
 	GetTopFilms() ([]models.ProfileFilm, error)

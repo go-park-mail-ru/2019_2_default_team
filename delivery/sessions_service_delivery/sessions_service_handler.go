@@ -97,6 +97,8 @@ func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) {
 		_, err := json.Marshal(models.Session{SessionID: r.Context().Value(middleware.KeySessionID).(string)})
 		if err != nil {
 			logger.Error(err)
+			h.deleteSession(w, r)
+			fmt.Println("ses1")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -104,6 +106,15 @@ func (h *Handler) getSession(w http.ResponseWriter, r *http.Request) {
 		user, err := h.useCaseUser.GetUser(r.Context().Value(middleware.KeyUserID).(uint))
 		if err != nil {
 			logger.Error(err)
+			c, err := r.Cookie("session_id")
+			if err != nil {
+				fmt.Println("deed")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			c.Expires = time.Now().AddDate(0, 0, -1)
+			http.SetCookie(w, c)
+			fmt.Println("ses2")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

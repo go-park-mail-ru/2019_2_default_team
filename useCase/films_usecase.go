@@ -20,7 +20,7 @@ type FilmsUseCase interface {
 	Vote(ctx context.Context, u *models.RegisterVote) (models.Vote, error)
 	GetFilmsForToday(ctx context.Context) ([]models.ProfileFilm, error)
 	GetFilmsForSoon(ctx context.Context) ([]models.ProfileFilm, error)
-	GetRecommendedFilms(wantedGenre string, ctx context.Context) ([]models.ProfileFilm, error)
+	GetRecommendedFilms(wantedGenre string, ctx context.Context, film_id int) ([]models.ProfileFilm, error)
 	GetFilmsForDate(startTime, lastTime time.Time, filmId uint, ctx context.Context) (bool, error)
 	GetFilmsForPrice(minPrice, maxPrice int, filmId uint, ctx context.Context) (bool, error)
 	GetTopFilms(ctx context.Context) ([]models.ProfileFilm, error)
@@ -87,11 +87,11 @@ func (f filmUseCase) GetFilmsForDate(startTime, lastTime time.Time, filmId uint,
 	return result, err
 }
 
-func (f filmUseCase) GetRecommendedFilms(wantedGenre string, ctx context.Context) ([]models.ProfileFilm, error) {
+func (f filmUseCase) GetRecommendedFilms(wantedGenre string, ctx context.Context, film_id int) ([]models.ProfileFilm, error) {
 	var err error
 	var profile []models.ProfileFilm
 
-	profile, err = f.filmRepo.GetRecommendedFilms(wantedGenre)
+	profile, err = f.filmRepo.GetRecommendedFilms(wantedGenre, film_id)
 
 	if err != nil {
 		return []models.ProfileFilm{}, err

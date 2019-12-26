@@ -481,6 +481,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var finalFilms []models.ProfileFilm
+	finalFilms = profile
 	var checkFilms []models.ProfileFilm
 
 	if pt != "" {
@@ -496,6 +497,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in profileMethod")
@@ -523,6 +525,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in profileMethod")
@@ -550,6 +553,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in profileMethod")
@@ -577,6 +581,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in profileMethod")
@@ -599,6 +604,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		if lastTime != "" {
 			var err error
 			lastTimeFormat, err = time.Parse(layout, lastTime)
+			fmt.Println("last timing", lastTimeFormat)
 
 			if err != nil {
 				logger.Error("Error while parsing date last", err.Error())
@@ -646,6 +652,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in filmMethodmarshal")
@@ -704,6 +711,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in filmMethodmarshal")
@@ -750,13 +758,17 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		} else {
 			checkFilms = finalFilms
 		}
+		fmt.Println(startYearValue, lastYearValue)
 		var newCheck []models.ProfileFilm
 		for _, value := range checkFilms {
+			fmt.Println(value.Year)
 			if value.Year <= lastYearValue && value.Year >= startYearValue {
 				newCheck = append(newCheck, value)
+				fmt.Println(value)
 			}
 		}
 		if len(newCheck) == 0 {
+			newCheck = []models.ProfileFilm{}
 			json, err := json.Marshal(newCheck)
 			if err != nil {
 				log.Println(err, "in profileMethod")
@@ -770,9 +782,8 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 			checkFilms = []models.ProfileFilm{}
 		}
 	}
-	fmt.Println("end")
+
 	if len(finalFilms) != 0 {
-		fmt.Println("final", finalFilms)
 		json, err := json.Marshal(finalFilms)
 		if err != nil {
 			fmt.Println("err json")
@@ -782,8 +793,8 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprintln(w, string(json))
 	} else {
-		fmt.Println("profile", profile)
-		json, err := json.Marshal(profile)
+		newCheck := []models.ProfileFilm{}
+		json, err := json.Marshal(newCheck)
 		if err != nil {
 			fmt.Println("err json")
 			log.Println(err, "in profileMethod")
@@ -1070,7 +1081,23 @@ func (h *Handler) getRecommendedFilms(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	films, err := h.useCase.GetRecommendedFilms(pt, r.Context())
+	urlQuery, ok := vals["film_id"]
+	var id string
+	if ok {
+		if len(urlQuery) >= 1 {
+			id = urlQuery[0]
+		}
+	}
+
+	film_id, err := strconv.Atoi(id)
+
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		film_id = 0
+	}
+
+	films, err := h.useCase.GetRecommendedFilms(pt, r.Context(), film_id)
 	if err != nil {
 		fmt.Println("error")
 		switch err.(type) {

@@ -116,9 +116,12 @@ func SessionMiddleware(next http.HandlerFunc, sm *session_microservice_client.Se
 		}
 
 		if err == nil && c != nil {
+			fmt.Println("here1")
 			uid, err := sm.Get(c.Value)
 			switch err {
 			case nil:
+				fmt.Println("here2")
+
 				ctx = context.WithValue(ctx, KeyIsAuthenticated, true)
 				ctx = context.WithValue(ctx, KeySessionID, c.Value)
 				ctx = context.WithValue(ctx, KeyUserID, uid)
@@ -126,6 +129,8 @@ func SessionMiddleware(next http.HandlerFunc, sm *session_microservice_client.Se
 				csrfToken, _ := CSRF.Tokens.Create(string(uid), c.Value, tokenExpiration.Unix())
 				w.Header().Set("X-CSRF-Token", csrfToken)
 			case db.ErrSessionNotFound:
+				fmt.Println("here3")
+
 				// delete unvalid cookie
 				c.Expires = time.Now().AddDate(0, 0, -1)
 				http.SetCookie(w, c)
@@ -136,15 +141,22 @@ func SessionMiddleware(next http.HandlerFunc, sm *session_microservice_client.Se
 				http.SetCookie(w, c)
 				ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
 			default:
-				fmt.Println("errors are here in default")
+				fmt.Println("here4")
 
+				c.Expires = time.Now().AddDate(0, 0, -1)
+				http.SetCookie(w, c)
+				ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
 				log.Println(err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 		} else { // ErrNoCookie
+			fmt.Println("here5")
+
 			ctx = context.WithValue(ctx, KeyIsAuthenticated, false)
 		}
+		fmt.Println("here6")
+
 		//fmt.Println("key  ", KeyIsAuthenticated)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
