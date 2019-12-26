@@ -340,4 +340,5 @@ drop table support cascade;
 drop table ticket_profile cascade;
 drop table user_profile cascade;
 drop table user_to_sup cascade;
+drop table user_genres cascade;
 
