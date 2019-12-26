@@ -593,7 +593,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 
 	layout := "2006-01-02T15:04:05.000Z"
 
-	if lastTime != "" && startTime != "" {
+	if lastTime != "" || startTime != "" {
 
 		var lastTimeFormat time.Time
 		if lastTime != "" {
@@ -660,7 +660,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if minPrice != "" && maxPrice != "" {
+	if minPrice != "" || maxPrice != "" {
 		var maxPriceValue int
 		var minPriceValue int
 
@@ -719,7 +719,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if startYear != "" && lastYear != "" {
+	if startYear != "" || lastYear != "" {
 		var lastYearValue int
 		var startYearValue int
 
