@@ -208,7 +208,8 @@ func (UR UserRepository) GetUserProfileByID(id uint) (models.FullProfile, error)
 	}
 
 	for _, value := range resT {
-		if value.TicketProfile.Date.After(time.Now().AddDate(0, 0, 3)) {
+		value.Date = value.TicketProfile.Date
+		if value.Date.After(time.Now().Add(time.Hour * time.Duration(3))) {
 			res.Tickets = append(res.Tickets, value)
 		} else {
 			res.TicketsHistory = append(res.TicketsHistory, value)

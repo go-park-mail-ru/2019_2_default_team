@@ -92,14 +92,14 @@ INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, direct
 
 
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (1, 'super-hall2', 2, '2019-12-25 19:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (2, 'super-hall', 1, '2019-12-25 19:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (3, 'super-hall', 1, '2019-12-25 21:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (2, 'super-hall', 1, '2019-12-26 19:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (3, 'super-hall', 1, '2019-12-26 21:30:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (4, 'super-hall', 1, '2019-12-26 21:30:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (5, 'super-hall', 1, '2019-12-27 21:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (6, 'super-hall', 1, '2019-12-25 15:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (7, 'super-hall', 5, '2019-12-25 18:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (8, 'super-hall', 4, '2019-12-25 18:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (9, 'super-hall', 3, '2019-12-25 18:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (6, 'super-hall', 1, '2019-12-26 15:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (7, 'super-hall', 5, '2019-12-26 18:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (8, 'super-hall', 4, '2019-12-26 18:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (9, 'super-hall', 3, '2019-12-26 18:30:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (10, 'super-hall', 2, '2019-12-25 18:30:16.968122', 'IMAX', false);
 
 
