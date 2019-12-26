@@ -518,7 +518,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 		var newCheck []models.ProfileFilm
 		for _, value := range checkFilms {
-			if strings.Contains(strings.ToLower(value.Genre), strings.ToLower(pt)) {
+			if strings.Contains(strings.ToLower(value.Genre), strings.ToLower(genre)) {
 				newCheck = append(newCheck, value)
 			}
 		}
@@ -545,7 +545,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 		var newCheck []models.ProfileFilm
 		for _, value := range checkFilms {
-			if strings.Contains(strings.ToLower(value.MainActor), strings.ToLower(pt)) {
+			if strings.Contains(strings.ToLower(value.MainActor), strings.ToLower(actor)) {
 				newCheck = append(newCheck, value)
 			}
 		}
@@ -572,7 +572,7 @@ func (h *Handler) getAllFilms(w http.ResponseWriter, r *http.Request) {
 		}
 		var newCheck []models.ProfileFilm
 		for _, value := range checkFilms {
-			if strings.Contains(strings.ToLower(value.Production), strings.ToLower(pt)) {
+			if strings.Contains(strings.ToLower(value.Production), strings.ToLower(country)) {
 				newCheck = append(newCheck, value)
 			}
 		}
