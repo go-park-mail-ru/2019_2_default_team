@@ -23,7 +23,7 @@ create table user_genres (
 create table film_profile (
     film_id                  bigserial   primary key,
     title                text        not null,
-    admin_id            bigserial   not null references user_profile (user_id),
+    admin_id            bigserial   not null,
     genre               text        not null,
     length              int         not null,
     director            text        not null,
@@ -75,11 +75,7 @@ create table ticket_profile (
     is_deleted          boolean     not null default(false)
 );
 
-INSERT INTO user_profile(nickname, password, first_name, last_name, email, avatar,  is_deleted)
-VALUES('usernick', 'password', 'user', 'surname', 'me@mail.ru', 'https://yt3.ggpht.com/a/AGF-l79J268L8ezHGDGnFh57D0wyFA-ltncqGF3cVA=s900-c-k-c0xffffffff-no-rj-mo', false);
 
-insert into public.user_genres(genre_id, user_id, genre) VALUES(1, 1,'Drama');
-insert into public.user_genres(genre_id, user_id, genre) VALUES(2, 1,'Science');
 
 INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (2, 'Форд Против Феррари', 1, 'Драма', 169, 'Грей', 'США', 2019, 'Бейл', 'Противостояние машин... ', 2, 'https://static.karofilm.ru/uploads/film/desktop/03/b9/83/e827e7909888a133b74969ce6f.jpg', 'https://static.karofilm.ru/uploads/film/desktop/a0/dd/98/6ab8284a4d469111457c17e10f.jpg', 'https://www.youtube.com/embed/fAD-D3P-s0I', false);
 INSERT INTO public.film_profile (film_id, title, admin_id, genre, length, director, production, year, actors, description, rating, poster, poster_popup, trailer, is_deleted) VALUES (1, 'Джокер', 1, 'Драма', 159, 'Тодд', 'США', 2019, 'Феникс', 'Джокер, начало', 0, 'https://static.karofilm.ru/uploads/film/desktop/e3/b6/4b/5215d5811b80298172dad73fd1.jpg', 'https://static.karofilm.ru/uploads/film/desktop/06/5b/94/d93f295f6ac79d1e2060f657de.jpg', 'https://www.youtube.com/embed/50IJyz7ecqc', false);
