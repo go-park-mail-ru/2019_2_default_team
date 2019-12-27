@@ -106,7 +106,7 @@ func readVote(r *http.Request, p *models.RegisterVote) error {
 func SanitizeMe(film models.ProfileFilm) models.ProfileFilm {
 	sanitizer := bluemonday.UGCPolicy()
 	film.Description = sanitizer.Sanitize(film.Description)
-	film.MainActor = sanitizer.Sanitize(film.Description)
+	film.MainActor = sanitizer.Sanitize(film.MainActor)
 	film.Director = sanitizer.Sanitize(film.Director)
 
 	return film
@@ -115,7 +115,7 @@ func SanitizeMe(film models.ProfileFilm) models.ProfileFilm {
 func SanitizeMeVote(film models.ProfileFilmWithVote) models.ProfileFilmWithVote {
 	sanitizer := bluemonday.UGCPolicy()
 	film.Description = sanitizer.Sanitize(film.Description)
-	film.MainActor = sanitizer.Sanitize(film.Description)
+	film.MainActor = sanitizer.Sanitize(film.MainActor)
 	film.Director = sanitizer.Sanitize(film.Director)
 
 	return film

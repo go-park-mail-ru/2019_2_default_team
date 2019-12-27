@@ -4,8 +4,8 @@ import "time"
 
 type ProfileFilm struct {
 	Film
-	Title       string  `json:"title" example:"Joker"`
-	Description string  `json:"description" example:"Absolutely madness"`
+	Title       string  `json:"title" example:"Joker" db:"title"`
+	Description string  `json:"description" db:"description"`
 	Avatar      *string `json:"avatar,omitempty"`
 	Director    string  `json:"director"  db:"director" example:"Todd Philips"`
 	MainActor   string  `json:"mainactor"  db:"actors" example:"Phoenix"`
