@@ -107,7 +107,7 @@ INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, ty
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (6, 'super-hall', 1, '2019-12-27 23:20:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (7, 'super-hall', 5, '2019-12-27 21:30:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (8, 'super-hall', 4, '2019-12-27 22:30:16.968122', 'IMAX', false);
-INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (9, 'super-hall', 3, '2019-12-27 23:30:16.968122', 'IMAX', false);
+INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (9, 'super-hall', 3, '2019-12-27 23:55:16.968122', 'IMAX', false);
 INSERT INTO public.movie_session (ms_id, hall_name, movie_id, start_datetime, type, is_deleted) VALUES (10, 'super-hall', 2, '2019-12-28 23:30:16.968122', 'IMAX', false);
 
 
