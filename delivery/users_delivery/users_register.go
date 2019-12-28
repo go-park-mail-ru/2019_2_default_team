@@ -37,3 +37,9 @@ func (apiu *MyHandlerUser) ProfileHandler(w http.ResponseWriter, r *http.Request
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
+
+func (apiu *MyHandlerUser) ProfileRegHandler(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler(apiu.useCase, apiu.uS)
+
+	h.postSignupProfile(w, r)
+}

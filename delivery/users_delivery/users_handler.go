@@ -261,6 +261,7 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 
 		//newU, err := db.CreateNewUser(u)
 		if err != nil {
+			fmt.Println("herethis1")
 			if err == db.ErrUniqueConstraintViolation ||
 				err == db.ErrNotNullConstraintViolation {
 				w.WriteHeader(http.StatusUnprocessableEntity)
@@ -274,6 +275,7 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 		hs := sessions_service_delivery.NewHandler(h.manager, h.useCase)
 		res, err := hs.LoginUser(r.Context(), w, newU.UserID)
 		if err != nil {
+			fmt.Println("herethis2")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -282,6 +284,7 @@ func (h *Handler) postSignupProfile(w http.ResponseWriter, r *http.Request) {
 
 		json, err := json.Marshal(Suc)
 		if err != nil {
+			fmt.Println("herethis3")
 			log.Println(err, "error msrashal")
 			w.WriteHeader(http.StatusInternalServerError)
 			return

@@ -51,8 +51,10 @@ func (UR UserRepository) CreateNewUser(u *models.RegisterProfile) (models.Profil
 		pqErr := err.(*pq.Error)
 		switch pqErr.Code {
 		case "23502":
+			fmt.Println("23502")
 			return res, errors.ErrNotNullConstraintViolation
 		case "23505":
+			fmt.Println("23505")
 			return res, errors.ErrUniqueConstraintViolation
 		}
 	}
